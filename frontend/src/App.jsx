@@ -20,6 +20,7 @@ function App() {
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
+          count isn't real though!
         </button>
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
