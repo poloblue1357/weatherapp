@@ -5,9 +5,10 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import locationRoutes from "./routes/location.js"
 import weatherRoutes from "./routes/weather.js"
+import 'dotenv/config'; 
 
 // Load .env
-dotenv.config()
+// dotenv.config({ silent: true });
 
 const app = express()
 
