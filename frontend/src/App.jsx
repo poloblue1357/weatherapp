@@ -96,12 +96,13 @@ function App() {
 
     // Fetch wind gust data from JSON format
     const gustData = await fetchWindGustData(location);
-    console.log("Gust Data", gustData)
+    // console.log("Gust Data", gustData)
     setWindGust(gustData);
   };
 
   const getWeatherInfo = (data) => {
   if (!data || !data.current) {
+    console.error("No weather data found");
     return {};
   }
 
@@ -113,8 +114,18 @@ function App() {
   const sunsetUTC = current.city?.sun?.$.set || null;
   const lastUpdateUTC = current.lastupdate?.$.value || null; // Extract last update time
 
-  const gusts = windGust || "N/A"; // Use the state value of wind gusts
-  const speed = current.wind?.speed?.$.value || "N/A"; // Corrected this line
+// ── Wind ────────────────────────────────────────
+const windSpeedObj = current.wind?.speed?.$ || {};
+const windSpeed = windSpeedObj.value ?? "N/A";
+const windType   = windSpeedObj.name  ?? "N/A";
+
+const windDirObj = current.wind?.direction?.$ || {};
+const windDirectionName = windDirObj.name ?? "N/A";
+const windDirectionCode = windDirObj.code ?? "N/A";
+
+// Prefer JSON gust (separate fetch) over XML
+const xmlGust = current.wind?.gusts?.$?.value ?? null;
+const finalWindGust = windGust ?? xmlGust ?? "N/A";  // windGust = state value from JSON
 
   // Convert to Date objects
   const sunriseDate = sunriseUTC ? new Date(sunriseUTC) : null;
@@ -134,22 +145,27 @@ function App() {
   const formattedSunset = sunsetDate ? convertToLocalTime(sunsetDate) : "N/A";
   const formattedLastUpdate = lastUpdateDate ? convertToLocalTime(lastUpdateDate) : "N/A";
 
-  // console.log("Last update", formattedLastUpdate)
-  return {
-    city: current.city?.$.name || "Unknown City",
-    weather: current.weather?.$.value || "No weather data",
-    temperature: current.temperature?.$.value || "N/A",
-    humidity: current.humidity?.$.value || "N/A",
-    pressure: current.pressure?.$.value || "N/A",
-    windSpeed: speed, // Wind speed from XML
-    windType: current.wind?.speed?.$.name || "N/A",
-    windDirection: current.wind?.direction?.$.name || "N/A",
-    windDirectionCode: current.wind?.direction?.$.code || "N/A",
-    windGusts: gusts, // Wind gusts from JSON
-    sunrise: formattedSunrise,
-    sunset: formattedSunset,
-    lastUpdate: formattedLastUpdate, // Add formatted last update here
-  };
+  // Debugging logs
+  // console.log("Wind Data:", current.wind);
+  // console.log("Sunrise:", formattedSunrise, "Sunset:", formattedSunset);
+
+return {
+  city: current.city?.$.name || "Unknown City",
+  weather: current.weather?.$.value || "No weather data",
+  temperature: current.temperature?.$.value || "N/A",
+  humidity: current.humidity?.$.value || "N/A",
+  pressure: current.pressure?.$.value || "N/A",
+  
+  windSpeed,
+  windType,
+  windDirection: windDirectionName,
+  windDirectionCode,
+  windGusts: finalWindGust === "N/A" ? "N/A" : finalWindGust,
+  
+  sunrise: formattedSunrise,
+  sunset: formattedSunset,
+  lastUpdate: formattedLastUpdate,
+};
 };
 
   const weatherInfo = getWeatherInfo(weatherData);
