@@ -1,28 +1,35 @@
-import React from 'react';
 import './index.css';
-import Search from "./components/Search"
-import Home from "./components/Home"
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './components/Header'
+import NavBar from "./components/NavBar"
+import Footer from "./components/Footer"
+import { Route, Routes } from 'react-router-dom';
+
+// importing pages
+import Home from './pages/Home';
+import Contact from './pages/Contact';
+import Favorites from './pages/Favorites';
+import SavedLocation from './pages/SavedLocations';
+import Search from './pages/Search';
 
 function App() {
   
   return (
-    <Router>
+    <div>
+      <Header />
+      <NavBar />
 
-      <div className="bg-red-500">
-        <h1 className="text-4xl font-bold">Welcome to Weather App!</h1>
-      </div>
-
-        <div>
-          <Search />
-        </div>
-
+      <main className="">
         <Routes>
-          <Route path="/" element={<Home />}/>
+          <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/savedlocations" element={<SavedLocation />} />
         </Routes>
+      </main>
 
-    </Router>
+      <Footer />
+    </div>
   )
 }
 

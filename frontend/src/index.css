@@ -1,11 +1,5 @@
-/* Tailwind's base styles */
-@tailwind base;
+@import "tailwindcss";
 
-/* Tailwind's component styles */
-@tailwind components;
-
-/* Tailwind's utility classes */
-@tailwind utilities;
 
 
 

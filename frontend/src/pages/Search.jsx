@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import "../index.css"
 import { XMLParser } from 'fast-xml-parser';
 
@@ -171,19 +171,19 @@ return {
   const weatherInfo = getWeatherInfo(weatherData);
 
   return (
-  <div className="App p-4">
+  <div className="">
     {/* <h1 className="text-3xl font-bold mb-4">Weather App</h1> */}
 
     {/* Search Bar */}
-    <form onSubmit={handleSearch} className="flex space-x-2 mb-4">
+    <form onSubmit={handleSearch} className="space-between">
       <input
         type="text"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
         placeholder="Enter city or lat,lon"
-        className="p-2 border border-gray-300 rounded"
+        className="p-2 border border-gray-300 rounded bg-blue-200"
       />
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+      <button type="submit" className="bg-blue-700 text-white p-2 rounded">
         Search
       </button>
     </form>
