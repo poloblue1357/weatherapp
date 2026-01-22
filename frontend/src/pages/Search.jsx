@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import "../index.css"
 import { XMLParser } from 'fast-xml-parser';
 
 const fetchWeatherData = async (location) => {
@@ -171,7 +170,7 @@ return {
   const weatherInfo = getWeatherInfo(weatherData);
 
   return (
-  <div className="">
+  <div className="flex justify-center pt-4 flex-col items-center">
     {/* <h1 className="text-3xl font-bold mb-4">Weather App</h1> */}
 
     {/* Search Bar */}

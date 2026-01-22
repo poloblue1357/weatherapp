@@ -1,4 +1,3 @@
-import "../index.css"
 import { Link } from 'react-router-dom';
 
 function NavBar() {
@@ -19,9 +18,15 @@ function NavBar() {
         </Link>
         <Link 
             className="border-2 p-3 rounded-md"
-            to="/contact"
+            to="/exits"
         >
-            Contact
+            Exits
+        </Link>
+        <Link 
+            className="border-2 p-3 rounded-md"
+            to="/favorites"
+        >
+            Favorites
         </Link>
     </nav>
     )
