@@ -1,13 +1,24 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-// Define the schema for a saved location
 const locationSchema = new mongoose.Schema({
-    name: { type: String, required: true },   // e.g. "New York"
-    country: { type: String },                // optional, e.g., "US"
-    lat: { type: Number },                  // optional latitude 
-    lon: { type: Number }                   // optional longitude
-}, { timestamps: true}); // automatically adds createdAt and updatedAt
+    name: { type: String, required: true },
+    country: { type: String },
+    lat: { type: Number },
+    lon: { type: Number },
+    weather: {
+        description: String,
+        temperature: String,
+        humidity: String,
+        pressure: String,
+        windSpeed: String,
+        windType: String,
+        windDirection: String,
+        windGusts: String,
+        sunrise: String,
+        sunset: String,
+        lastUpdated: String
+    }
+}, { timestamps: true });
 
-// Export the model
-const Location = mongoose.model("Location", locationSchema)
-export default Location
+const Location = mongoose.model("Location", locationSchema);
+export default Location;
