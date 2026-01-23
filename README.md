@@ -7,7 +7,7 @@ A MERN weather application that lets users save locations and view real-time wea
 - Express
 - React (Vite)
 - Node.js
-- OpenWeatherMap API
+- OpenWeatherMap API (XML and JSON)
 
 ## Running locally
 ```bash
