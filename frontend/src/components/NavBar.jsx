@@ -14,7 +14,7 @@ function NavBar() {
             className="border-2 p-3 rounded-md"
             to="/search"
         >
-            Search
+            WeatherSearch
         </Link>
         <Link 
             className="border-2 p-3 rounded-md"

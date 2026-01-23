@@ -8,7 +8,7 @@ import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Favorites from './pages/Favorites';
 import Exits from './pages/Exits';
-import Search from './pages/Search';
+import WeatherSearch from './pages/WeatherSearch';
 
 function App() {
   
@@ -20,7 +20,7 @@ function App() {
       <main className="">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/search" element={<WeatherSearch />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/exits" element={<Exits />} />
