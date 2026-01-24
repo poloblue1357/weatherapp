@@ -19,7 +19,7 @@ export const fetchWeatherData = async (location) => {
         }
 
         const xmlData = await response.text();
-        console.log('Raw XML:', xmlData);
+        // console.log('Raw XML:', xmlData);
 
         const parser = new XMLParser({
         ignoreAttributes: false,
@@ -28,7 +28,7 @@ export const fetchWeatherData = async (location) => {
         });
 
         const parsedData = parser.parse(xmlData);
-        console.log("Full parsed data:", parsedData);
+        // console.log("Full parsed data:", parsedData);
 
         return parsedData;
     } catch (error) {

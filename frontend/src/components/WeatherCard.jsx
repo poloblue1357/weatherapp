@@ -23,17 +23,17 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
     return (
         <div className="space-y-4">
         {/* Wind Condition Alert Banner */}
-        <div className={`bg-gradient-to-r ${windConditions.color} text-white p-5 rounded-2xl shadow-xl flex items-center justify-between`}>
+        <div className={`bg-linear-to-r ${windConditions.color} text-white p-5 rounded-2xl shadow-xl flex items-center justify-between`}>
             <div>
             <div className="text-xs font-semibold opacity-90 mb-1 uppercase tracking-wide">Status</div>
             <div className="text-base font-bold leading-tight">{windConditions.text}</div>
             </div>
-            <AlertCircle className="w-8 h-8 opacity-80 flex-shrink-0 ml-2" />
+            <AlertCircle className="w-8 h-8 opacity-80 shrink-0 ml-2" />
         </div>
 
         {/* Main Weather Card */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-sky-600 text-white p-6 relative overflow-hidden">
+            <div className="bg-linear-to-br from-blue-600 via-blue-700 to-sky-600 text-white p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
             
@@ -62,12 +62,12 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
             </div>
 
             {/* Wind Compass */}
-            <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b">
+            <div className="p-6 bg-linear-to-b from-gray-50 to-white border-b">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Wind Analysis</h3>
             <div className="flex items-center justify-between">
                 <div className="flex-1">
                 <div className="relative w-28 h-28 mx-auto">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-sky-100 rounded-full"></div>
+                    <div className="absolute inset-0 bg-linear-to-br from-blue-100 to-sky-100 rounded-full"></div>
                     <div className="absolute inset-2 bg-white rounded-full shadow-inner"></div>
                     {weatherInfo.windDirectionDegrees && (
                     <div
@@ -137,12 +137,12 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
 
             {/* Sun Times */}
             <div className="px-6 pb-6 grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-200">
+            <div className="bg-linear-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-200">
                 <Sunrise className="w-6 h-6 text-orange-600 mb-2" />
                 <div className="text-xs font-medium text-gray-600">Sunrise</div>
                 <div className="text-base font-semibold text-orange-900">{weatherInfo.sunrise}</div>
             </div>
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
+            <div className="bg-linear-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
                 <Sunset className="w-6 h-6 text-indigo-600 mb-2" />
                 <div className="text-xs font-medium text-gray-600">Sunset</div>
                 <div className="text-base font-semibold text-indigo-900">{weatherInfo.sunset}</div>
@@ -160,8 +160,8 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 onClick={onToggleFavorite}
                 className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
                 isFavorite
-                    ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white'
-                    : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
+                    ? 'bg-linear-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white'
+                    : 'bg-linear-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
                 }`}
             >
                 {isFavorite ? (
