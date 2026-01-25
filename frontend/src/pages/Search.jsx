@@ -59,6 +59,7 @@ function Search() {
    
     const data = await fetchWeatherData(location);
     if (data) {
+      console.log("data:", data)
       setWeatherData(data);
       const gustData = await fetchWindGustData(location);
       setWindGust(gustData);
@@ -68,6 +69,7 @@ function Search() {
       setWeatherInfo(info);
      
       setIsFavorite(isInFavorites(location));
+      setLocation('')
     } else {
       setError('Could not fetch weather data. Please check the location.');
       setWeatherInfo(null);

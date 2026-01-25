@@ -14,7 +14,7 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
         } else if (speed === 5) {
         return { color: 'from-amber-500 to-orange-600', text: 'PROCEED WITH CAUTION' };
         } else {
-        return { color: 'from-red-500 to-rose-600', text: 'JUMPING NOT RECOMMENDED - EVALUATE CONDITIONS ON SITE' };
+        return { color: 'from-red-500 to-rose-600', text: 'EVALUATE CONDITIONS ON SITE' };
         }
     };
 
