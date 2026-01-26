@@ -1,10 +1,11 @@
 import React from 'react';
+import { useFavorites } from '../hooks/useFavorites';
 import { Heart, Wind, Droplets, Gauge, Eye, Sunrise, Sunset, MapPin, Plus, AlertCircle, Navigation } from 'lucide-react';
 
 function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
+    const { addFavorite, removeFavorite, isFavorited, updateFavoriteName } = useFavorites();
     const getWindConditions = (windSpeed) => {
         const speed = parseFloat(windSpeed);
-    
         if (isNaN(speed)) {
         return { color: 'from-gray-500 to-gray-600', text: 'WIND DATA UNAVAILABLE' };
         }
@@ -50,8 +51,8 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 </div>
                 </div>
                 <button
-                onClick={onToggleFavorite}
-                className="p-3 hover:bg-white/20 rounded-full transition-all"
+                    onClick={onToggleFavorite}
+                    className="p-3 hover:bg-white/20 rounded-full transition-all"
                 >
                 <Heart
                     className={`w-7 h-7 ${isFavorite ? 'fill-white' : ''}`}

@@ -1,13 +1,13 @@
 import { XMLParser } from 'fast-xml-parser';
 
 export const fetchWeatherData = async (location) => {
-    const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
     let url;
     if (location.includes(',')) {
         const [lat, lon] = location.split(',');
-        url = `http://localhost:8000/api/weather?lat=${lat.trim()}&lon=${lon.trim()}`
+        url = `${API_URL}/api/weather?lat=${lat.trim()}&lon=${lon.trim()}`
     } else {
-        url = `http://localhost:8000/api/weather?city=${encodeURIComponent(location)}`
+        url = `${API_URL}/api/weather?city=${encodeURIComponent(location)}`
     }
 
     try {
