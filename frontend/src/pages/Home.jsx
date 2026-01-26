@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
 import { Search, Heart, Wind, MapPin } from 'lucide-react';
+import Header from '../components/Header';
 
 function Home() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
-        <header className="bg-black/20 backdrop-blur-sm text-white p-4 shadow-lg">
-            <h1 className="text-xl font-semibold text-center tracking-wide">ExitWx</h1>
-            <p className="text-center text-blue-100 text-sm mt-1 font-light tracking-wider">
-            Wind & Weather for Jumpers
-            </p>
-        </header>
+        <Header title="ExitWx" subtitle="Wind & Weather for Jumpers" />
 
         <main className="p-6 flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
             <div className="text-center mb-12">

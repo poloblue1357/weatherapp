@@ -1,47 +1,12 @@
+
 import React, { useState } from 'react';
-import { Search as SearchIcon, Heart, Home, MapPin, ArrowLeft } from 'lucide-react';
+import { Search as SearchIcon } from 'lucide-react';
 import { fetchWeatherData, fetchWindGustData, getWeatherInfo } from '../api/weatherAPI';
 import WeatherCard from '../components/WeatherCard';
-import { useNavigate } from "react-router-dom"
-import NavBar from "../components/NavBar"
-
-// Favorites management functions
-const getFavorites = () => {
-  const favorites = localStorage.getItem('weatherFavorites');
-  return favorites ? JSON.parse(favorites) : [];
-};
-
-const saveFavorites = (favorites) => {
-  localStorage.setItem('weatherFavorites', JSON.stringify(favorites));
-};
-
-const addToFavorites = (location, city) => {
-  const favorites = getFavorites();
-  if (favorites.length >= 10) {
-    alert('Maximum of 10 favorites reached. Please remove one to add another.');
-    return false;
-  }
- 
-  const exists = favorites.some(fav => fav.location === location);
-  if (exists) {
-    return false;
-  }
- 
-  favorites.push({ location, city, addedAt: new Date().toISOString() });
-  saveFavorites(favorites);
-  return true;
-};
-
-const removeFromFavorites = (location) => {
-  const favorites = getFavorites();
-  const filtered = favorites.filter(fav => fav.location !== location);
-  saveFavorites(filtered);
-};
-
-const isInFavorites = (location) => {
-  const favorites = getFavorites();
-  return favorites.some(fav => fav.location === location);
-};
+import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
+import Header from "../components/Header";
+import { useFavorites } from '../hooks/useFavorites';
 
 function Search() {
   const [weatherData, setWeatherData] = useState(null);
@@ -49,9 +14,14 @@ function Search() {
   const [weatherInfo, setWeatherInfo] = useState(null);
   const [location, setLocation] = useState('');
   const [error, setError] = useState('');
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [currentLat, setCurrentLat] = useState(null);
+  const [currentLon, setCurrentLon] = useState(null);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorited } = useFavorites();
+
+  // Check if current location is favorited
+  const isFavorite = currentLat && currentLon ? isFavorited(currentLat, currentLon) : false;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -59,8 +29,15 @@ function Search() {
    
     const data = await fetchWeatherData(location);
     if (data) {
-      console.log("data:", data)
+      console.log("data:", data);
       setWeatherData(data);
+     
+      // Extract lat/lon from the weather data
+      const lat = parseFloat(data?.current?.city?.coord?.$?.lat);
+      const lon = parseFloat(data?.current?.city?.coord?.$?.lon);
+      setCurrentLat(lat);
+      setCurrentLon(lon);
+     
       const gustData = await fetchWindGustData(location);
       setWindGust(gustData);
      
@@ -68,11 +45,12 @@ function Search() {
       const info = getWeatherInfo(data, gustData);
       setWeatherInfo(info);
      
-      setIsFavorite(isInFavorites(location));
-      setLocation('')
+      setLocation('');
     } else {
       setError('Could not fetch weather data. Please check the location.');
       setWeatherInfo(null);
+      setCurrentLat(null);
+      setCurrentLon(null);
     }
   };
 
@@ -83,33 +61,25 @@ function Search() {
   };
 
   const toggleFavorite = () => {
-    const city = weatherData?.current?.city?.$.name || location;
+    if (!currentLat || !currentLon) return;
+   
+    const cityName = weatherData?.current?.city?.$.name || location;
    
     if (isFavorite) {
-      removeFromFavorites(location);
-      setIsFavorite(false);
+      const favoriteId = `${currentLat}-${currentLon}`;
+      removeFavorite(favoriteId);
     } else {
-      const success = addToFavorites(location, city);
-      if (success) {
-        setIsFavorite(true);
-      }
+      addFavorite({
+        name: cityName,
+        lat: currentLat,
+        lon: currentLon
+      });
     }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 to-gray-100 flex flex-col">
-      <header className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
-        <div className="flex items-center justify-between max-w-md mx-auto">
-          <button
-            onClick={() => navigate('/')}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-xl font-semibold tracking-wide">ExitWx</h1>
-          <div className="w-10"></div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500 flex flex-col">
+      <Header title="Search" showBackButton={false} />
 
       <main className="flex-1 p-4 pb-20 max-w-md mx-auto w-full">
         <div className="mb-6">
@@ -124,7 +94,7 @@ function Search() {
             />
             <button
               onClick={handleSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-3 rounded-xl transition-all shadow-lg"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-3 rounded-xl transition-all shadow-lg"
             >
               <SearchIcon className="w-6 h-6" />
             </button>
@@ -149,19 +119,5 @@ function Search() {
     </div>
   );
 }
-
-const NavButton = ({ icon, label, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all ${
-      active
-        ? 'text-blue-600 bg-blue-50'
-        : 'text-gray-500 hover:text-blue-600 hover:bg-gray-50'
-    }`}
-  >
-    {React.cloneElement(icon, { className: 'w-6 h-6', strokeWidth: 2 })}
-    <span className="text-xs font-bold">{label}</span>
-  </button>
-);
 
 export default Search;

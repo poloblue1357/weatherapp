@@ -1,63 +1,71 @@
 import WeatherTile from "../components/WeatherTile";
 import NavBar from "../components/NavBar";
-import axios from 'axios';
-import { useState } from "react";
+import Header from "../components/Header";
+import { useState, useContext, useEffect } from "react";
+import { FavoritesContext } from "../context/FavoritesContext";
+import { fetchWeatherData, fetchWindGustData, getWeatherInfo } from "../api/weatherAPI";
 
 function Favorites() {
-    const [locationsData, setLocationsData] = useState([]);
+    const [results, setResults] = useState([]);
+    const { favorites } = useContext(FavoritesContext);
 
-    // Fetch favorite locations
-    function getFavs() {
-        axios
-        .get('http://localhost:8000/api/locations')
-        .then((response) => {
-            console.log('Data received:', response.data);
-            setLocationsData(response.data);
-        })
-        .catch((error) => {
-            console.error('There was an error with the axios request:', error);
-        });
-    }
+    useEffect(() => {
+        const fetchAllWeather = async () => {
+            const weatherResults = [];
 
-    const lData = locationsData.map((location) => {
-        const weather = location?.weather || {}; // Default to an empty object if weather is undefined
+            for (const fav of favorites) {
+                try {
+                    const location = `${fav.lat},${fav.lon}`;
 
-        // Extract and convert temperature to a number
-        const temperatureString = weather.temperature;
-        const temp = temperatureString ? parseFloat(temperatureString.replace('°F', '').trim()) : NaN; // Remove "°F" and convert to number
+                    const data = await fetchWeatherData(location);
+                    const gustData = await fetchWindGustData(location);
+                    const weatherInfo = getWeatherInfo(data, gustData);
 
-        // Check if the temp is valid (not NaN)
-        const lTemp = Number.isNaN(temp) ? 69 : Math.round(temp); // Defaults to 69 if temperature is invalid
-
-        return {
-            lName: location?.name,
-            lTemp: lTemp, // Use the validated temperature
-            lDesc: weather.description || "Cloudy", // Defaults to "Cloudy" if description is missing
+                    weatherResults.push({
+                        id: fav.id,
+                        name: fav.name,
+                        weatherInfo: weatherInfo
+                    });
+                } catch (error) {
+                    console.error(`Failed to fetch weather for ${fav.name}:`, error);
+                }
+            }
+            setResults(weatherResults);
         };
-    });
-
-
+       
+        if (favorites.length > 0) {
+            fetchAllWeather();
+        } else {
+            setResults([]); // Clear results if no favorites
+        }
+    }, [favorites]);
 
     return (
-        <div>
-        <h1>Favorites</h1>
-        <button onClick={getFavs} className="border-2 p-2 m-2">
-            Get Favs
-        </button>
+        <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
+            <Header title="My Favorites" showBackButton={false} />
 
-        {/* Pass the mapped data to WeatherTile */}
-        <div>
-            {lData.map((location, index) => (
-            <WeatherTile
-                key={index} // Use a unique key for each WeatherTile
-                name={location.lName}
-                temp={location.lTemp}
-                desc={location.lDesc}
-            />
-            ))}
-        </div>
+            <main className="p-4 max-w-md mx-auto">
+                {favorites.length === 0 && (
+                    <div className="text-center py-12">
+                        <p className="text-white text-3xl font-semibold">No favorites yet</p>
+                        <p className="text-blue-100 text-xl mt-2">Add locations <span className="text-purple-300">from</span> the Search page!</p>
+                    </div>
+                )}
 
-        <NavBar />
+                <div className="space-y-2">
+                    {results.map((result) => (
+                        <WeatherTile
+                            key={result.id}
+                            id={result.id}
+                            name={result.name}
+                            temp={result.weatherInfo.temperature}
+                            desc={result.weatherInfo.weather}
+                        />
+                    ))}
+                </div>
+            </main>
+
+            <NavBar currentPage="favorites" />
         </div>
     );
 }
