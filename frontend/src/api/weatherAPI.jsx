@@ -5,70 +5,73 @@ export const fetchWeatherData = async (location) => {
     let url;
     if (location.includes(',')) {
         const [lat, lon] = location.split(',');
-        url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat.trim()}&lon=${lon.trim()}&units=imperial&appid=${apiKey}&mode=xml`;
+        url = `http://localhost:8000/api/weather?lat=${lat.trim()}&lon=${lon.trim()}`
     } else {
-        url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&units=imperial&appid=${apiKey}&mode=xml`;
+        url = `http://localhost:8000/api/weather?city=${encodeURIComponent(location)}`
     }
 
     try {
         const response = await fetch(url);
         if (!response.ok) {
-        const errText = await response.text();
-        console.error('API error response:', errText);
-        throw new Error(`HTTP ${response.status}: ${errText}`);
+            const errText = await response.text();
+            console.error('API error response:', errText);
+            throw new Error(`HTTP ${response.status}: ${errText}`);
         }
 
-        const xmlData = await response.text();
-        // console.log('Raw XML:', xmlData);
+        const jsonData = await response.json()
 
-        const parser = new XMLParser({
-        ignoreAttributes: false,
-        attributeNamePrefix: "",
-        attributesGroupName: "$",
-        });
+        return {
+            current: {
+                city: {
+                    $: { name: jsonData.city },
+                    country: [jsonData.country],
+                    coord: {
+                        $: {
+                            lat: jsonData.lat || location.split(',')[0],
+                            lon: jsonData.lon || location.split(',')[1]
+                        }
+                    }
+                },
+                temperature: {
+                    $: { value: jsonData.temp }
+                },
+                weather: {
+                    $: {
+                        value: jsonData.description,
+                        icon: jsonData.icon
+                    }
+                },
+                wind: {
+                    speed: {
+                        $: {
+                            value: jsonData.wind.speed.value,
+                            unit: jsonData.wind.speed.unit,
+                            name: jsonData.wind.speed.name
+                        }
+                    },
+                    direction: {
+                        $: {
+                            value: jsonData.wind.direction.value,
+                            code: jsonData.wind.direction.code,
+                            name: jsonData.wind.direction.name
+                        }
+                    },
+                    gusts: jsonData.wind.gust ? {
+                        $: { value: jsonData.wind.gust }
+                    } : undefined
+                }
+            }
+        }
 
-        const parsedData = parser.parse(xmlData);
-        // console.log("Full parsed data:", parsedData);
-
-        return parsedData;
     } catch (error) {
-        console.error('Fetch/parse failed:', error);
+        console.error('Fetch failed:', error);
         return null;
     }
 };
 
 export const fetchWindGustData = async (location) => {
-    const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
-    if (!apiKey) {
-        console.error('OpenWeather API key is missing');
-        return null;
-    }
-
-    let url;
-    if (location.includes(',')) {
-        const [lat, lon] = location.split(',');
-        url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat.trim()}&lon=${lon.trim()}&units=imperial&appid=${apiKey}`;
-    } else {
-        url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&units=imperial&appid=${apiKey}`;
-    }
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-        if (response.status === 404) {
-            console.warn('Location not found');
-        } else {
-            throw new Error(`HTTP error ${response.status}`);
-        }
-        return null;
-        }
-
-        const jsonData = await response.json();
-        return jsonData.wind?.gust ?? null;
-    } catch (error) {
-        console.error('Error fetching wind gust data:', error);
-        return null;
-    }
+    const data = await fetchWeatherData(location) 
+    return data?.current?.wind?.gusts?.$?.value || null
 };
 
 export const getWeatherInfo = (data, windGust) => {
