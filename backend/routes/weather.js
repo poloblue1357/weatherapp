@@ -44,10 +44,12 @@ router.get("/", async (req, res) => {
         )
 
         const data = await parseStringPromise(response.data)
-
+        
         // Example: extract city, country, temp, wind info
         const weather = {
             city: data.current.city[0].$.name,
+            lat: parseFloat(data.current.city[0].coord[0].$.lat),
+            lon: parseFloat(data.current.city[0].coord[0].$.lon),
             country: data.current.city[0].country[0],
             temp: data.current.temperature[0].$.value,
             description: data.current.weather[0].$.value,

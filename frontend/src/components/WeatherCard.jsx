@@ -51,11 +51,11 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 </div>
                 </div>
                 <button
-                    onClick={onToggleFavorite}
+                    onClick={addFavorite}
                     className="p-3 hover:bg-white/20 rounded-full transition-all"
                 >
                 <Heart
-                    className={`w-7 h-7 ${isFavorite ? 'fill-white' : ''}`}
+                    className={`w-7 h-7 ${isFavorited ? 'fill-rose-600' : ''}`}
                     strokeWidth={2}
                 />
                 </button>

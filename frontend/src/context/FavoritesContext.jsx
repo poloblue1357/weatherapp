@@ -26,7 +26,8 @@ export function FavoritesProvider({children}) {
             lon: location.lon,
             addedAt: new Date().toISOString()
         }
-
+        console.log("lat:", location.lat)
+        console.log("lon:", location.lon)
         setFavorites(prev => [...prev, newFavorite])
     }
 

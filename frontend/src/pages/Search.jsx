@@ -61,6 +61,8 @@ function Search() {
   };
 
   const toggleFavorite = () => {
+    console.log(currentLat)
+    console.log(currentLon)
     if (!currentLat || !currentLon) return;
    
     const cityName = weatherData?.current?.city?.$.name || location;
