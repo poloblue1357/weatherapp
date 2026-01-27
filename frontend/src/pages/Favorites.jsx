@@ -32,7 +32,7 @@ function Favorites() {
             }
             setResults(weatherResults);
         };
-       
+    
         if (favorites.length > 0) {
             fetchAllWeather();
         } else {
@@ -60,6 +60,7 @@ function Favorites() {
                             name={result.name}
                             temp={result.weatherInfo.temperature}
                             desc={result.weatherInfo.weather}
+                            results={results.weatherInfo}
                         />
                     ))}
                 </div>

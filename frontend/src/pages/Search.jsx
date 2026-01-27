@@ -18,7 +18,7 @@ function Search() {
   const [currentLon, setCurrentLon] = useState(null);
 
   const navigate = useNavigate();
-  const { addFavorite, removeFavorite, isFavorited } = useFavorites();
+  const { addFavorite, removeFavorite, isFavorited, favorites } = useFavorites();
 
   // Check if current location is favorited
   const isFavorite = currentLat && currentLon ? isFavorited(currentLat, currentLon) : false;
@@ -61,8 +61,6 @@ function Search() {
   };
 
   const toggleFavorite = () => {
-    console.log(currentLat)
-    console.log(currentLon)
     if (!currentLat || !currentLon) return;
    
     const cityName = weatherData?.current?.city?.$.name || location;

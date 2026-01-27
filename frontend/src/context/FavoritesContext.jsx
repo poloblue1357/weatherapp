@@ -1,4 +1,4 @@
-import { createContext, useState } from "react"
+import { createContext, useState, useEffect } from "react"
 
 export const FavoritesContext = createContext()
 
@@ -8,6 +8,9 @@ export function FavoritesProvider({children}) {
         const saved = localStorage.getItem('exitwx-favorites')
         return saved ? JSON.parse(saved) : []
     })
+    useEffect(() => {
+        localStorage.setItem('exitwx-favorites', JSON.stringify(favorites))
+    }, [favorites])
 
     const addFavorite = (location) => {
         if (favorites.some(fav => fav.lat === location.lat && fav.lon === location.lon)) {
@@ -26,11 +29,12 @@ export function FavoritesProvider({children}) {
             lon: location.lon,
             addedAt: new Date().toISOString()
         }
-        console.log("lat:", location.lat)
-        console.log("lon:", location.lon)
+        
         setFavorites(prev => [...prev, newFavorite])
+        setTimeout(() => {
+        }, 10000)
     }
-
+    
     const removeFavorite = (id) => {
         setFavorites(prev => prev.filter(fav => fav.id !== id))
     }
