@@ -6,8 +6,10 @@ import { FavoritesContext } from "../context/FavoritesContext";
 import { fetchWeatherData, fetchWindGustData, getWeatherInfo } from "../api/weatherAPI";
 
 function Favorites() {
-    const [results, setResults] = useState([]);
-    const { favorites } = useContext(FavoritesContext);
+    const { favorites } = useContext(FavoritesContext)
+
+    const [results, setResults] = useState([])
+    const [expandedId, setExpandedId] = useState(null)
 
     useEffect(() => {
         const fetchAllWeather = async () => {
@@ -22,7 +24,7 @@ function Favorites() {
                     const weatherInfo = getWeatherInfo(data, gustData);
 
                     weatherResults.push({
-                        id: fav.id,
+                        id: String(fav.id),
                         name: fav.name,
                         weatherInfo: weatherInfo
                     });
@@ -44,7 +46,7 @@ function Favorites() {
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
             <Header title="My Favorites" showBackButton={false} />
 
-            <main className="p-4 max-w-md mx-auto">
+            <main className="p-4 pb-22 max-w-md mx-auto">
                 {favorites.length === 0 && (
                     <div className="text-center py-12">
                         <p className="text-white text-3xl font-semibold">No favorites yet</p>
@@ -53,14 +55,16 @@ function Favorites() {
                 )}
 
                 <div className="space-y-2">
-                    {results.map((result) => (
+                    {results.map((favoriteLocation) => (
                         <WeatherTile
-                            key={result.id}
-                            id={result.id}
-                            name={result.name}
-                            temp={result.weatherInfo.temperature}
-                            desc={result.weatherInfo.weather}
-                            results={results.weatherInfo}
+                            key={favoriteLocation.id}
+                            id={favoriteLocation.id}
+                            name={favoriteLocation.name}
+                            temp={favoriteLocation.weatherInfo.temperature}
+                            desc={favoriteLocation.weatherInfo.weather}
+                            weatherInfo={favoriteLocation.weatherInfo}
+                            expandedId={expandedId}
+                            setExpandedId={setExpandedId}
                         />
                     ))}
                 </div>

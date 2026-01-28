@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     if (lon) lon = parseFloat(lon);
 
     // console.log("Using API Key:", process.env.OPENWEATHER_API_KEY)
-    console.log("Query params:", req.query)
+    // console.log("Query params:", req.query)
 
     try {
         // Set up API request parameters

@@ -3,14 +3,14 @@ import { Plus, X } from "lucide-react";
 import { useFavorites } from "../hooks/useFavorites";
 import WeatherCard from "./WeatherCard";
 
-function WeatherTile({ id, name, temp, desc, weatherInfo }) {
+function WeatherTile({ id, name, temp, desc, weatherInfo, expandedId, setExpandedId }) {
     const [showCard, setShowCard] = useState(false);
     const { removeFavorite } = useFavorites();
 
     // Toggle for showing/hiding the detailed weather card
-    const cardDisplay = () => {
+    {/*const cardDisplay = () => {
         setShowCard(!showCard);
-    };
+    };*/}
 
     const handleRemove = (e) => {
         e.stopPropagation(); // Prevent triggering cardDisplay
@@ -21,7 +21,14 @@ function WeatherTile({ id, name, temp, desc, weatherInfo }) {
         <div>
             <div
                 className="mb-1 border-2 w-full h-14 flex flex-row items-center cursor-pointer bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                onClick={cardDisplay}
+                onClick={() => {
+                    setExpandedId(expandedId === id ? null : String(id))
+                    console.log("my tile id:", id)
+                    console.log('expanded id:', expandedId)
+                    console.log('should i show card?', expandedId === id)
+                    console.log("type of id", typeof id)
+                    console.log('type of expId', typeof expandedId)
+                }}
             >
                 <div className="flex flex-row items-center w-full">
                     <Plus
@@ -47,12 +54,10 @@ function WeatherTile({ id, name, temp, desc, weatherInfo }) {
            
             <div
                 className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                    showCard ? "opacity-100 max-h-screen visible mb-4" : "opacity-0 max-h-0 invisible"
+                    expandedId === id ? "opacity-100 max-h-screen visible mb-4" : "opacity-0 max-h-0 invisible"
                 }`}
             >
-            {showCard && 
-                <WeatherCard weatherInfo={weatherInfo} />
-            }
+            {expandedId === id && <WeatherCard weatherInfo={weatherInfo} />}
                 {/* 
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mt-2">
                     <p className="text-gray-700">Detailed weather card will go here...</p>
