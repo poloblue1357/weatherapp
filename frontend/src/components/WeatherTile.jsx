@@ -23,11 +23,6 @@ function WeatherTile({ id, name, temp, desc, weatherInfo, expandedId, setExpande
                 className="mb-1 border-2 w-full h-14 flex flex-row items-center cursor-pointer bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 onClick={() => {
                     setExpandedId(expandedId === id ? null : String(id))
-                    console.log("my tile id:", id)
-                    console.log('expanded id:', expandedId)
-                    console.log('should i show card?', expandedId === id)
-                    console.log("type of id", typeof id)
-                    console.log('type of expId', typeof expandedId)
                 }}
             >
                 <div className="flex flex-row items-center w-full">

@@ -42,11 +42,11 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 <div>
                 <div className="flex items-center gap-2 mb-2">
                     <MapPin className="w-5 h-5" />
-                    <h2 className="text-2xl font-bold">{weatherInfo?.city}</h2>
+                    <h2 className="text-2xl font-bold">{weatherInfo.city}</h2>
                 </div>
-                <p className="text-blue-100 text-base mb-4">{weatherInfo?.weather}</p>
+                <p className="text-blue-100 text-base mb-4">{weatherInfo.weather}</p>
                 <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold">{weatherInfo?.temperature}</span>
+                    <span className="text-5xl font-bold">{weatherInfo.temperature}</span>
                     <span className="text-xl font-semibold">°F</span>
                 </div>
                 </div>
@@ -70,17 +70,17 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 <div className="relative w-28 h-28 mx-auto">
                     <div className="absolute inset-0 bg-linear-to-br from-blue-100 to-sky-100 rounded-full"></div>
                     <div className="absolute inset-2 bg-white rounded-full shadow-inner"></div>
-                    {weatherInfo?.windDirectionDegrees && (
+                    {weatherInfo.windDirectionDegrees && (
                     <div
                         className="absolute inset-0 flex items-center justify-center transition-transform duration-500"
-                        style={{ transform: `rotate(${weatherInfo?.windDirectionDegrees}deg)` }}
+                        style={{ transform: `rotate(${weatherInfo.windDirectionDegrees}deg)` }}
                     >
                         <Navigation className="w-12 h-12 text-blue-600" fill="currentColor" />
                     </div>
                     )}
                     <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center mt-16">
-                        <div className="text-xs font-bold text-gray-500">{weatherInfo?.windDirectionCode}</div>
+                        <div className="text-xs font-bold text-gray-500">{weatherInfo.windDirectionCode}</div>
                     </div>
                     </div>
                 </div>
@@ -89,14 +89,14 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 <div className="bg-blue-50 p-3 rounded-xl">
                     <div className="text-xs text-gray-600 font-medium mb-1">Speed</div>
                     <div className="text-xl font-bold text-blue-900">
-                    {weatherInfo?.windSpeed} <span className="text-sm font-normal">mph</span>
+                    {weatherInfo.windSpeed} <span className="text-sm font-normal">mph</span>
                     </div>
                 </div>
                 <div className="bg-amber-50 p-3 rounded-xl">
                     <div className="text-xs text-gray-600 font-medium mb-1">Gusts</div>
                     <div className="text-xl font-bold text-amber-900">
-                    {weatherInfo?.windGusts !== "N/A"
-                        ? <>{weatherInfo?.windGusts} <span className="text-sm font-normal">mph</span></>
+                    {weatherInfo.windGusts !== "N/A"
+                        ? <>{weatherInfo.windGusts} <span className="text-sm font-normal">mph</span></>
                         : <span className="text-sm">None</span>
                     }
                     </div>
@@ -104,7 +104,7 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 </div>
             </div>
             <div className="mt-3 text-center text-sm text-gray-600 font-medium">
-                {weatherInfo?.windType}
+                {weatherInfo.windType}
             </div>
             </div>
 
@@ -113,25 +113,25 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
             <DetailCard
                 icon={<Droplets className="w-5 h-5 text-blue-600" />}
                 label="Humidity"
-                value={`${weatherInfo?.humidity}%`}
+                value={`${weatherInfo.humidity}%`}
                 color="blue"
             />
             <DetailCard
                 icon={<Gauge className="w-5 h-5 text-purple-600" />}
                 label="Pressure"
-                value={`${weatherInfo?.pressure} hPa`}
+                value={`${weatherInfo.pressure} hPa`}
                 color="purple"
             />
             <DetailCard
                 icon={<Eye className="w-5 h-5 text-green-600" />}
                 label="Visibility"
-                value={`${weatherInfo?.visibility} mi`}
+                value={`${weatherInfo.visibility} mi`}
                 color="green"
             />
             <DetailCard
                 icon={<Wind className="w-5 h-5 text-gray-600" />}
                 label="Direction"
-                value={weatherInfo?.windDirection}
+                value={weatherInfo.windDirection}
                 color="gray"
             />
             </div>
@@ -141,18 +141,18 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
             <div className="bg-linear-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-200">
                 <Sunrise className="w-6 h-6 text-orange-600 mb-2" />
                 <div className="text-xs font-medium text-gray-600">Sunrise</div>
-                <div className="text-base font-semibold text-orange-900">{weatherInfo?.sunrise}</div>
+                <div className="text-base font-semibold text-orange-900">{weatherInfo.sunrise}</div>
             </div>
             <div className="bg-linear-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
                 <Sunset className="w-6 h-6 text-indigo-600 mb-2" />
                 <div className="text-xs font-medium text-gray-600">Sunset</div>
-                <div className="text-base font-semibold text-indigo-900">{weatherInfo?.sunset}</div>
+                <div className="text-base font-semibold text-indigo-900">{weatherInfo.sunset}</div>
             </div>
             </div>
 
             {/* Last Updated */}
             <div className="px-6 pb-4 text-center text-xs text-gray-500">
-            Updated {weatherInfo?.lastUpdate}
+            Updated {weatherInfo.lastUpdate}
             </div>
 
             {/* Add/Remove Favorites Button */}
