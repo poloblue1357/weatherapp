@@ -45,18 +45,17 @@ router.get("/", async (req, res) => {
             "https://api.openweathermap.org/data/2.5/weather",
             { params }
         )
-        
-        const data = await parseStringPromise(response.data)
-        console.log(data.current.wind[0].gust?.[0]?.$.value)
-        console.log(typeof data.current.wind[0].gust?.[0]?.$.value)
-        
+        // console.log(response)
+        const data = await parseStringPromise(response.data) // 2026-01-29T21:39:22.000Z
+        let date = new Date(data.current.city[0].sun[0].$.rise)
+        console.log(Date.parse(date) / 1000)
         // Example: extract city, country, temp, wind info
         const weather = {
             city: data.current.city[0].$.name, // string "Cedar City"
             lat: parseFloat(data.current.city[0].coord[0].$.lat), // string - num w/parseFloat - 37.6775
             lon: parseFloat(data.current.city[0].coord[0].$.lon), // string - num w/ParseFloat - -113.0619
             country: data.current.city[0].country[0], // string "US"
-            temp: data.current.temperature[0].$.value, // string - 33.17
+            temp: Math.round(Number(data.current.temperature[0].$.value) * 10) / 10, // string - 33.17
             description: data.current.weather[0].$.value, // string - clear sky
             icon: data.current.weather[0].$.icon, // string - 01n
             wind: {
@@ -72,11 +71,14 @@ router.get("/", async (req, res) => {
                 },
                 // Always include gust key; null if missing
                 gust: data.current.wind[0].gust?.[0]?.$.value || null // 
-            }
+            },
+            sunrise: data.current.city[0].sun[0].$.rise, // string - 2026-01-29T14:39:22
+            sunset: data.current.city[0].sun[0].$.set, // string - 2026-01-30T00:41:32
+            lastupdate: data.current.lastupdate[0].$.value // string - 2026-01-30T05:59:33
         }
 
         res.json(weather)
-        // console.log(res.json())
+        // console.log(weather.lat)
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
         res.status(500).json({ error: "Failed to fetch weather data" })
@@ -84,3 +86,8 @@ router.get("/", async (req, res) => {
 })
 
 export default router
+
+
+// visibility, pressure, humidity
+// assign lat/lon to a specific value?
+// format values properly

@@ -44,7 +44,7 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                     <MapPin className="w-5 h-5" />
                     <h2 className="text-2xl font-bold">{weatherInfo.city}</h2>
                 </div>
-                <p className="text-blue-100 text-base mb-4">{weatherInfo.weather}</p>
+                <p className="text-blue-100 text-base mb-4 capitalize">{weatherInfo.weather}</p>
                 <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold">{weatherInfo.temperature}</span>
                     <span className="text-xl font-semibold">°F</span>
@@ -80,7 +80,7 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                     )}
                     <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center mt-16">
-                        <div className="text-xs font-bold text-gray-500">{weatherInfo.windDirectionCode}</div>
+                        <div className="text-xs font-bold text-gray-500 capitalize">{weatherInfo.windDirectionCode}</div>
                     </div>
                     </div>
                 </div>
