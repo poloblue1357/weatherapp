@@ -16,7 +16,8 @@ const locationSchema = new mongoose.Schema({
         windGusts: String,
         sunrise: String,
         sunset: String,
-        lastUpdated: String
+        lastUpdated: String,
+        timezone: String,
     }
 }, { timestamps: true });
 

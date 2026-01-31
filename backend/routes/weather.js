@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
         )
         // console.log(response)
         const data = await parseStringPromise(response.data) // 2026-01-29T21:39:22.000Z
-        
+        // console.log(data.current)
         // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {
             // Parse the raw UTC time into a Date object
@@ -76,43 +76,28 @@ router.get("/", async (req, res) => {
             // console.log(`${hours}:${minutes} ${period}`)
             return `${hours}:${minutes} ${period}`;
         }
-
-    //         const getTimeAgo = (utcTime) => {
-    //     if (!utcTime) return "N/A";
-    //     const date = new Date(utcTime);
-    //     const now = new Date();
-    //     const diffMs = now - date;
-    //     const diffMins = Math.floor(diffMs / 60000);
-    
-    //     if (diffMins < 1) return "Just now";
-    //     if (diffMins === 1) return "1 minute ago";
-    //     if (diffMins < 60) return `${diffMins} minutes ago`;
-    
-    //     const diffHours = Math.floor(diffMins / 60);
-    //     if (diffHours === 1) return "1 hour ago";
-    //     return `${diffHours} hours ago`;
-    // };
+        // function that formats the last update
         function formatLastUpdate(rawLastUpdate) {
-            console.log("Raw last update:", rawLastUpdate); // check input
+            // console.log("Raw last update:", rawLastUpdate); // check input
             if (!rawLastUpdate) return "N/A";
 
             const date = new Date(rawLastUpdate); 
             const now = new Date();
             const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
             
-            console.log("Now UTC:", nowUtc);
-            console.log("API date:", date);
+            // console.log("Now UTC:", nowUtc);
+            // console.log("API date:", date);
 
             const diffMs = nowUtc - date;
             const diffMins = Math.floor(diffMs / 60000);
-            console.log("diffMins:", diffMins);
+            // console.log("diffMins:", diffMins);
 
             if (diffMins < 1) return "Just now";
             if (diffMins === 1) return "1 minute ago";
             if (diffMins < 60) return `${diffMins} minutes ago`;
 
             const diffHours = Math.floor(diffMins / 60);
-            console.log("diffHours:", diffHours);
+            // console.log("diffHours:", diffHours);
             if (diffHours === 1) return "1 hour ago";
 
             const diffDays = Math.floor(diffHours / 24);
@@ -142,14 +127,23 @@ router.get("/", async (req, res) => {
                     name: data.current.wind[0].direction[0].$.name // string - North-northeast
                 },
                 // Always include gust key; null if missing
-                gust: data.current.wind[0].gust?.[0]?.$.value || null // 
+                gust: data.current.wind[0].gust?.[0]?.$.value || "N/A" // 
             },
             sunrise: formatTime(data.current.city[0].sun[0].$.rise, data.current.city[0].timezone[0]), // string - 2026-01-29T14:39:22
             sunset: formatTime(data.current.city[0].sun[0].$.set, data.current.city[0].timezone[0]), // string - 2026-01-30T00:41:32
             lastupdate: formatLastUpdate(data.current.lastupdate[0].$.value), // string - 2026-01-30T05:59:33
             timezone: data.current.city[0].timezone[0], // string in seconds - -25200
+            visibility: Math.round(Number(data.current.visibility[0].$.value) / 1609.34 * 10) / 10, // string in meters - 10000 - converted to miles
+            pressure: {
+                value: Number((Number(data.current.pressure[0].$.value) / 33.8639).toFixed(2)) , // string hPa - converted in inHg
+                unit: 'inHg', // string hPa - converted value to inHg so updated unit
+            },
+            humidity: {
+                value: Number(data.current.humidity[0].$.value),
+                unit: data.current.humidity[0].$.unit,
+            }
         }
-
+        console.log(weather)
         res.json(weather)
         // console.log(weather.lat)
     } catch (error) {
@@ -161,6 +155,6 @@ router.get("/", async (req, res) => {
 export default router
 
 
-// visibility, pressure, humidity
-// assign lat/lon to a specific value?
+// (values i need to calculate / format on the backend) - none?
+// assign lat/lon to a specific value - done on the FE (local storage)
 // format values properly
