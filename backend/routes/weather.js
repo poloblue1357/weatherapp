@@ -47,8 +47,80 @@ router.get("/", async (req, res) => {
         )
         // console.log(response)
         const data = await parseStringPromise(response.data) // 2026-01-29T21:39:22.000Z
-        let date = new Date(data.current.city[0].sun[0].$.rise)
-        console.log(Date.parse(date) / 1000)
+        
+        // function to format the sunrise/sunset
+        function formatTime(rawTime, timezoneOffset) {
+            // Parse the raw UTC time into a Date object
+            const date = new Date(rawTime);
+
+            // Adjust for the timezone offset (converted to milliseconds)
+            const offsetDate = new Date(date.getTime() + timezoneOffset * 1000);
+
+            // Extract hours and minutes
+            let hours = offsetDate.getHours();
+            let minutes = offsetDate.getMinutes();
+
+            // Ensure minutes are always two digits
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            // Determine whether it's AM or PM
+            let period = 'AM';
+            if (hours >= 12) {
+                period = 'PM';
+                if (hours > 12) hours -= 12;  // Convert to 12-hour format
+            } else if (hours === 0) {
+                hours = 12; // Handle midnight as 12:xx AM
+            }
+
+            // Return the formatted time as a string
+            // console.log(`${hours}:${minutes} ${period}`)
+            return `${hours}:${minutes} ${period}`;
+        }
+
+    //         const getTimeAgo = (utcTime) => {
+    //     if (!utcTime) return "N/A";
+    //     const date = new Date(utcTime);
+    //     const now = new Date();
+    //     const diffMs = now - date;
+    //     const diffMins = Math.floor(diffMs / 60000);
+    
+    //     if (diffMins < 1) return "Just now";
+    //     if (diffMins === 1) return "1 minute ago";
+    //     if (diffMins < 60) return `${diffMins} minutes ago`;
+    
+    //     const diffHours = Math.floor(diffMins / 60);
+    //     if (diffHours === 1) return "1 hour ago";
+    //     return `${diffHours} hours ago`;
+    // };
+        function formatLastUpdate(rawLastUpdate) {
+            console.log("Raw last update:", rawLastUpdate); // check input
+            if (!rawLastUpdate) return "N/A";
+
+            const date = new Date(rawLastUpdate); 
+            const now = new Date();
+            const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+            
+            console.log("Now UTC:", nowUtc);
+            console.log("API date:", date);
+
+            const diffMs = nowUtc - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            console.log("diffMins:", diffMins);
+
+            if (diffMins < 1) return "Just now";
+            if (diffMins === 1) return "1 minute ago";
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+
+            const diffHours = Math.floor(diffMins / 60);
+            console.log("diffHours:", diffHours);
+            if (diffHours === 1) return "1 hour ago";
+
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays === 1) return "1 day ago";
+            if (diffDays > 1) return `${diffDays} days ago`;
+
+            return `${diffHours} hours ago`;
+        }
         // Example: extract city, country, temp, wind info
         const weather = {
             city: data.current.city[0].$.name, // string "Cedar City"
@@ -72,9 +144,10 @@ router.get("/", async (req, res) => {
                 // Always include gust key; null if missing
                 gust: data.current.wind[0].gust?.[0]?.$.value || null // 
             },
-            sunrise: data.current.city[0].sun[0].$.rise, // string - 2026-01-29T14:39:22
-            sunset: data.current.city[0].sun[0].$.set, // string - 2026-01-30T00:41:32
-            lastupdate: data.current.lastupdate[0].$.value // string - 2026-01-30T05:59:33
+            sunrise: formatTime(data.current.city[0].sun[0].$.rise, data.current.city[0].timezone[0]), // string - 2026-01-29T14:39:22
+            sunset: formatTime(data.current.city[0].sun[0].$.set, data.current.city[0].timezone[0]), // string - 2026-01-30T00:41:32
+            lastupdate: formatLastUpdate(data.current.lastupdate[0].$.value), // string - 2026-01-30T05:59:33
+            timezone: data.current.city[0].timezone[0], // string in seconds - -25200
         }
 
         res.json(weather)
