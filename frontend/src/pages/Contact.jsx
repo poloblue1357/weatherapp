@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ArrowLeft, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import { EmailJSResponseStatus } from "@emailjs/browser";
 import emailjs from "@emailjs/browser"
 
 function Contact() {

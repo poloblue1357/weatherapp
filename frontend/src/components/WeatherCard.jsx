@@ -1,9 +1,7 @@
-import React from 'react';
-import { useFavorites } from '../hooks/useFavorites';
+
 import { Heart, Wind, Droplets, Gauge, Eye, Sunrise, Sunset, MapPin, Plus, AlertCircle, Navigation } from 'lucide-react';
 
 function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
-    const { addFavorite, removeFavorite, isFavorited, updateFavoriteName } = useFavorites();
     const getWindConditions = (windSpeed) => {
         const speed = parseFloat(windSpeed);
         if (isNaN(speed)) {
@@ -46,7 +44,7 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
                 </div>
                 <p className="text-blue-100 text-base mb-4 capitalize">{weatherInfo.weather}</p>
                 <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold">{weatherInfo.temperature}</span>
+                    <span className="text-5xl font-bold">{weatherInfo.temp}</span>
                     <span className="text-xl font-semibold">°F</span>
                 </div>
                 </div>
@@ -119,7 +117,7 @@ function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
             <DetailCard
                 icon={<Gauge className="w-5 h-5 text-purple-600" />}
                 label="Pressure"
-                value={`${weatherInfo.pressure} hPa`}
+                value={`${weatherInfo.pressure} inHg`}
                 color="purple"
             />
             <DetailCard

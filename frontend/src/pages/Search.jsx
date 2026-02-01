@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
-import { fetchWeatherData, fetchWindGustData, getWeatherInfo } from '../api/weatherAPI';
+import { fetchWeatherData } from '../api/weatherAPI';
 import WeatherCard from '../components/WeatherCard';
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
@@ -9,8 +9,6 @@ import Header from "../components/Header";
 import { useFavorites } from '../hooks/useFavorites';
 
 function Search() {
-  const [weatherData, setWeatherData] = useState(null);
-  const [windGust, setWindGust] = useState(null);
   const [weatherInfo, setWeatherInfo] = useState(null);
   const [location, setLocation] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +16,7 @@ function Search() {
   const [currentLon, setCurrentLon] = useState(null);
 
   const navigate = useNavigate();
-  const { addFavorite, removeFavorite, isFavorited, favorites } = useFavorites();
+  const { addFavorite, removeFavorite, isFavorited } = useFavorites();
 
   // Check if current location is favorited
   const isFavorite = currentLat && currentLon ? isFavorited(currentLat, currentLon) : false;
@@ -26,26 +24,17 @@ function Search() {
   const handleSearch = async (e) => {
     e.preventDefault();
     setError('');
-   
-    const data = await fetchWeatherData(location);
-    if (data) {
-      console.log("data:", data);
-      setWeatherData(data);
-     
-      // Extract lat/lon from the weather data
-      const lat = parseFloat(data?.current?.city?.coord?.$?.lat);
-      const lon = parseFloat(data?.current?.city?.coord?.$?.lon);
-      setCurrentLat(lat);
-      setCurrentLon(lon);
-     
-      const gustData = await fetchWindGustData(location);
-      setWindGust(gustData);
-     
-      // Get formatted weather info
-      const info = getWeatherInfo(data, gustData);
-      setWeatherInfo(info);
-     
+
+    const weatherInfo = await fetchWeatherData(location);
+    if (weatherInfo) {
+
+      setWeatherInfo(weatherInfo)
+
+      // Extract lat/lon from the weatherInfo
+      setCurrentLat(weatherInfo.lat);
+      setCurrentLon(weatherInfo.lon);
       setLocation('');
+
     } else {
       setError('Could not fetch weather data. Please check the location.');
       setWeatherInfo(null);
@@ -62,9 +51,9 @@ function Search() {
 
   const toggleFavorite = () => {
     if (!currentLat || !currentLon) return;
-   
-    const cityName = weatherData?.current?.city?.$.name || location;
-   
+
+    const cityName = weatherInfo?.city || location;
+    
     if (isFavorite) {
       const favoriteId = `${currentLat}-${currentLon}`;
       removeFavorite(favoriteId);

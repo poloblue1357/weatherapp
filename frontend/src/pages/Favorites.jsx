@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import Header from "../components/Header";
 import { useState, useContext, useEffect } from "react";
 import { FavoritesContext } from "../context/FavoritesContext";
-import { fetchWeatherData, fetchWindGustData, getWeatherInfo } from "../api/weatherAPI";
+import { fetchWeatherData } from "../api/weatherAPI";
 
 function Favorites() {
     const { favorites } = useContext(FavoritesContext)
@@ -19,9 +19,7 @@ function Favorites() {
                 try {
                     const location = `${fav.lat},${fav.lon}`;
 
-                    const data = await fetchWeatherData(location);
-                    const gustData = await fetchWindGustData(location);
-                    const weatherInfo = getWeatherInfo(data, gustData);
+                    const weatherInfo = await fetchWeatherData(location);
 
                     weatherResults.push({
                         id: String(fav.id),
