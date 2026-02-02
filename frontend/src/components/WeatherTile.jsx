@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useFavorites } from "../hooks/useFavorites";
 import WeatherCard from "./WeatherCard";
 

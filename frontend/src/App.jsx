@@ -6,6 +6,7 @@ import Exits from './pages/Exits';
 import Search from './pages/Search';
 import Footer from './components/Footer';
 import { FavoritesProvider } from './context/FavoritesContext';
+import Forecast from "./components/Forecast"
 
 function App() {
   const location = useLocation();
@@ -21,6 +22,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/exits" element={<Exits />} />
+            <Route path="/forecast" element={<Forecast />} />
           </Routes>
         </main>
         {showFooter && <Footer />}

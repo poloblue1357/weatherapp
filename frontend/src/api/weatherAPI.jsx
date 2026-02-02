@@ -1,13 +1,7 @@
 
 export const fetchWeatherData = async (location) => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-    let url;
-    if (location.includes(',')) {
-        const [lat, lon] = location.split(',');
-        url = `${API_URL}/api/weather?lat=${lat.trim()}&lon=${lon.trim()}`
-    } else {
-        url = `${API_URL}/api/weather?city=${encodeURIComponent(location)}`
-    }
+    const url = `${API_URL}/api/weather?location=${encodeURIComponent(location)}`
 
     try {
         const response = await fetch(url);

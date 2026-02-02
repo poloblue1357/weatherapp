@@ -4,36 +4,40 @@ import { parseStringPromise } from "xml2js"
 
 const router = express.Router()
 
-// GET /api/weather?city=CityName or /api/weather?lat=xx&lon=yy
+// GET  zip/lat,lon/city
 router.get("/", async (req, res) => {
-    const { city } = req.query;
-    let lat = req.query.lat;
-    let lon = req.query.lon;
-    let units = (req.query.units || "imperial").trim();
+    const { location} = req.query;
+    let units = (req.query.units || 'imperial').trim()
 
-    // Require either city OR both lat & lon
-    if (!city && (!lat || !lon)) {
-        return res.status(400).json({ error: "City or lat/lon is required" })
+    if(!location) {
+        return res.status(400).json({ error: "Location is required"})
     }
 
-        // Convert lat/lon to numbers if provided
-    if (lat) lat = parseFloat(lat);
-    if (lon) lon = parseFloat(lon);
+    const params = {
+        appid: process.env.OPENWEATHER_API_KEY,
+        units
+    }
 
+    // determine type of location 
+    const isLatLon = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(location);
+    const isZip = /^\d{5}$/.test(location);
+
+    if (isLatLon) {
+        const [lat, lon] = location.split(",");
+        params.lat = parseFloat(lat.trim());
+        params.lon = parseFloat(lon.trim());
+    } else if (isZip) {
+        params.zip = `${location},US`; // optionally add country
+    } else {
+        params.q = location;
+    }
     try {
-        // Set up API request parameters
-        const params = {
-            appid: process.env.OPENWEATHER_API_KEY,
-            units,
-        }
-
-        if (city) {
-            params.q = city
-        } else {
-            params.lat = lat
-            params.lon = lon
-        }
-
+        const fiveDayReponse = await axios.get(
+            'https://api.openweathermap.org/data/2.5/forecast',
+            { params: { ...params, mode: 'json'}}
+        )
+        const fiveDayData = fiveDayReponse.data
+        console.log(fiveDayData)
         const xmlResponse = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
             { params: { ...params, mode: "xml" } }
@@ -45,7 +49,6 @@ router.get("/", async (req, res) => {
             { params }
         )
         const jsonData = jsonResponse.data
-        // console.log(jsonData)
 
         // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {
@@ -125,7 +128,12 @@ router.get("/", async (req, res) => {
             pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(2)),
             humidity: Number(xmlData.current.humidity[0].$.value),
         }
-        res.json(weather)
+
+        const forecast = {
+
+        }
+
+        res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
         res.status(500).json({ error: "Failed to fetch weather data" })

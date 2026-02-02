@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Header from "../components/Header";
 import { useFavorites } from '../hooks/useFavorites';
+import Forecast from "../components/Forecast"
 
 function Search() {
   const [weatherInfo, setWeatherInfo] = useState(null);
@@ -78,7 +79,7 @@ function Search() {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Search any location..."
+              placeholder="Search by City / Zip / Lat,Lon"
               className="w-full p-5 pr-14 border-0 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg bg-white shadow-lg"
             />
             <button
@@ -103,6 +104,7 @@ function Search() {
             onToggleFavorite={toggleFavorite}
           />
         )}
+        <Forecast weatherInfo={weatherInfo}/>
       </main>
       <NavBar currentPage="search" />
     </div>
