@@ -1,7 +1,4 @@
 
-// zip code
-// api.openweathermap.org/data/2.5/forecast?zip={zip code},{country code}&appid={API key}
-
 
 
 // Wishlist / Stretch Features
@@ -48,51 +45,53 @@
 
 // --Push notifications for alerts
 
-import { useEffect, useRef } from 'react';
-import { Chart } from 'chart.js';
+import { useEffect, useRef } from 'react'
+import Chart from 'chart.js/auto'
 
-function Forecast({ weatherInfo }) {
-    const chartRef = useRef(null);
+function Forecast() {
+    const canvasRef = useRef(null)
+    const chartRef = useRef(null)
 
     useEffect(() => {
-        if (!chartRef.current || !weatherInfo || !weatherInfo.data || !weatherInfo.labels) return;
+        if (!canvasRef.current) return
 
-        const chartInstance = new Chart(chartRef.current, {
+        // destroy previous chart (important)
+        if (chartRef.current) {
+            chartRef.current.destroy()
+        }
+
+        chartRef.current = new Chart(canvasRef.current, {
         type: 'bar',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'], //weatherInfo.map(item => item.time), // array of labels
-            datasets: [{
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [
+            {
                 label: 'Wind Gusts',
-                data: [1, 3, 5, 7, 9, 2, 4], // weatherInfo.map(item => item.windGust), // array of numbers
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-            }],
+                data: [1, 3, 5, 7, 9, 2, 4],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            },
+            ],
         },
         options: {
             responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
+            maintainAspectRatio: false,
         },
-        });
-
-        return () => {
-        chartInstance.destroy(); // clean up on unmount/update
-        };
-    });
+        })
+    })
 
     return (
-        <div className="max-w-3xl mx-auto p-4 bg-white rounded-lg shadow-md mt-8">
-            <h2 className="text-center text-xl font-semibold mb-4">Wind Gusts Forecast</h2>
-            <div className="relative">
-                <canvas ref={chartRef} className="w-full h-64 md:h-80"></canvas>
+        <div className="max-w-3xl mx-auto p-4 bg-white rounded shadow mt-8">
+            <h2 className="text-xl font-semibold mb-4 text-center">
+                Wind Gusts Forecast
+            </h2>
+
+            <div className="h-64">
+                <canvas ref={canvasRef} />
             </div>
         </div>
-    );
+    )
 }
 
-export default Forecast;
+export default Forecast
+
 

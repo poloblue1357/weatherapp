@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
 import { fetchWeatherData } from '../api/weatherAPI';
@@ -7,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Header from "../components/Header";
 import { useFavorites } from '../hooks/useFavorites';
-import Forecast from "../components/Forecast"
 
 function Search() {
   const [weatherInfo, setWeatherInfo] = useState(null);
+  const [forecastInfo, setForecastInfo] = useState(null)
   const [location, setLocation] = useState('');
   const [error, setError] = useState('');
   const [currentLat, setCurrentLat] = useState(null);
@@ -26,16 +25,15 @@ function Search() {
     e.preventDefault();
     setError('');
 
-    const weatherInfo = await fetchWeatherData(location);
-    if (weatherInfo) {
-
-      setWeatherInfo(weatherInfo)
+    const data = await fetchWeatherData(location);
+    if (data && data.weather && data.forecast) {
+      setWeatherInfo(data.weather);
+      setForecast(data.forecast)
 
       // Extract lat/lon from the weatherInfo
-      setCurrentLat(weatherInfo.lat);
-      setCurrentLon(weatherInfo.lon);
+      setCurrentLat(data.weather.lat);
+      setCurrentLon(data.weather.lon);
       setLocation('');
-
     } else {
       setError('Could not fetch weather data. Please check the location.');
       setWeatherInfo(null);
@@ -54,7 +52,7 @@ function Search() {
     if (!currentLat || !currentLon) return;
 
     const cityName = weatherInfo?.city || location;
-    
+
     if (isFavorite) {
       const favoriteId = `${currentLat}-${currentLon}`;
       removeFavorite(favoriteId);
@@ -96,7 +94,7 @@ function Search() {
             {error}
           </div>
         )}
-
+        {/* {console.log(`About to render WeatherCard with:`, weatherInfo)} */}
         {weatherInfo && (
           <WeatherCard
             weatherInfo={weatherInfo}
@@ -104,7 +102,6 @@ function Search() {
             onToggleFavorite={toggleFavorite}
           />
         )}
-        <Forecast weatherInfo={weatherInfo}/>
       </main>
       <NavBar currentPage="search" />
     </div>

@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useFavorites } from "../hooks/useFavorites";
 import WeatherCard from "./WeatherCard";
 
 function WeatherTile({ id, weatherInfo, expandedId, setExpandedId }) {
-    const [showCard, setShowCard] = useState(false);
     const { removeFavorite } = useFavorites();
 
     const handleRemove = (e) => {
@@ -24,18 +22,17 @@ function WeatherTile({ id, weatherInfo, expandedId, setExpandedId }) {
                     <Plus
                         size={20}
                         color="black"
-                        className={`shrink-0 ml-2 ${showCard ? 'rotate-45' : ''}`}
+                        className={`shrink-0 ml-2 transition-transform ${expandedId === id ? 'rotate-45' : ''}`}
                     />
-                    <p className="m-1 ml-1.5 truncate w-26 font-medium">{weatherInfo.city}</p>
+                    <p className="m-1 ml-1.5 truncate w-24 font-medium">{weatherInfo.city}</p>
                     <p className="m-2 shrink-0 w-7 font-bold text-lg">
                         {Math.round(weatherInfo.temp)}°
-                        <span className="p-1 text-md font-normal"></span>
                     </p>
-                    <p className="truncate w-22 capitalize text-gray-600">{weatherInfo.weather}</p>
+                    <p className="truncate flex-1 capitalize text-gray-600">{weatherInfo.weather.condition}</p>
                 </div>
                 <button
                     onClick={handleRemove}
-                    className="text-sm w-[80px] bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold p-2 rounded-lg mr-2 ml-2 flex items-center justify-center gap-1 transition-all"
+                    className="text-sm w-20 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold p-2 rounded-lg mr-2 ml-2 flex items-center justify-center transition-all"
                 >
                     Remove
                 </button>
@@ -46,11 +43,16 @@ function WeatherTile({ id, weatherInfo, expandedId, setExpandedId }) {
                     expandedId === id ? "opacity-100 max-h-screen visible mb-4" : "opacity-0 max-h-0 invisible"
                 }`}
             >
-            {expandedId === id && <WeatherCard weatherInfo={weatherInfo} />}
+                {expandedId === id && (
+                    <WeatherCard
+                        weatherInfo={weatherInfo}
+                        isFavorite={true}
+                        onToggleFavorite={handleRemove}
+                    />
+                )}
             </div>
         </div>
     );
 }
 
 export default WeatherTile;
-

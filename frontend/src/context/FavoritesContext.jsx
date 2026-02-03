@@ -31,8 +31,6 @@ export function FavoritesProvider({children}) {
         }
         
         setFavorites(prev => [...prev, newFavorite])
-        setTimeout(() => {
-        }, 10000)
     }
     
     const removeFavorite = (id) => {

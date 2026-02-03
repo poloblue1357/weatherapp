@@ -6,10 +6,10 @@ import { FavoritesContext } from "../context/FavoritesContext";
 import { fetchWeatherData } from "../api/weatherAPI";
 
 function Favorites() {
-    const { favorites } = useContext(FavoritesContext)
+    const { favorites } = useContext(FavoritesContext);
 
-    const [results, setResults] = useState([])
-    const [expandedId, setExpandedId] = useState(null)
+    const [results, setResults] = useState([]);
+    const [expandedId, setExpandedId] = useState(null);
 
     useEffect(() => {
         const fetchAllWeather = async () => {
@@ -18,13 +18,12 @@ function Favorites() {
             for (const fav of favorites) {
                 try {
                     const location = `${fav.lat},${fav.lon}`;
-
-                    const weatherInfo = await fetchWeatherData(location);
+                    const data = await fetchWeatherData(location);
 
                     weatherResults.push({
                         id: String(fav.id),
                         name: fav.name,
-                        weatherInfo: weatherInfo
+                        weatherInfo: data.weather
                     });
                 } catch (error) {
                     console.error(`Failed to fetch weather for ${fav.name}:`, error);
@@ -32,7 +31,6 @@ function Favorites() {
             }
             setResults(weatherResults);
         };
-    
         if (favorites.length > 0) {
             fetchAllWeather();
         } else {
@@ -44,11 +42,13 @@ function Favorites() {
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
             <Header title="My Favorites" showBackButton={false} />
 
-            <main className="p-4 pb-22 max-w-md mx-auto">
+            <main className="p-4 pb-20 max-w-md mx-auto">
                 {favorites.length === 0 && (
                     <div className="text-center py-12">
                         <p className="text-white text-3xl font-semibold">No favorites yet</p>
-                        <p className="text-blue-100 text-xl mt-2">Add locations <span className="text-purple-300">from</span> the Search page!</p>
+                        <p className="text-blue-100 text-xl mt-2">
+                            Add locations <span className="text-purple-300">from</span> the Search page!
+                        </p>
                     </div>
                 )}
 
@@ -57,9 +57,6 @@ function Favorites() {
                         <WeatherTile
                             key={favoriteLocation.id}
                             id={favoriteLocation.id}
-                            name={favoriteLocation.name}
-                            temp={favoriteLocation.weatherInfo.temperature}
-                            desc={favoriteLocation.weatherInfo.weather}
                             weatherInfo={favoriteLocation.weatherInfo}
                             expandedId={expandedId}
                             setExpandedId={setExpandedId}

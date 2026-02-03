@@ -12,7 +12,6 @@ export const fetchWeatherData = async (location) => {
         }
 
         const jsonData = await response.json()
-
         return jsonData // returns formatted info from backend
 
     } catch (error) {

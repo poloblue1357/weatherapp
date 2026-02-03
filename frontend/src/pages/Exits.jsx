@@ -7,7 +7,6 @@ function Exits() {
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
             <Header title="Known Exits" showBackButton={false} />
 
-
             <NavBar currentPage="exits"/>
         </div>
     )
