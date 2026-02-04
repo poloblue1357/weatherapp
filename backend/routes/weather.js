@@ -75,73 +75,61 @@ router.get("/", async (req, res) => {
         )
         const jsonData = jsonResponse.data
 
-        // Function to format the sunrise/sunset
+        // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {
-            try {
-                const date = new Date(rawTime);
-               
-                if (isNaN(date.getTime())) {
-                    return "N/A";
-                }
+            // Parse the raw UTC time into a Date object
+            const date = new Date(rawTime);
 
-                // Adjust for the timezone offset (converted to milliseconds)
-                const offsetDate = new Date(date.getTime() + timezoneOffset * 1000);
+            // Adjust for the timezone offset (converted to milliseconds)
+            const offsetDate = new Date(date.getTime() + timezoneOffset * 1000);
 
-                // Extract UTC hours and minutes after offset
-                let hours = offsetDate.getUTCHours();
-                let minutes = offsetDate.getUTCMinutes();
+            // Extract hours and minutes
+            let hours = offsetDate.getHours();
+            let minutes = offsetDate.getMinutes();
 
-                // Ensure minutes are always two digits
-                minutes = minutes < 10 ? '0' + minutes : minutes;
+            // Ensure minutes are always two digits
+            minutes = minutes < 10 ? '0' + minutes : minutes;
 
-                // Determine whether it's AM or PM
-                let period = 'AM';
-                if (hours >= 12) {
-                    period = 'PM';
-                    if (hours > 12) hours -= 12;
-                } else if (hours === 0) {
-                    hours = 12;
-                }
-
-                return `${hours}:${minutes} ${period}`;
-            } catch (error) {
-                console.error("Error formatting time:", error);
-                return "N/A";
+            // Determine whether it's AM or PM
+            let period = 'AM';
+            if (hours >= 12) {
+                period = 'PM';
+                if (hours > 12) hours -= 12;  // Convert to 12-hour format
+            } else if (hours === 0) {
+                hours = 12; // Handle midnight as 12:xx AM
             }
-        }
 
-        // Function that formats the last update
+            // Return the formatted time as a string
+            return `${hours}:${minutes} ${period}`;
+        }
+        // function that formats the last update
         function formatLastUpdate(rawLastUpdate) {
             if (!rawLastUpdate) return "N/A";
 
-            try {
-                const date = new Date(rawLastUpdate);
-                const now = new Date();
-                const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+            const date = new Date(rawLastUpdate); 
+            const now = new Date();
+            const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
 
-                const diffMs = nowUtc - date;
-                const diffMins = Math.floor(diffMs / 60000);
+            const diffMs = nowUtc - date;
+            const diffMins = Math.floor(diffMs / 60000);
 
-                if (diffMins < 1) return "Just now";
-                if (diffMins === 1) return "1 minute ago";
-                if (diffMins < 60) return `${diffMins} minutes ago`;
+            if (diffMins < 1) return "Just now";
+            if (diffMins === 1) return "1 minute ago";
+            if (diffMins < 60) return `${diffMins} minutes ago`;
 
-                const diffHours = Math.floor(diffMins / 60);
+            const diffHours = Math.floor(diffMins / 60);
 
-                if (diffHours === 1) return "1 hour ago";
-                if (diffHours < 24) return `${diffHours} hours ago`;
+            if (diffHours === 1) return "1 hour ago";
 
-                const diffDays = Math.floor(diffHours / 24);
-                if (diffDays === 1) return "1 day ago";
-                return `${diffDays} days ago`;
-            } catch (error) {
-                console.error("Error formatting last update:", error);
-                return "N/A";
-            }
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays === 1) return "1 day ago";
+            if (diffDays > 1) return `${diffDays} days ago`;
+
+            return `${diffHours} hours ago`;
         }
 
         const windSpeed = xmlData.current.wind[0].speed[0].$.value;
-        const windGust = jsonData.wind?.gust;
+        const windGust = jsonData.wind?.gust
 
         const weather = {
             city: xmlData.current.city[0].$.name,
@@ -156,7 +144,7 @@ router.get("/", async (req, res) => {
             windSpeed: windSpeed,
             windType: xmlData.current.wind[0].speed[0].$.name,
             windDirection: xmlData.current.wind[0].direction[0].$.name,
-            windDirectionCode: xmlData.current.wind[0].direction[0].$.code,
+            windDirectionCode: convertDegreesToCode(xmlData.current.wind[0].direction[0].$.value),
             windDirectionDegrees: xmlData.current.wind[0].direction[0].$.value,
             windGusts: (windGust && windGust !== windSpeed) ? windGust : "N/A",
             sunrise: formatTime(xmlData.current.city[0].sun[0].$.rise, xmlData.current.city[0].timezone[0]),
@@ -168,11 +156,31 @@ router.get("/", async (req, res) => {
             humidity: Number(xmlData.current.humidity[0].$.value),
         }
 
-        // Process 5-day forecast data
-        const forecast = {
-            
+        function formatDate(date, timezone) {
+            let splitDate = date.split(" ")[0]
+            console.log(splitDate)
+            let newDate = splitDate.toLocaleDateString("en-US")
+            console.log(newDate)
+            return console.log("format Date ran")
         }
-
+        // 5-day timezone
+        const fiveDayTimezone = fiveDayData.city.timezone;
+        // Process 5-day forecast data
+        const forecast = fiveDayData.list.map(item => ({
+            temp: item.main.temp,
+            windSpeed: item.wind.speed,
+            date: formatDate(item.dt_txt, fiveDayData.city.timezone),
+            time: formatTime(item.dt_txt, fiveDayData.city.timezone),
+            degree: item.wind.deg,
+            direction: convertDegreesToCode(item.wind.deg),
+            gust: item.wind.gust,
+            condition: item.weather[0].main || "N/A",
+            description: item.weather[0].description || 'N/A',
+            clouds: item.clouds.all,
+            pressure: item.main.grnd_level,
+            precipitation: item.pop,
+        }))
+        // console.log(fiveDayData.list[0].dt_txt)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
@@ -181,3 +189,15 @@ router.get("/", async (req, res) => {
 })
 
 export default router
+
+// X day - Tue, 3 Feb 
+// X hour - 5pm 6pm 7pm
+// X wind (mph) - 3 0 2
+// X bar chart - direction and degree
+// X gust
+// X sky - clouds/clear? is it necessary?
+// X temp
+// X precipitation (precip)
+// X cloud %
+// X press(mb)
+// run (wtf is run?!)

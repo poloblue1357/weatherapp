@@ -28,7 +28,7 @@ function Search() {
     const data = await fetchWeatherData(location);
     if (data && data.weather && data.forecast) {
       setWeatherInfo(data.weather);
-      setForecast(data.forecast)
+      setForecastInfo(data.forecast)
 
       // Extract lat/lon from the weatherInfo
       setCurrentLat(data.weather.lat);
@@ -94,7 +94,7 @@ function Search() {
             {error}
           </div>
         )}
-        {/* {console.log(`About to render WeatherCard with:`, weatherInfo)} */}
+
         {weatherInfo && (
           <WeatherCard
             weatherInfo={weatherInfo}
