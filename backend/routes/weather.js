@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
             { params: { ...params, mode: 'json' } }
         )
         const fiveDayData = fiveDayResponse.data
-
+        // console.log(fiveDayData)
         // Fetch current weather in XML format
         const xmlResponse = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
@@ -156,21 +156,38 @@ router.get("/", async (req, res) => {
             humidity: Number(xmlData.current.humidity[0].$.value),
         }
 
-        function formatDate(date, timezone) {
-            let splitDate = date.split(" ")[0]
-            console.log(splitDate)
-            let newDate = splitDate.toLocaleDateString("en-US")
-            console.log(newDate)
-            return console.log("format Date ran")
+                // Helper to format day
+        function formatDay(utcMillis, timezoneOffset) {
+            const localDate = new Date(utcMillis + timezoneOffset * 1000);
+            const options = { weekday: "short", month: "short", day: "numeric" };
+            return localDate.toLocaleDateString("en-US", options);
         }
+
+        // Helper to format time
+        function getTime(rawTime, timezoneOffset) {
+            const date = new Date(rawTime + timezoneOffset * 1000);
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            let period = 'AM';
+            if (hours >= 12) {
+                period = 'PM';
+                if (hours > 12) hours -= 12;
+            } else if (hours === 0) {
+                hours = 12;
+            }
+            return `${hours}:${minutes} ${period}`;
+        }
+
         // 5-day timezone
         const fiveDayTimezone = fiveDayData.city.timezone;
-        // Process 5-day forecast data
+
+        // Process 5-day forecast
         const forecast = fiveDayData.list.map(item => ({
+            date: formatDay(item.dt * 1000, fiveDayTimezone),       // "Tue, Feb 10"
+            time: getTime(item.dt * 1000, fiveDayTimezone),      // "3:00 PM"
             temp: item.main.temp,
             windSpeed: item.wind.speed,
-            date: formatDate(item.dt_txt, fiveDayData.city.timezone),
-            time: formatTime(item.dt_txt, fiveDayData.city.timezone),
             degree: item.wind.deg,
             direction: convertDegreesToCode(item.wind.deg),
             gust: item.wind.gust,
@@ -179,8 +196,9 @@ router.get("/", async (req, res) => {
             clouds: item.clouds.all,
             pressure: item.main.grnd_level,
             precipitation: item.pop,
-        }))
-        // console.log(fiveDayData.list[0].dt_txt)
+        }));
+
+        // console.log(forecast)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
