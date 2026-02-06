@@ -45,53 +45,241 @@
 
 // --Push notifications for alerts
 
-import { useEffect, useRef } from 'react'
-import Chart from 'chart.js/auto'
 
-function Forecast() {
-    const canvasRef = useRef(null)
-    const chartRef = useRef(null)
 
-    useEffect(() => {
-        if (!canvasRef.current) return
+import React from 'react';
+import { Navigation } from 'lucide-react';
 
-        // destroy previous chart (important)
-        if (chartRef.current) {
-            chartRef.current.destroy()
+// Sample forecast data structure
+const sampleForecast = [
+  // Monday
+    { date: 'Mon, Feb 9', time: '1 PM', windSpeed: 3, gust: 5, degree: 315, direction: 'NW', temp: 45, condition: 'Clear', precipitation: 0 },
+    { date: 'Mon, Feb 9', time: '4 PM', windSpeed: 4, gust: 6, degree: 320, direction: 'NW', temp: 43, condition: 'Clear', precipitation: 0 },
+    { date: 'Mon, Feb 9', time: '7 PM', windSpeed: 2, gust: 4, degree: 310, direction: 'NW', temp: 41, condition: 'Clear', precipitation: 0 },
+    { date: 'Mon, Feb 9', time: '10 PM', windSpeed: 3, gust: 4, degree: 305, direction: 'NW', temp: 39, condition: 'Clear', precipitation: 0 },
+    // Tuesday
+    { date: 'Tue, Feb 10', time: '1 AM', windSpeed: 6, gust: 9, degree: 340, direction: 'N', temp: 37, condition: 'Cloudy', precipitation: 0 },
+    { date: 'Tue, Feb 10', time: '4 AM', windSpeed: 7, gust: 10, degree: 345, direction: 'N', temp: 36, condition: 'Cloudy', precipitation: 0 },
+    { date: 'Tue, Feb 10', time: '7 AM', windSpeed: 8, gust: 12, degree: 350, direction: 'N', temp: 35, condition: 'Rain', precipitation: 0.2 },
+    { date: 'Tue, Feb 10', time: '10 AM', windSpeed: 5, gust: 8, degree: 355, direction: 'N', temp: 38, condition: 'Rain', precipitation: 0.1 },
+    // Wednesday
+    { date: 'Wed, Feb 11', time: '1 PM', windSpeed: 4, gust: 6, degree: 270, direction: 'W', temp: 42, condition: 'Cloudy', precipitation: 0 },
+    { date: 'Wed, Feb 11', time: '4 PM', windSpeed: 3, gust: 5, degree: 275, direction: 'W', temp: 44, condition: 'Partly Cloudy', precipitation: 0 },
+    { date: 'Wed, Feb 11', time: '7 PM', windSpeed: 2, gust: 3, degree: 280, direction: 'W', temp: 40, condition: 'Clear', precipitation: 0 },
+    { date: 'Wed, Feb 11', time: '10 PM', windSpeed: 2, gust: 3, degree: 285, direction: 'W', temp: 38, condition: 'Clear', precipitation: 0 },
+];
+
+// Group forecast by date
+function groupByDate(forecast) {
+    const groups = [];
+    let currentDate = null;
+    let currentGroup = [];
+
+    forecast.forEach(item => {
+        if (item.date !== currentDate) {
+        if (currentGroup.length > 0) {
+            groups.push({ date: currentDate, items: currentGroup });
         }
+        currentDate = item.date;
+        currentGroup = [item];
+        } else {
+        currentGroup.push(item);
+        }
+    });
 
-        chartRef.current = new Chart(canvasRef.current, {
-        type: 'bar',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [
-            {
-                label: 'Wind Gusts',
-                data: [1, 3, 5, 7, 9, 2, 4],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-        },
-        })
-    })
+    if (currentGroup.length > 0) {
+        groups.push({ date: currentDate, items: currentGroup });
+    }
 
-    return (
-        <div className="max-w-3xl mx-auto p-4 bg-white rounded shadow mt-8">
-            <h2 className="text-xl font-semibold mb-4 text-center">
-                Wind Gusts Forecast
-            </h2>
-
-            <div className="h-64">
-                <canvas ref={canvasRef} />
-            </div>
-        </div>
-    )
+    return groups;
 }
 
-export default Forecast
+// Individual forecast column
+function ForecastColumn({ data }) {
+    const maxHeight = 120;
+    // Calculate heights but cap them so numbers don't go off screen
+    const windHeight = Math.min(data.windSpeed * 10, maxHeight - 25); // Leave 25px for number
+    const gustHeight = Math.min(data.gust * 10, maxHeight - 25);
+
+    const bgColor = getHourBackgroundColor(data.windSpeed);
+
+    return (
+        <div className={`flex-shrink-0 relative border-r border-gray-200 pr-3 last:border-r-0 ${bgColor} rounded-xl p-3 -mx-1`}>
+        <div className="flex gap-2">
+            {/* Wind Bar */}
+            <div className="w-14 flex flex-col items-center">
+            {/* Wind Bar Container */}
+            <div className="relative flex items-end justify-center" style={{ height: `${maxHeight}px` }}>
+                {/* Wind Speed Number - 7.5px ABOVE BAR */}
+                <div
+                className="absolute text-sm font-bold text-blue-900"
+                style={{ bottom: `${windHeight + 7.5}px` }}
+                >
+                {data.windSpeed}
+                </div>
+            
+                {/* Wind Bar with gradient and shadow */}
+                <div
+                className="w-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all shadow-md"
+                style={{ height: `${windHeight}px` }}
+                />
+            </div>
+
+            {/* Wind Direction - BELOW BAR - ARROW */}
+            <div className="mt-2 flex flex-col items-center">
+                <div
+                className="text-black text-xl font-bold leading-none mb-1"
+                style={{ transform: `rotate(${data.degree - 42}deg)` }}
+                >
+                ↑
+                </div>
+                <div className="text-xs font-bold text-gray-800">{data.direction}</div>
+                <div className="text-xs text-gray-500">{data.degree}°</div>
+            </div>
+            </div>
+
+            {/* Gust Bar */}
+            <div className="w-14 flex flex-col items-center">
+            {/* Gust Bar Container */}
+            <div className="relative flex items-end justify-center" style={{ height: `${maxHeight}px` }}>
+                {/* Gust Number - 7.5px ABOVE BAR */}
+                <div
+                className="absolute text-sm font-bold text-purple-900"
+                style={{ bottom: `${gustHeight + 7.5}px` }}
+                >
+                {data.gust}
+                </div>
+            
+                {/* Gust Bar with gradient and shadow */}
+                <div
+                className="w-14 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-lg transition-all shadow-md"
+                style={{ height: `${gustHeight}px` }}
+                />
+            </div>
+
+            {/* Precipitation info below */}
+            <div className="mt-2 flex flex-col items-center">
+                <div className="text-xs font-semibold text-gray-700 mb-1">Precip</div>
+                <div className="text-xs text-blue-600 font-bold">
+                {data.precipitation > 0 ? `${data.precipitation}"` : '0"'}
+                </div>
+                <div className="text-xs text-blue-600 font-bold">
+                {data.precipitation > 0 ? `${(data.precipitation * 100).toFixed(0)}%` : '0%'}
+                </div>
+            </div>
+            </div>
+        </div>
+
+        {/* Additional Info Below */}
+        <div className="mt-3 text-center space-y-1">
+            <div className="text-xs font-semibold text-gray-600">{data.time}</div>
+            <div className="text-xs text-gray-700 capitalize flex items-center justify-center gap-1">
+            <span>{getWeatherIcon(data.condition)}</span>
+            <span>{data.condition}</span>
+            </div>
+            <div className="text-sm font-bold text-gray-800">{data.temp}°F</div>
+        </div>
+        </div>
+    );
+}
+
+// Get weather icon based on condition
+function getWeatherIcon(condition) {
+    const lower = condition.toLowerCase();
+    if (lower.includes('clear')) return '☀️';
+    if (lower.includes('cloud') || lower.includes('overcast')) return '☁️';
+    if (lower.includes('rain')) return '🌧️';
+    if (lower.includes('snow')) return '❄️';
+    if (lower.includes('partly')) return '⛅';
+    if (lower.includes('thunder') || lower.includes('storm')) return '⛈️';
+    return '🌤️'; // default partly cloudy
+}
+
+// Get background color based on wind speed for individual hour
+function getHourBackgroundColor(windSpeed) {
+    if (windSpeed <= 4) return 'bg-green-100';
+    if (windSpeed === 5) return 'bg-amber-100';
+    return 'bg-red-100';
+}
+
+// Day group component
+function DayGroup({ date, items }) {
+    return (
+        <div className="relative inline-flex flex-col border-r-2 border-gray-300 pr-6 mr-6 last:border-r-0 last:mr-0">
+        {/* Day Header */}
+        <div className="mb-4 text-center bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white py-3 px-5 rounded-xl shadow-lg">
+            <div className="text-base font-bold">{date}</div>
+        </div>
+
+        {/* Forecast Columns */}
+        <div className="flex gap-3">
+            {items.map((item, idx) => (
+            <ForecastColumn
+                key={idx}
+                data={item}
+            />
+            ))}
+        </div>
+        </div>
+    );
+}
+
+// Main Timeline Component
+export default function ForecastTimeline({ forecastData = sampleForecast }) {
+    const groupedData = groupByDate(forecastData);
+
+    return (
+        <div className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden mb-5">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white p-5">
+            <h2 className="text-xl font-bold text-center">5-Day Wind Forecast</h2>
+            <div className="flex justify-center gap-6 mt-3 text-sm">
+            <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-emerald-400 rounded"></div>
+                <span>Good (≤4 mph)</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-amber-400 rounded"></div>
+                <span>Caution (5 mph)</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-400 rounded"></div>
+                <span>Evaluate (&gt;5 mph)</span>
+            </div>
+            </div>
+        </div>
+
+        {/* Legend */}
+        <div className="bg-gray-50 border-b border-gray-200 px-6 py-3 flex justify-center gap-8 text-sm">
+            <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-blue-500 rounded"></div>
+            <span className="font-semibold text-gray-700">Wind Speed (mph)</span>
+            </div>
+            <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-purple-500 rounded"></div>
+            <span className="font-semibold text-gray-700">Gusts (mph)</span>
+            </div>
+        </div>
+
+        {/* Scrollable Timeline */}
+        <div className="overflow-x-auto p-6 pb-8">
+            <div className="inline-flex">
+            {groupedData.map((group, idx) => (
+                <DayGroup
+                key={idx}
+                date={group.date}
+                items={group.items}
+                />
+            ))}
+            </div>
+        </div>
+
+        {/* Footer Note */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-center text-xs text-gray-600">
+                Arrow shows wind direction • Numbers in MPH • Scroll horizontally for more
+            </div>
+        </div>
+    );
+}
 
 

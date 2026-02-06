@@ -28,7 +28,7 @@ function Search() {
     const data = await fetchWeatherData(location);
     if (data && data.weather && data.forecast) {
       setWeatherInfo(data.weather);
-      setForecastInfo(data.forecast)
+      setForecastInfo(data.forecast || null)
 
       // Extract lat/lon from the weatherInfo
       setCurrentLat(data.weather.lat);
@@ -37,6 +37,7 @@ function Search() {
     } else {
       setError('Could not fetch weather data. Please check the location.');
       setWeatherInfo(null);
+      setForecastInfo(null);
       setCurrentLat(null);
       setCurrentLon(null);
     }
@@ -98,6 +99,7 @@ function Search() {
         {weatherInfo && (
           <WeatherCard
             weatherInfo={weatherInfo}
+            forecastInfo={forecastInfo}
             isFavorite={isFavorite}
             onToggleFavorite={toggleFavorite}
           />

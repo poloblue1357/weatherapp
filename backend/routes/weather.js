@@ -198,7 +198,7 @@ router.get("/", async (req, res) => {
             precipitation: item.pop,
         }));
 
-        // console.log(forecast)
+        console.log(forecast)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
@@ -208,14 +208,3 @@ router.get("/", async (req, res) => {
 
 export default router
 
-// X day - Tue, 3 Feb 
-// X hour - 5pm 6pm 7pm
-// X wind (mph) - 3 0 2
-// X bar chart - direction and degree
-// X gust
-// X sky - clouds/clear? is it necessary?
-// X temp
-// X precipitation (precip)
-// X cloud %
-// X press(mb)
-// run (wtf is run?!)
