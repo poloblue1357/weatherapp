@@ -186,11 +186,11 @@ router.get("/", async (req, res) => {
         const forecast = fiveDayData.list.map(item => ({
             date: formatDay(item.dt * 1000, fiveDayTimezone),       // "Tue, Feb 10"
             time: getTime(item.dt * 1000, fiveDayTimezone),      // "3:00 PM"
-            temp: item.main.temp,
-            windSpeed: item.wind.speed,
+            temp: Math.round(item.main.temp * 10) / 10,
+            windSpeed: Math.round(item.wind.speed * 10) / 10,
             degree: item.wind.deg,
             direction: convertDegreesToCode(item.wind.deg),
-            gust: item.wind.gust,
+            gust: Math.round(item.wind.gust * 10) / 10,
             condition: item.weather[0].main || "N/A",
             description: item.weather[0].description || 'N/A',
             clouds: item.clouds.all,
@@ -198,7 +198,7 @@ router.get("/", async (req, res) => {
             precipitation: item.pop,
         }));
 
-        console.log(forecast)
+        // console.log(forecast)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Header from "../components/Header";
 import { useFavorites } from '../hooks/useFavorites';
+import Forecast from '../components/Forecast';
 
 function Search() {
   const [weatherInfo, setWeatherInfo] = useState(null);
@@ -14,6 +15,7 @@ function Search() {
   const [error, setError] = useState('');
   const [currentLat, setCurrentLat] = useState(null);
   const [currentLon, setCurrentLon] = useState(null);
+  const [activeTab, setActiveTab] = useState('current')
 
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorited } = useFavorites();
@@ -95,14 +97,42 @@ function Search() {
             {error}
           </div>
         )}
-
-        {weatherInfo && (
-          <WeatherCard
-            weatherInfo={weatherInfo}
-            forecastInfo={forecastInfo}
-            isFavorite={isFavorite}
-            onToggleFavorite={toggleFavorite}
-          />
+        {weatherInfo && forecastInfo && (
+          <>
+          <div className='flex gap-3 mb-6 p-1 bg-white rounded-xl shadow-lg'>
+            <button 
+              onClick={() => setActiveTab('current')}
+              className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all 
+                        ${activeTab === 'current' 
+                        ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md'
+                        : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Current
+            </button>
+            <button 
+              onClick={() => setActiveTab('forecast')}
+              className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all 
+                        ${activeTab === 'forecast'
+                        ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md'
+                        : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Forecast
+            </button>
+          </div>  
+          {activeTab === 'current' ? (
+            <div className="mb-4">
+              <WeatherCard
+                weatherInfo={weatherInfo}
+                isFavorite={isFavorite}
+                onToggleFavorite={toggleFavorite}
+              />
+            </div>
+          ) : (
+            <Forecast forecastInfo={forecastInfo} />
+          )}
+          </>
         )}
       </main>
       <NavBar currentPage="search" />

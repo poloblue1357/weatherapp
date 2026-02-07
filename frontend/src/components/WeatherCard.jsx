@@ -547,8 +547,6 @@ export default function WeatherCard({ weatherInfo, forecastInfo, isFavorite, onT
                     </button>
                 </div>
             </div>
-<Forecast forecastInfo={forecastInfo} />
-            
         </div>
     );
 }

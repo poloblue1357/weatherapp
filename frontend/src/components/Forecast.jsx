@@ -1,6 +1,3 @@
-
-
-
 // Wishlist / Stretch Features
 
 // Tiered users
@@ -50,32 +47,13 @@
 import React from 'react';
 import { Navigation } from 'lucide-react';
 
-// Sample forecast data structure
-const sampleForecast = [
-  // Monday
-    { date: 'Mon, Feb 9', time: '1 PM', windSpeed: 3, gust: 5, degree: 315, direction: 'NW', temp: 45, condition: 'Clear', precipitation: 0 },
-    { date: 'Mon, Feb 9', time: '4 PM', windSpeed: 4, gust: 6, degree: 320, direction: 'NW', temp: 43, condition: 'Clear', precipitation: 0 },
-    { date: 'Mon, Feb 9', time: '7 PM', windSpeed: 2, gust: 4, degree: 310, direction: 'NW', temp: 41, condition: 'Clear', precipitation: 0 },
-    { date: 'Mon, Feb 9', time: '10 PM', windSpeed: 3, gust: 4, degree: 305, direction: 'NW', temp: 39, condition: 'Clear', precipitation: 0 },
-    // Tuesday
-    { date: 'Tue, Feb 10', time: '1 AM', windSpeed: 6, gust: 9, degree: 340, direction: 'N', temp: 37, condition: 'Cloudy', precipitation: 0 },
-    { date: 'Tue, Feb 10', time: '4 AM', windSpeed: 7, gust: 10, degree: 345, direction: 'N', temp: 36, condition: 'Cloudy', precipitation: 0 },
-    { date: 'Tue, Feb 10', time: '7 AM', windSpeed: 8, gust: 12, degree: 350, direction: 'N', temp: 35, condition: 'Rain', precipitation: 0.2 },
-    { date: 'Tue, Feb 10', time: '10 AM', windSpeed: 5, gust: 8, degree: 355, direction: 'N', temp: 38, condition: 'Rain', precipitation: 0.1 },
-    // Wednesday
-    { date: 'Wed, Feb 11', time: '1 PM', windSpeed: 4, gust: 6, degree: 270, direction: 'W', temp: 42, condition: 'Cloudy', precipitation: 0 },
-    { date: 'Wed, Feb 11', time: '4 PM', windSpeed: 3, gust: 5, degree: 275, direction: 'W', temp: 44, condition: 'Partly Cloudy', precipitation: 0 },
-    { date: 'Wed, Feb 11', time: '7 PM', windSpeed: 2, gust: 3, degree: 280, direction: 'W', temp: 40, condition: 'Clear', precipitation: 0 },
-    { date: 'Wed, Feb 11', time: '10 PM', windSpeed: 2, gust: 3, degree: 285, direction: 'W', temp: 38, condition: 'Clear', precipitation: 0 },
-];
-
 // Group forecast by date
-function groupByDate(forecast) {
+function groupByDate( forecastInfo ) {
     const groups = [];
     let currentDate = null;
     let currentGroup = [];
 
-    forecast.forEach(item => {
+    forecastInfo.forEach(item => {
         if (item.date !== currentDate) {
         if (currentGroup.length > 0) {
             groups.push({ date: currentDate, items: currentGroup });
@@ -95,7 +73,7 @@ function groupByDate(forecast) {
 }
 
 // Individual forecast column
-function ForecastColumn({ data }) {
+function ForecastColumn( {data} ) {
     const maxHeight = 120;
     // Calculate heights but cap them so numbers don't go off screen
     const windHeight = Math.min(data.windSpeed * 10, maxHeight - 25); // Leave 25px for number
@@ -172,7 +150,7 @@ function ForecastColumn({ data }) {
 
         {/* Additional Info Below */}
         <div className="mt-3 text-center space-y-1">
-            <div className="text-xs font-semibold text-gray-600">{data.time}</div>
+            <div className="text-s font-bold text-black-600">{data.time}</div>
             <div className="text-xs text-gray-700 capitalize flex items-center justify-center gap-1">
             <span>{getWeatherIcon(data.condition)}</span>
             <span>{data.condition}</span>
@@ -225,8 +203,8 @@ function DayGroup({ date, items }) {
 }
 
 // Main Timeline Component
-export default function ForecastTimeline({ forecastData = sampleForecast }) {
-    const groupedData = groupByDate(forecastData);
+export default function Forecast({ forecastInfo }) {
+    const groupedData = groupByDate(forecastInfo);
 
     return (
         <div className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden mb-5">

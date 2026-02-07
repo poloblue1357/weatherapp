@@ -10,6 +10,7 @@ function Favorites() {
 
     const [results, setResults] = useState([]);
     const [expandedId, setExpandedId] = useState(null);
+    const [activeTab, setActiveTab] = useState('current')
 
     useEffect(() => {
         const fetchAllWeather = async () => {
@@ -18,12 +19,13 @@ function Favorites() {
             for (const fav of favorites) {
                 try {
                     const location = `${fav.lat},${fav.lon}`;
-                    const data = await fetchWeatherData(location);
+                    const data = await fetchWeatherData(location); // This returns { weather, forecast }
 
                     weatherResults.push({
                         id: String(fav.id),
                         name: fav.name,
-                        weatherInfo: data.weather
+                        weatherInfo: data.weather,
+                        forecastInfo: data.forecast  // Add this line!
                     });
                 } catch (error) {
                     console.error(`Failed to fetch weather for ${fav.name}:`, error);
@@ -31,10 +33,11 @@ function Favorites() {
             }
             setResults(weatherResults);
         };
+
         if (favorites.length > 0) {
             fetchAllWeather();
         } else {
-            setResults([]); // Clear results if no favorites
+            setResults([]);
         }
     }, [favorites]);
 
@@ -58,6 +61,7 @@ function Favorites() {
                             key={favoriteLocation.id}
                             id={favoriteLocation.id}
                             weatherInfo={favoriteLocation.weatherInfo}
+                            forecastInfo={favoriteLocation.forecastInfo}  // Add this line!
                             expandedId={expandedId}
                             setExpandedId={setExpandedId}
                         />
