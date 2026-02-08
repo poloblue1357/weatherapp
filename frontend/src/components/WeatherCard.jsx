@@ -27,7 +27,7 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
         if (isNaN(speed)) {
             return { color: 'from-gray-500 to-gray-600', text: 'WIND DATA UNAVAILABLE' };
         }
-   
+
         if (speed <= 4) {
             return { color: 'from-green-500 to-emerald-600', text: 'GOOD CONDITIONS FOR JUMPING' };
         } else if (speed === 5) {
@@ -55,7 +55,7 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
                 <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-sky-600 text-white p-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
-                   
+
                     <div className="relative flex items-start justify-between">
                         <div>
                             <div className="flex items-center gap-2 mb-2">

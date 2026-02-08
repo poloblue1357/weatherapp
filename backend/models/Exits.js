@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const locationSchema = new mongoose.Schema({
+const exitsSchema = new mongoose.Schema({
     name: { type: String, required: true },
     country: { type: String },
     lat: { type: Number },
@@ -21,5 +21,5 @@ const locationSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const Location = mongoose.model("Location", locationSchema);
-export default Location;
+const Exits = mongoose.model("Exit", exitsSchema);
+export default Exits;

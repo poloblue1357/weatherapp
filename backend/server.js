@@ -1,21 +1,16 @@
 import express from "express";
-import axios from "axios"
 import cors from "cors";
 import mongoose from "mongoose"
-import dotenv from "dotenv"
-import locationRoutes from "./routes/location.js"
+import exitsRoutes from "./routes/exitsRoutes.js"
 import weatherRoutes from "./routes/weather.js"
 import 'dotenv/config'; 
-
-// Load .env
-// dotenv.config({ silent: true });
 
 const app = express()
 
 // Middleware
 app.use(cors())
 app.use(express.json())
-app.use("/api/locations", locationRoutes)
+app.use("/api/exits", exitsRoutes)
 app.use("/api/weather", weatherRoutes)
 
 // MongoDB connection
