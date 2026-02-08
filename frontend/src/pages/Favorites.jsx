@@ -10,7 +10,6 @@ function Favorites() {
 
     const [results, setResults] = useState([]);
     const [expandedId, setExpandedId] = useState(null);
-    const [activeTab, setActiveTab] = useState('current')
 
     useEffect(() => {
         const fetchAllWeather = async () => {

@@ -8,32 +8,32 @@ function NavBar({ currentPage }) {
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl max-w-md mx-auto">
-        <div className="flex justify-around p-3">
-            <NavButton
-            to="/"
-            icon={<Home />}
-            label="Home"
-            active={current === '' || current === 'home'}
-            />
-            <NavButton
-            to="/search"
-            icon={<Search />}
-            label="Search"
-            active={current === 'search'}
-            />
-            <NavButton
-            to="/exits"
-            icon={<MapPin />}
-            label="Exits"
-            active={current === 'exits'}
-            />
-            <NavButton
-            to="/favorites"
-            icon={<Heart />}
-            label="Favorites"
-            active={current === 'favorites'}
-            />
-        </div>
+            <div className="flex justify-around p-3">
+                <NavButton
+                    to="/"
+                    icon={<Home />}
+                    label="Home"
+                    active={current === '' || current === 'home'}
+                />
+                <NavButton
+                    to="/search"
+                    icon={<Search />}
+                    label="Search"
+                    active={current === 'search'}
+                />
+                <NavButton
+                    to="/exits"
+                    icon={<MapPin />}
+                    label="Exits"
+                    active={current === 'exits'}
+                />
+                <NavButton
+                    to="/favorites"
+                    icon={<Heart />}
+                    label="Favorites"
+                    active={current === 'favorites'}
+                />
+            </div>
         </nav>
     );
 }
