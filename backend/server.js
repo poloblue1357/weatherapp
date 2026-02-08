@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose"
-import exitsRoutes from "./routes/exitsRoutes.js"
+import exitRoutes from "./routes/exitRoutes.js"
 import weatherRoutes from "./routes/weather.js"
 import 'dotenv/config'; 
 
@@ -10,7 +10,7 @@ const app = express()
 // Middleware
 app.use(cors())
 app.use(express.json())
-app.use("/api/exits", exitsRoutes)
+app.use("/api/exits", exitRoutes)
 app.use("/api/weather", weatherRoutes)
 
 // MongoDB connection

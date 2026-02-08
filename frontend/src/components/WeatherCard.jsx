@@ -62,7 +62,7 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
                                 <MapPin className="w-5 h-5" />
                                 <h2 className="text-2xl font-bold">{weatherInfo.city}</h2>
                             </div>
-                            <p className="text-blue-100 text-base mb-4 capitalize">{weatherInfo.weather.condition}</p>
+                            <p className="text-blue-100 text-base mb-4 capitalize">{weatherInfo.condition}</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-5xl font-bold">{weatherInfo.temp}</span>
                                 <span className="text-xl font-semibold">°F</span>

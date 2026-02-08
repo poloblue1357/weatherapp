@@ -31,7 +31,7 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId 
                     <p className="m-2 shrink-0 w-7 font-bold text-lg">
                         {Math.round(weatherInfo.temp)}°
                     </p>
-                    <p className="truncate w-23 capitalize text-gray-600">{weatherInfo.weather.condition}</p>
+                    <p className="truncate w-23 capitalize text-gray-600">{weatherInfo.condition}</p>
                 </div>
                 <button
                     onClick={handleRemove}

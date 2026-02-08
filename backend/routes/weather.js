@@ -132,30 +132,27 @@ router.get("/", async (req, res) => {
         const windGust = jsonData.wind?.gust
 
         const weather = {
-            city: xmlData.current.city[0].$.name,
-            lat: parseFloat(xmlData.current.city[0].coord[0].$.lat),
-            lon: parseFloat(xmlData.current.city[0].coord[0].$.lon),
-            country: xmlData.current.city[0].country[0],
-            temp: Math.round(Number(xmlData.current.temperature[0].$.value) * 10) / 10,
-            weather: {
-                condition: xmlData.current.weather[0].$.value,
-                icon: xmlData.current.weather[0].$.icon
-            },
-            windSpeed: windSpeed,
-            windType: xmlData.current.wind[0].speed[0].$.name,
-            windDirection: xmlData.current.wind[0].direction[0].$.name,
-            windDirectionCode: convertDegreesToCode(xmlData.current.wind[0].direction[0].$.value),
-            windDirectionDegrees: xmlData.current.wind[0].direction[0].$.value,
-            windGusts: (windGust && windGust !== windSpeed) ? windGust : "N/A",
-            sunrise: formatTime(xmlData.current.city[0].sun[0].$.rise, xmlData.current.city[0].timezone[0]),
-            sunset: formatTime(xmlData.current.city[0].sun[0].$.set, xmlData.current.city[0].timezone[0]),
-            lastUpdate: formatLastUpdate(xmlData.current.lastupdate[0].$.value),
-            timezone: xmlData.current.city[0].timezone[0],
-            visibility: Math.round(Number(xmlData.current.visibility[0].$.value) / 1609.34 * 10) / 10,
-            pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(2)),
-            humidity: Number(xmlData.current.humidity[0].$.value),
+            city: xmlData.current.city[0].$.name, // string
+            lat: parseFloat(xmlData.current.city[0].coord[0].$.lat), // num
+            lon: parseFloat(xmlData.current.city[0].coord[0].$.lon), // num
+            country: xmlData.current.city[0].country[0], // string
+            temp: Math.round(Number(xmlData.current.temperature[0].$.value) * 10) / 10, // num
+            condition: xmlData.current.weather[0].$.value,
+            windSpeed: Number(windSpeed), 
+            windType: xmlData.current.wind[0].speed[0].$.name, //str
+            windDirection: xmlData.current.wind[0].direction[0].$.name, //str
+            windDirectionCode: convertDegreesToCode(xmlData.current.wind[0].direction[0].$.value), //str
+            windDirectionDegrees: Number(xmlData.current.wind[0].direction[0].$.value), //str
+            windGusts: (windGust && windGust !== windSpeed) ? Number(windGust) : 0, // num
+            sunrise: formatTime(xmlData.current.city[0].sun[0].$.rise, xmlData.current.city[0].timezone[0]), //str
+            sunset: formatTime(xmlData.current.city[0].sun[0].$.set, xmlData.current.city[0].timezone[0]), //str
+            lastUpdate: formatLastUpdate(xmlData.current.lastupdate[0].$.value), // str
+            timezone: Number(xmlData.current.city[0].timezone[0]), // str
+            visibility: Math.round(Number(xmlData.current.visibility[0].$.value) / 1609.34 * 10) / 10, // num
+            pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(2)), // num
+            humidity: Number(xmlData.current.humidity[0].$.value), // num
         }
-
+        // console.log('weather', weather)
                 // Helper to format day
         function formatDay(utcMillis, timezoneOffset) {
             const localDate = new Date(utcMillis + timezoneOffset * 1000);
@@ -184,21 +181,21 @@ router.get("/", async (req, res) => {
 
         // Process 5-day forecast
         const forecast = fiveDayData.list.map(item => ({
-            date: formatDay(item.dt * 1000, fiveDayTimezone),       // "Tue, Feb 10"
-            time: getTime(item.dt * 1000, fiveDayTimezone),      // "3:00 PM"
-            temp: Math.round(item.main.temp * 10) / 10,
-            windSpeed: Math.round(item.wind.speed * 10) / 10,
-            degree: item.wind.deg,
-            direction: convertDegreesToCode(item.wind.deg),
-            gust: Math.round(item.wind.gust * 10) / 10,
-            condition: item.weather[0].main || "N/A",
-            description: item.weather[0].description || 'N/A',
-            clouds: item.clouds.all,
-            pressure: item.main.grnd_level,
-            precipitation: item.pop,
+            date: formatDay(item.dt * 1000, fiveDayTimezone), // str       // "Tue, Feb 10"
+            time: getTime(item.dt * 1000, fiveDayTimezone), //str      // "3:00 PM"
+            temp: Math.round(item.main.temp * 10) / 10, // num
+            windSpeed: Math.round(item.wind.speed * 10) / 10, // num
+            degree: item.wind.deg, // num
+            direction: convertDegreesToCode(item.wind.deg), // str
+            gust: item.wind.gust ? Math.round(item.wind.gust * 10) / 10 : 0, // num
+            condition: item.weather[0].main || "N/A", // str
+            description: item.weather[0].description || 'N/A', // str
+            clouds: item.clouds.all, // num
+            pressure: item.main.grnd_level, // num
+            precipitation: item.pop, // num
         }));
 
-        // console.log(forecast)
+        // console.log('forecast', forecast)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)

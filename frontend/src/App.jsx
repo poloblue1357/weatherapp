@@ -1,16 +1,13 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Favorites from './pages/Favorites';
 import Exits from './pages/Exits';
 import Search from './pages/Search';
-import Footer from './components/Footer';
 import { FavoritesProvider } from './context/FavoritesContext';
 import Forecast from "./components/Forecast"
 
 function App() {
-  const location = useLocation();
-  const showFooter = location.pathname === '/';
 
   return (
     <FavoritesProvider>
@@ -25,7 +22,6 @@ function App() {
             <Route path="/forecast" element={<Forecast />} />
           </Routes>
         </main>
-        {showFooter && <Footer />}
       </div>
     </FavoritesProvider>
   );

@@ -1,11 +1,12 @@
 import express from "express"
-import Exits from "../models/Exits.js"
+import Exit from "../models/Exit.js"
+import axios from 'axios'
 
 const router = express.Router()
 
 router.get("/", async (req, res) => {
     try{
-        const locations = await Exits.find()
+        const locations = await Exit.find()
         res.json(locations)
     } catch (err) {
         res.status(500).json({ message: err.message})
@@ -14,8 +15,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     console.log("Received data:", req.body);  // Log the incoming data
-    const { name, country, lat, lon, weather } = req.body;
-    const location = new Exits({ name, country, lat, lon, weather });
+    const { name, city, country, lat, lon, zip, weather, forecast } = req.body;
+    const location = new Exit({ name, city, country, lat, lon, zip, weather, forecast });
     
     try {
         const savedLocation = await location.save();
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
 // DELETE /api/exits/:id
 router.delete("/:id", async (req, res) => {
     try {
-        const location = await Exits.findByIdAndDelete(req.params.id)
+        const location = await Exit.findByIdAndDelete(req.params.id)
         if (!location) {
             return res.status(404).json({ error: "Location not found" })
         }
