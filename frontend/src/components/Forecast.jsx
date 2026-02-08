@@ -254,7 +254,7 @@ export default function Forecast({ forecastInfo }) {
 
         {/* Footer Note */}
             <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-center text-xs text-gray-600">
-                Arrow shows wind direction • Numbers in MPH • Scroll horizontally for more
+                • Arrow shows wind direction <br /> • Scroll horizontally for more information
             </div>
         </div>
     );
