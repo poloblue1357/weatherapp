@@ -175,8 +175,8 @@ function getWeatherIcon(condition) {
 
 // Get background color based on wind speed for individual hour
 function getHourBackgroundColor(windSpeed) {
-    if (windSpeed <= 4) return 'bg-green-100';
-    if (windSpeed === 5) return 'bg-amber-100';
+    if (windSpeed <= 13) return 'bg-green-100';
+    if (windSpeed === 14) return 'bg-amber-100';
     return 'bg-red-100';
 }
 
@@ -214,15 +214,15 @@ export default function Forecast({ forecastInfo }) {
             <div className="flex justify-center gap-6 mt-3 text-sm">
             <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-emerald-400 rounded"></div>
-                <span>Good (≤4 mph)</span>
+                <span>Good <br /> (≤13 mph)</span>
             </div>
             <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-amber-400 rounded"></div>
-                <span>Caution (5 mph)</span>
+                <span>Caution<br /> (14 mph)</span>
             </div>
             <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-red-400 rounded"></div>
-                <span>Evaluate (&gt;5 mph)</span>
+                <span>Evaluate <br /> (&gt;15 mph)</span>
             </div>
             </div>
         </div>

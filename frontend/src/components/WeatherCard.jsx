@@ -33,6 +33,13 @@ function toDirection(code) {
     return i === -1 ? code : DIRECTIONS[(i + 8) % 16];
 }
 
+function displayGust(windGusts, windSpeed) {
+    if (!windGusts || windGusts === "N/A") return "N/A";
+    if (Number(windGusts) <= Number(windSpeed)) return "Light and variable";
+    return `${windGusts} mph`;
+}
+
+
 
 export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
     const getWindConditions = (windSpeed) => {
@@ -41,9 +48,9 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
             return { color: 'from-gray-500 to-gray-600', text: 'WIND DATA UNAVAILABLE' };
         }
 
-        if (speed <= 4) {
+        if (speed <= 13) {
             return { color: 'from-green-500 to-emerald-600', text: 'GOOD CONDITIONS FOR JUMPING' };
-        } else if (speed === 5) {
+        } else if (speed === 14) {
             return { color: 'from-amber-500 to-orange-600', text: 'PROCEED WITH CAUTION' };
         } else {
             return { color: 'from-red-500 to-rose-600', text: 'EVALUATE CONDITIONS ON SITE' };
@@ -150,12 +157,10 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
                             </div>
                             <div className="bg-amber-50 p-3 rounded-xl">
                                 <div className="text-xs text-gray-600 font-medium mb-1">Gusts</div>
-                                <div className="text-xl font-bold text-amber-900">
-                                    {weatherInfo.windGusts !== "N/A"
-                                        ? <>{weatherInfo.windGusts} <span className="text-sm font-normal">mph</span></>
-                                        : <span className="text-sm">None</span>
-                                    }
-                                </div>
+                                    <div className="text-xl font-bold text-amber-900">
+                                        {displayGust(weatherInfo.windGusts, weatherInfo.windSpeed)}
+                                    </div>
+
                             </div>
                         </div>
                     </div>

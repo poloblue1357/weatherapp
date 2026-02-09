@@ -128,8 +128,8 @@ router.get("/", async (req, res) => {
             return `${diffHours} hours ago`;
         }
 
-        const windSpeed = xmlData.current.wind[0].speed[0].$.value;
-        const windGust = jsonData.wind?.gust
+        const windSpeed = Math.round(xmlData.current.wind[0].speed[0].$.value * 10) / 10
+        const windGust = Math.round(jsonData.wind?.gust * 10) / 10
 
         const weather = {
             city: xmlData.current.city[0].$.name, // string
@@ -149,11 +149,10 @@ router.get("/", async (req, res) => {
             lastUpdate: formatLastUpdate(xmlData.current.lastupdate[0].$.value), // str
             timezone: Number(xmlData.current.city[0].timezone[0]), // str
             visibility: Math.round(Number(xmlData.current.visibility[0].$.value) / 1609.34 * 10) / 10, // num
-            pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(2)), // num
+            pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(1)), // num
             humidity: Number(xmlData.current.humidity[0].$.value), // num
         }
-        // console.log('weather', weather)
-                // Helper to format day
+        // Helper to format day
         function formatDay(utcMillis, timezoneOffset) {
             const localDate = new Date(utcMillis + timezoneOffset * 1000);
             const options = { weekday: "short", month: "short", day: "numeric" };
