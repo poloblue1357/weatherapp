@@ -195,7 +195,7 @@ router.get("/", async (req, res) => {
             precipitation: item.pop, // num
         }));
 
-        // console.log('forecast', forecast)
+        console.log('weather', weather)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
