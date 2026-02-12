@@ -74,6 +74,32 @@ router.get("/", async (req, res) => {
             { params }
         )
         const jsonData = jsonResponse.data
+        // console.log(jsonData)
+// let moonData;
+
+// if (jsonData) {
+//     try {
+//         // Fetching moon data using One Call API
+//         const moonResponse = await axios.get("https://api.openweathermap.org/data/2.5/onecall", {
+//             params: {
+//                 lon: jsonData.coord.lon,
+//                 lat: jsonData.coord.lat,
+//                 appid: process.env.OPENWEATHER_API_KEY,
+//                 exclude: "current,minutely,hourly,alerts", // Optional: excluding unnecessary data
+//             }
+//         });
+
+//         // Storing the moon data
+//         moonData = moonResponse.data;
+
+//         // If moonData is successfully fetched, log it
+//         console.log(moonData);
+//     } catch (error) {
+//         console.error("Error fetching moon data:", error);
+//     }
+// } else {
+//     console.log("No valid jsonData to fetch moon data.");
+// }
 
         // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {
@@ -194,7 +220,7 @@ router.get("/", async (req, res) => {
             precipitation: item.pop, // num
         }));
 
-        console.log('weather', weather)
+        // console.log('weather', weather)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)

@@ -43,12 +43,10 @@
 // --Push notifications for alerts
 
 
-
 import React from 'react';
-import { Navigation } from 'lucide-react';
 
 // Group forecast by date
-function groupByDate( forecastInfo ) {
+function groupByDate(forecastInfo) {
     const groups = [];
     let currentDate = null;
     let currentGroup = [];
@@ -72,96 +70,16 @@ function groupByDate( forecastInfo ) {
     return groups;
 }
 
-// Individual forecast column
-function ForecastColumn( {data} ) {
-    const maxHeight = 120;
-    // Calculate heights but cap them so numbers don't go off screen
-    const windHeight = Math.min(data.windSpeed * 10, maxHeight - 25); // Leave 25px for number
-    const gustHeight = Math.min(data.gust * 10, maxHeight - 25);
-
-    const bgColor = getHourBackgroundColor(data.windSpeed);
-
-    return (
-        <div className={`flex-shrink-0 relative border-r border-gray-200 pr-3 last:border-r-0 ${bgColor} rounded-xl p-3 -mx-1`}>
-        <div className="flex gap-2">
-            {/* Wind Bar */}
-            <div className="w-14 flex flex-col items-center">
-            {/* Wind Bar Container */}
-            <div className="relative flex items-end justify-center" style={{ height: `${maxHeight}px` }}>
-                {/* Wind Speed Number - 7.5px ABOVE BAR */}
-                <div
-                className="absolute text-sm font-bold text-blue-900"
-                style={{ bottom: `${windHeight + 7.5}px` }}
-                >
-                {data.windSpeed}
-                </div>
-            
-                {/* Wind Bar with gradient and shadow */}
-                <div
-                className="w-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all shadow-md"
-                style={{ height: `${windHeight}px` }}
-                />
-            </div>
-
-            {/* Wind Direction - BELOW BAR - ARROW */}
-            <div className="mt-2 flex flex-col items-center">
-                <div
-                className="text-black text-xl font-bold leading-none mb-1"
-                style={{ transform: `rotate(${data.degree - 42}deg)` }}
-                >
-                ↑
-                </div>
-                <div className="text-xs font-bold text-gray-800">{data.direction}</div>
-                <div className="text-xs text-gray-500">{data.degree}°</div>
-            </div>
-            </div>
-
-            {/* Gust Bar */}
-            <div className="w-14 flex flex-col items-center">
-            {/* Gust Bar Container */}
-            <div className="relative flex items-end justify-center" style={{ height: `${maxHeight}px` }}>
-                {/* Gust Number - 7.5px ABOVE BAR */}
-                <div
-                className="absolute text-sm font-bold text-purple-900"
-                style={{ bottom: `${gustHeight + 7.5}px` }}
-                >
-                {data.gust}
-                </div>
-            
-                {/* Gust Bar with gradient and shadow */}
-                <div
-                className="w-14 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-lg transition-all shadow-md"
-                style={{ height: `${gustHeight}px` }}
-                />
-            </div>
-
-            {/* Precipitation info below */}
-            <div className="mt-2 flex flex-col items-center">
-                <div className="text-xs font-semibold text-gray-700 mb-1">Precip</div>
-                <div className="text-xs text-blue-600 font-bold">
-                {data.precipitation > 0 ? `${data.precipitation}"` : '0"'}
-                </div>
-                <div className="text-xs text-blue-600 font-bold">
-                {data.precipitation > 0 ? `${(data.precipitation * 100).toFixed(0)}%` : '0%'}
-                </div>
-            </div>
-            </div>
-        </div>
-
-        {/* Additional Info Below */}
-        <div className="mt-3 text-center space-y-1">
-            <div className="text-s font-bold text-black-600">{data.time}</div>
-            <div className="text-xs text-gray-700 capitalize flex items-center justify-center gap-1">
-            <span>{getWeatherIcon(data.condition)}</span>
-            <span>{data.condition}</span>
-            </div>
-            <div className="text-sm font-bold text-gray-800">{data.temp}°F</div>
-        </div>
-        </div>
-    );
+// Get bar color based on gust delta
+function getBarColor(windSpeed, gust) {
+    const delta = gust - windSpeed;
+    
+    if (delta < 4) return 'from-blue-600 to-blue-400';      // Calm - minimal gusting
+    if (delta < 7) return 'from-orange-600 to-orange-400';  // Moderate - noticeable gusts
+    return 'from-red-600 to-red-400';                        // Significant - dangerous gusts
 }
 
-// Get weather icon based on condition
+// Get weather icon
 function getWeatherIcon(condition) {
     const lower = condition.toLowerCase();
     if (lower.includes('clear')) return '☀️';
@@ -170,14 +88,73 @@ function getWeatherIcon(condition) {
     if (lower.includes('snow')) return '❄️';
     if (lower.includes('partly')) return '⛅';
     if (lower.includes('thunder') || lower.includes('storm')) return '⛈️';
-    return '🌤️'; // default partly cloudy
+    return '🌤️';
 }
 
-// Get background color based on wind speed for individual hour
-function getHourBackgroundColor(windSpeed) {
-    if (windSpeed <= 13) return 'bg-green-100';
-    if (windSpeed === 14) return 'bg-amber-100';
-    return 'bg-red-100';
+// Individual forecast column
+function ForecastColumn({ data }) {
+    const maxHeight = 120;
+    // Minimum bar height of 35px so arrow is always visible
+    const barHeight = Math.max(Math.min(data.windSpeed * 10, maxHeight - 25), 35);
+    const barColor = getBarColor(data.windSpeed, data.gust);
+
+    return (
+        <div className="flex-shrink-0 relative border-r border-gray-200 pr-3 last:border-r-0">
+        <div className="w-16 flex flex-col items-center">
+            {/* Wind Speed Number - ABOVE BAR */}
+            <div className="relative flex items-end justify-center mb-1" style={{ height: `${maxHeight}px` }}>
+            <div
+                className="absolute text-sm font-bold text-gray-900"
+                style={{ bottom: `${barHeight + 7.5}px` }}
+            >
+                {data.windSpeed}
+            </div>
+            
+            {/* Single Bar with Color Based on Gust Delta */}
+            <div
+                className={`w-16 bg-gradient-to-t ${barColor} rounded-t-lg transition-all shadow-md relative flex items-center justify-center`}
+                style={{ height: `${barHeight}px` }}
+            >
+                {/* Wind Arrow Inside Bar */}
+                <div
+                className="text-white text-2xl font-bold"
+                style={{ transform: `rotate(${data.degree - 42}deg)` }}
+                >
+                ↑
+                </div>
+            </div>
+            </div>
+
+            {/* Gust Value BELOW BAR - First */}
+            <div className="mt-2 flex flex-col items-center">
+            <div className="text-xs font-semibold text-gray-700">Gust</div>
+            <div className="text-sm font-bold text-gray-900">{data.gust}</div>
+            </div>
+
+            {/* Divider Line */}
+            <div className="w-full border-t border-gray-300 my-2"></div>
+
+            {/* Wind Direction Info BELOW Gust - Second */}
+            <div className="flex flex-col items-center">
+            <div className="text-xs font-bold text-gray-800">{data.direction}</div>
+            <div className="text-xs text-gray-500">{data.degree}°</div>
+            </div>
+
+            {/* Divider Line */}
+            <div className="w-full border-t border-gray-300 my-2"></div>
+        </div>
+
+        {/* Additional Info Below */}
+        <div className="mt-3 text-center space-y-1 w-16">
+            <div className="text-sm font-bold text-gray-800">{data.time}</div>
+            <div className="text-xs text-gray-700 capitalize flex items-center justify-center gap-1">
+            <span>{getWeatherIcon(data.condition)}</span>
+            <span className="truncate">{data.condition}</span>
+            </div>
+            <div className="text-sm font-medium text-gray-900">{data.temp}°F</div>
+        </div>
+        </div>
+    );
 }
 
 // Day group component
@@ -190,7 +167,7 @@ function DayGroup({ date, items }) {
         </div>
 
         {/* Forecast Columns */}
-        <div className="flex gap-3">
+        <div className="flex gap-2">
             {items.map((item, idx) => (
             <ForecastColumn
                 key={idx}
@@ -204,38 +181,36 @@ function DayGroup({ date, items }) {
 
 // Main Timeline Component
 export default function Forecast({ forecastInfo }) {
+  // Safety check - return null if no data
+    if (!forecastInfo || forecastInfo.length === 0) {
+        return null;
+    }
+
     const groupedData = groupByDate(forecastInfo);
 
     return (
-        <div className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden mb-5">
+        <div className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden mb-4">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white p-5">
             <h2 className="text-xl font-bold text-center">5-Day Wind Forecast</h2>
-            <div className="flex justify-center gap-6 mt-3 text-sm">
-            <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-emerald-400 rounded"></div>
-                <span>Good <br /> (≤13 mph)</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-amber-400 rounded"></div>
-                <span>Caution<br /> (14 mph)</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-400 rounded"></div>
-                <span>Evaluate <br /> (&gt;15 mph)</span>
-            </div>
-            </div>
         </div>
 
         {/* Legend */}
-        <div className="bg-gray-50 border-b border-gray-200 px-6 py-3 flex justify-center gap-8 text-sm">
+        <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
+            <div className="text-center text-sm font-bold text-gray-700 mb-2">Bar Color = Gust Severity</div>
+            <div className="flex justify-center gap-6 text-xs">
             <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span className="font-semibold text-gray-700">Wind Speed (mph)</span>
+                <div className="w-4 h-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded"></div>
+                <span className="text-gray-700">Minimal (&lt;4 mph)</span>
             </div>
             <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-purple-500 rounded"></div>
-            <span className="font-semibold text-gray-700">Gusts (mph)</span>
+                <div className="w-4 h-4 bg-gradient-to-t from-orange-600 to-orange-400 rounded"></div>
+                <span className="text-gray-700">Moderate (4-7 mph)</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-gradient-to-t from-red-600 to-red-400 rounded"></div>
+                <span className="text-gray-700">Significant (&gt;7 mph)</span>
+            </div>
             </div>
         </div>
 
@@ -253,9 +228,9 @@ export default function Forecast({ forecastInfo }) {
         </div>
 
         {/* Footer Note */}
-            <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-center text-xs text-gray-600">
-                • Arrow shows wind direction <br /> • Scroll horizontally for more information
-            </div>
+        <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-center text-xs text-gray-600">
+            Arrow shows wind direction • Numbers in MPH • <br /> Bar color shows gust severity
+        </div>
         </div>
     );
 }
