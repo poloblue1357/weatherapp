@@ -4,6 +4,7 @@ import mongoose from "mongoose"
 import exitRoutes from "./routes/exitRoutes.js"
 import weatherRoutes from "./routes/weather.js"
 import 'dotenv/config'; 
+import geoRoutes from "./routes/geo.js"
 
 const app = express()
 
@@ -12,6 +13,7 @@ app.use(cors())
 app.use(express.json())
 app.use("/api/exits", exitRoutes)
 app.use("/api/weather", weatherRoutes)
+app.use('/api/geo', geoRoutes)
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)

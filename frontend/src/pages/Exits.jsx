@@ -5,7 +5,7 @@ import WeatherTile from "../components/WeatherTile";
 // local storage with a way to add/remove
 // limit to 8 exits in favorites
 // input field + form for submitting new exit
-// only need to save city/zip and lat/lon and name on backend
+// only need to save lat/lon and name on backend
 // drag/rearrange exits? favorites?
 // search bar - browse known exits
 function Exits() {
