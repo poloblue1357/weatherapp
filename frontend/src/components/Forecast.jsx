@@ -74,7 +74,8 @@ function groupByDate(forecastInfo) {
 function getBarColor(windSpeed, gust) {
     const delta = gust - windSpeed;
     
-    if (delta < 4) return 'from-blue-600 to-blue-400';      // Calm - minimal gusting
+    // if (delta < 4) return 'from-blue-600 to-blue-400';      // Calm - minimal gusting
+    if (delta < 4) return 'from-green-500 to-emerald-600'
     if (delta < 7) return 'from-orange-600 to-orange-400';  // Moderate - noticeable gusts
     return 'from-red-600 to-red-400';                        // Significant - dangerous gusts
 }
@@ -162,7 +163,8 @@ function DayGroup({ date, items }) {
     return (
         <div className="relative inline-flex flex-col border-r-2 border-gray-300 pr-6 mr-6 last:border-r-0 last:mr-0">
         {/* Day Header */}
-        <div className="mb-4 text-center bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white py-3 px-5 rounded-xl shadow-lg">
+        {/* <div className="mb-4 text-center bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white py-3 px-5 rounded-xl shadow-lg"> */}
+        <div className="mb-4 text-center bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 py-3 px-5 rounded-xl shadow-md">
             <div className="text-base font-bold">{date}</div>
         </div>
 
@@ -200,7 +202,8 @@ export default function Forecast({ forecastInfo }) {
             <div className="text-center text-sm font-bold text-gray-700 mb-2">Bar Color = Gust Severity</div>
             <div className="flex justify-center gap-6 text-xs">
             <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded"></div>
+                {/* <div className="w-4 h-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded"></div> */}
+                <div className="w-4 h-4 bg-gradient-to-t from-green-500 to-emerald-600 rounded"></div>
                 <span className="text-gray-700">Minimal (&lt;4 mph)</span>
             </div>
             <div className="flex items-center gap-2">

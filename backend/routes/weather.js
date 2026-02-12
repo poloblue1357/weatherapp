@@ -198,7 +198,8 @@ router.get("/", async (req, res) => {
             } else if (hours === 0) {
                 hours = 12;
             }
-            return `${hours}:${minutes} ${period}`;
+            // return `${hours}:${minutes} ${period}`;
+            return `${hours} ${period}`;
         }
 
         // 5-day timezone
