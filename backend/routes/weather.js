@@ -222,7 +222,7 @@ router.get("/", async (req, res) => {
         }));
 
         // console.log('weather', weather)
-        console.log('forecast', forecast[2])
+        // console.log('forecast', forecast)
         res.json({ weather, forecast })
     } catch (error) {
         console.error("OpenWeatherMap error:", error.response?.data || error.message)
