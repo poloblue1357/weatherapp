@@ -92,12 +92,31 @@ function getWeatherIcon(condition) {
     return '🌤️';
 }
 
+const DIRECTIONS = [
+    "N","NNE","NE","ENE",
+    "E","ESE","SE","SSE",
+    "S","SSW","SW","WSW",
+    "W","WNW","NW","NNW"
+];
+
+function toDirection(code) {
+    const i = DIRECTIONS.indexOf(code);
+    return i === -1 ? code : DIRECTIONS[(i + 8) % 16];
+}
+
 // Individual forecast column
 function ForecastColumn({ data }) {
     const maxHeight = 120;
     // Minimum bar height of 35px so arrow is always visible
     const barHeight = Math.max(Math.min(data.windSpeed * 10, maxHeight - 25), 35);
     const barColor = getBarColor(data.windSpeed, data.gust);
+
+    // const windConditions = getWindConditions(weatherInfo?.windSpeed);
+    const windDeg = Number(data.degree); // API: where wind comes FROM
+    const ICON_OFFSET = 45; // Navigation icon points 45° clockwise by default
+
+    // const rotation = (windDeg + 180 - ICON_OFFSET + 360) % 360;
+    const rotation = (windDeg + 180 - 0 + 360) % 360;
 
     return (
         <div className="flex-shrink-0 relative border-r border-gray-200 pr-3 last:border-r-0">
@@ -119,7 +138,7 @@ function ForecastColumn({ data }) {
                 {/* Wind Arrow Inside Bar */}
                 <div
                 className="text-white text-2xl font-bold"
-                style={{ transform: `rotate(${data.degree - 42}deg)` }}
+                style={{ transform: `rotate(${rotation}deg)` }}
                 >
                 ↑
                 </div>
@@ -137,8 +156,9 @@ function ForecastColumn({ data }) {
 
             {/* Wind Direction Info BELOW Gust - Second */}
             <div className="flex flex-col items-center">
-            <div className="text-xs font-bold text-gray-800">{data.direction}</div>
-            <div className="text-xs text-gray-500">{data.degree}°</div>
+            {/* <div className="text-xs font-bold text-gray-800">{data.direction}</div> */}
+            <div className="text-xs font-bold text-gray-800">{toDirection(data.direction)}</div>
+            <div className="text-xs text-gray-500">From {data.degree}°</div>
             </div>
 
             {/* Divider Line */}
