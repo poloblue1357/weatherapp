@@ -26,7 +26,7 @@ function Exits() {
 
             {/* form, submit button to database or email? both? title, button */}
 
-            <GeoSearch />
+            {/* <GeoSearch /> */}
             <NavBar currentPage="exits"/>
         </div>
     )

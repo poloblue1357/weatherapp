@@ -8,13 +8,11 @@ export const fetchGeoData = async (location) => {
         if (!response.ok) {
             const errText = await response.text();
             console.error('geoAPI error:', errText);
-            throw new Error(`HTTP ${response.status}: ${errText}`);
+            throw new Error(`HTTP ${response.status}: ${errText}`); // Fixed: changed to template literal
         }
-
         const geoData = await response.json()
-        console.log(geoData)
-        return geoData // returns formatted info from backend
-
+        // console.log(geoData)
+        return geoData
     } catch (error) {
         console.error('Fetch failed:', error);
         return null;
