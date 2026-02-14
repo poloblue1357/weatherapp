@@ -1,8 +1,9 @@
+
 export const fetchGeoData = async (location) => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
     const url = `${API_URL}/api/geo/autocomplete?text=${encodeURIComponent(location)}&limit=5`
 
-        try {
+    try {
         const response = await fetch(url);
         if (!response.ok) {
             const errText = await response.text();
