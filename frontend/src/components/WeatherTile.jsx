@@ -35,7 +35,7 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId 
                 </div>
                 <button
                     onClick={handleRemove}
-                    className="text-sm w-20 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold p-2 rounded-lg mr-1 ml-2 flex items-center justify-center transition-all"
+                    className="text-sm w-20 bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 text-red-900 font-bold p-2 rounded-lg mr-1 ml-2 flex items-center justify-center transition-all shadow-sm border border-red-300"
                 >
                     Remove
                 </button>

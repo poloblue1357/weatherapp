@@ -222,13 +222,13 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
                         onClick={onToggleFavorite}
                         className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
                             isFavorite
-                                ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white'
+                                ? 'bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 text-red-900 border-2 border-red-300'
                                 : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
                         }`}
                     >
                         {isFavorite ? (
                             <>
-                                <Heart className="w-5 h-5 fill-white" />
+                                <Heart className="w-5 h-5 fill-red-900" />
                                 Remove from Favorites
                             </>
                         ) : (

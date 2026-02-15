@@ -136,24 +136,24 @@ function Search() {
           <>
             <div className='flex gap-3 mb-6 p-1 bg-white rounded-xl shadow-lg'>
               <button
-                onClick={() => setActiveTab('current')}
-                className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all
-                          ${activeTab === 'current'
-                          ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md'
+                  onClick={() => setActiveTab('current')}
+                  className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${
+                      activeTab === 'current'
+                          ? 'bg-gradient-to-r from-purple-300 to-purple-400 text-white shadow-md'
                           : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
-                Current
+                  Current
               </button>
               <button
-                onClick={() => setActiveTab('forecast')}
-                className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all
-                          ${activeTab === 'forecast'
-                          ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md'
+                  onClick={() => setActiveTab('forecast')}
+                  className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${
+                      activeTab === 'forecast'
+                          ? 'bg-gradient-to-r from-purple-300 to-purple-400 text-white shadow-md'
                           : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
-                Forecast
+                  Forecast
               </button>
             </div>  
            

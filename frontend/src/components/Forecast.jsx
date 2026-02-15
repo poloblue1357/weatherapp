@@ -28,11 +28,9 @@ function groupByDate(forecastInfo) {
 // Get bar color based on gust delta
 function getBarColor(windSpeed, gust) {
     const delta = gust - windSpeed;
-    
-    // if (delta < 4) return 'from-blue-600 to-blue-400';      // Calm - minimal gusting
-    if (delta < 4) return 'from-green-500 to-emerald-600'
-    if (delta < 7) return 'from-orange-600 to-orange-400';  // Moderate - noticeable gusts
-    return 'from-red-600 to-red-400';                        // Significant - dangerous gusts
+    if (delta < 4) return 'from-green-300 to-emerald-300';      // Minimal
+    if (delta < 7) return 'from-yellow-200 to-amber-200';       // Moderate
+    return 'from-orange-300 to-red-300';                        // Significant
 }
 
 // Get weather icon
@@ -73,6 +71,11 @@ function ForecastColumn({ data }) {
     // const rotation = (windDeg + 180 - ICON_OFFSET + 360) % 360;
     const rotation = (windDeg + 180 - 0 + 360) % 360;
 
+        // Determine arrow color based on bar color
+        const arrowColor = barColor === 'from-yellow-200 to-amber-200'
+        ? 'text-gray-700'  // Dark arrow for light yellow bar
+        : 'text-white';     // White arrow for green and red bars
+
     return (
         <div className="flex-shrink-0 relative border-r border-gray-200 pr-3 last:border-r-0">
         <div className="w-16 flex flex-col items-center">
@@ -92,7 +95,7 @@ function ForecastColumn({ data }) {
             >
                 {/* Wind Arrow Inside Bar */}
                 <div
-                className="text-white text-2xl font-bold"
+                className={`${arrowColor} text-2xl font-bold`}
                 style={{ transform: `rotate(${rotation}deg)` }}
                 >
                 ↑
@@ -139,7 +142,7 @@ function DayGroup({ date, items }) {
         <div className="relative inline-flex flex-col border-r-2 border-gray-300 pr-6 mr-6 last:border-r-0 last:mr-0">
         {/* Day Header */}
         {/* <div className="mb-4 text-center bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white py-3 px-5 rounded-xl shadow-lg"> */}
-        <div className="mb-4 text-center bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 py-3 px-5 rounded-xl shadow-md">
+        <div className="mb-4 text-center bg-gradient-to-r from-blue-100 to-sky-100 text-blue-900 py-3 px-5 rounded-xl shadow-md border border-blue-200">
             <div className="text-base font-bold">{date}</div>
         </div>
 
@@ -176,19 +179,18 @@ export default function Forecast({ forecastInfo }) {
         <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
             <div className="text-center text-sm font-bold text-gray-700 mb-2">Bar Color = Gust Severity</div>
             <div className="flex justify-center gap-6 text-xs">
-            <div className="flex items-center gap-2">
-                {/* <div className="w-4 h-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded"></div> */}
-                <div className="w-4 h-4 bg-gradient-to-t from-green-500 to-emerald-600 rounded"></div>
-                <span className="text-gray-700">Minimal (&lt;4 mph)</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-gradient-to-t from-orange-600 to-orange-400 rounded"></div>
-                <span className="text-gray-700">Moderate (4-7 mph)</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-gradient-to-t from-red-600 to-red-400 rounded"></div>
-                <span className="text-gray-700">Significant (&gt;7 mph)</span>
-            </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gradient-to-t from-green-300 to-emerald-300 rounded"></div>
+                    <span className="text-gray-700">Minimal (&lt;4 mph)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gradient-to-t from-yellow-200 to-amber-200 rounded"></div>
+                    <span className="text-gray-700">Moderate (4-7 mph)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gradient-to-t from-orange-300 to-red-300 rounded"></div>
+                    <span className="text-gray-700">Significant (&gt;7 mph)</span>
+                </div>
             </div>
         </div>
 
