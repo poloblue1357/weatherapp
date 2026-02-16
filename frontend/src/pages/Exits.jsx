@@ -22,7 +22,16 @@ function Exits() {
 
 
             {/* form, button, title, state, get request */}
-
+            {/* <form>
+                <input 
+                    className="w-64 p-2 rounded-lg border border-gray-300 text-black bg-white" 
+                    type='text' 
+                    name='exitSearch' 
+                />
+                <button 
+                    className="px-4 py-2 bg-white text-blue-700 font-bold rounded-lg"
+                >Search Exits</button>
+            </form> */}
 
             {/* form, submit button to database or email? both? title, button */}
 
