@@ -7,7 +7,7 @@ const GEOAPIFY_BASE = 'https://api.geoapify.com/v1/geocode/autocomplete';
 router.get('/autocomplete', async (req, res) => {
     try {
         const { text, limit = 5, filter, lang, ...otherParams } = req.query;
-       
+
         if (!text || text.length < 2) {
             return res.status(400).json({ error: 'Query too short' });
         }
@@ -22,6 +22,7 @@ router.get('/autocomplete', async (req, res) => {
         });
 
         const response = await axios.get(`${GEOAPIFY_BASE}?${params.toString()}`); // Fixed: added (
+        // console.log(response.data)
         res.json(response.data);
     } catch (error) {
         console.error('Geoapify proxy error:', error.message);
