@@ -1,6 +1,7 @@
 
 export const fetchWeatherData = async (location) => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    // const API_URL = 'http://localhost:8000'
     const url = `${API_URL}/api/weather?location=${encodeURIComponent(location)}`
 
     try {

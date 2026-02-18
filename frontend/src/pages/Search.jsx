@@ -161,6 +161,9 @@ function Search() {
               <div className="mb-4">
                 <WeatherCard
                   weatherInfo={weatherInfo}
+                  lat={currentLat}
+                  lon={currentLon}
+                  forecastInfo={forecastInfo}
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                 />

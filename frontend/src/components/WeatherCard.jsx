@@ -1,6 +1,7 @@
 
 import { Heart, Wind, Droplets, Gauge, Eye, Sunrise, Sunset, MapPin, Plus, AlertCircle, Navigation } from 'lucide-react';
 import React, { useEffect, useRef } from 'react'
+import MoonInfo from './MoonInfo';
 
 const DetailCard = ({ icon, label, value, color }) => {
     const colorClasses = {
@@ -41,7 +42,7 @@ function displayGust(windGusts, windSpeed) {
 
 
 
-export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite }) {
+export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite, lat, lon, forecastInfo }) {
     const getWindConditions = (windSpeed) => {
         const speed = parseFloat(windSpeed);
         if (isNaN(speed)) {
@@ -195,6 +196,7 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite 
                         value={`${weatherInfo.visibility} mi`}
                         color="green"
                     />
+                    <MoonInfo weatherInfo={weatherInfo} lat={lat} lon={lon} forecastInfo={forecastInfo} />
                 </div>
                 {/* Sun Times */}
                 <div className="px-6 pb-6 grid grid-cols-2 gap-4">
