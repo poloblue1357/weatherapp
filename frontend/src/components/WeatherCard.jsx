@@ -184,7 +184,7 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite,
                         value={toDirection(weatherInfo.windDirectionCode)}
                         color="gray"
                     />
-                    <DetailCard
+                    {/* <DetailCard
                         icon={<Gauge className="w-5 h-5 text-purple-600" />}
                         label="Pressure"
                         value={`${weatherInfo.pressure} inHg`}
@@ -195,8 +195,11 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite,
                         label="Visibility"
                         value={`${weatherInfo.visibility} mi`}
                         color="green"
-                    />
-                    <MoonInfo weatherInfo={weatherInfo} lat={lat} lon={lon} forecastInfo={forecastInfo} />
+                    /> */}
+                </div>
+                 {/* Moon Info - Full Width Below Detail Cards */}
+                <div className="px-6 pb-6">
+                    <MoonInfo weatherInfo={weatherInfo} lat={lat} lon={lon} />
                 </div>
                 {/* Sun Times */}
                 <div className="px-6 pb-6 grid grid-cols-2 gap-4">
