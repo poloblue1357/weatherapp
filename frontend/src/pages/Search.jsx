@@ -20,6 +20,7 @@ function Search() {
   const [geoSearch, setGeoSearch] = useState(null);
   const geoSearchRef = useRef(); // Add ref
   const [selectedCoords, setSelectedCoords] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorited } = useFavorites();
@@ -33,6 +34,7 @@ function Search() {
   const handleSearch = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true)
    
     // use coordinates if available, otherwise use location string
     const searchParam = selectedCoords
@@ -45,23 +47,31 @@ function Search() {
     setLocation('')
     setSelectedCoords(null)
 
-    const data = await fetchWeatherData(searchParam);
-    if (data && data.weather && data.forecast) {
-      setWeatherInfo(data.weather);
-      setForecastInfo(data.forecast);
-      setCurrentLat(data.weather.lat);
-      setCurrentLon(data.weather.lon);
-      setLocation('');
-      setSelectedCoords(null)
-    } else {
-      setError('Could not fetch weather data. Please check the location.');
-      setWeatherInfo(null);
-      setForecastInfo(null);
-      setCurrentLat(null);
-      setCurrentLon(null);
-      setSelectedCoords('null')
+    try {
+        const data = await fetchWeatherData(searchParam);
+        if (data && data.weather && data.forecast) {
+          setWeatherInfo(data.weather);
+          setForecastInfo(data.forecast);
+          setCurrentLat(data.weather.lat);
+          setCurrentLon(data.weather.lon);
+          setLocation('');
+          setSelectedCoords(null)
+        } else {
+          throw new Error(`Invalid data format`)
+        } 
+      } catch (err) {
+          setError('Could not fetch weather data. Please check the location.');
+          setWeatherInfo(null);
+          setForecastInfo(null);
+          setCurrentLat(null);
+          setCurrentLon(null);
+          setSelectedCoords('null')
+          console.error(`fetch error:`, err)
+      } finally {
+        setLoading(false)
+      }
     }
-  };
+  // };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -131,7 +141,14 @@ function Search() {
             {error}
           </div>
         )}
-       
+        {/* loading spinner for when weatherapi is running */}
+        {loading && (
+          <div className="flex justify-center items-center space-x-2 mt-10 mb-10">
+            <div className="w-8 h-8 border-4 border-t-4 border-gray-300 rounded-full animate-spin border-t-indigo-600"></div>
+          </div>
+        )}
+
+
         {weatherInfo && forecastInfo && (
           <>
             <div className='flex gap-3 mb-6 p-1 bg-white rounded-xl shadow-lg'>
