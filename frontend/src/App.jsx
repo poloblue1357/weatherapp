@@ -4,13 +4,13 @@ import Contact from './pages/Contact';
 import Favorites from './pages/Favorites';
 import Exits from './pages/Exits';
 import Search from './pages/Search';
-import { FavoritesProvider } from './context/FavoritesContext';
+import { AppProvider } from './context/AppContext';
 import Forecast from "./components/Forecast"
 
 function App() {
 
   return (
-    <FavoritesProvider>
+    <AppProvider>
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
         <main className="flex-1">
           <Routes>
@@ -23,7 +23,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </FavoritesProvider>
+    </AppProvider>
   );
 }
 

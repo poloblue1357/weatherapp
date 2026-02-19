@@ -1,12 +1,12 @@
 import { Plus } from "lucide-react";
-import { useFavorites } from "../hooks/useFavorites";
+import { useApp } from "../hooks/useApp";
 import WeatherCard from "./WeatherCard";
 import Forecast from "./Forecast"; // Add this import
 import { useState } from "react"
 
 function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId }) {
     const [activeTab, setActiveTab] = useState('current')
-    const { removeFavorite } = useFavorites();
+    const { removeFavorite } = useApp();
 
     const handleRemove = (e) => {
         e.stopPropagation();

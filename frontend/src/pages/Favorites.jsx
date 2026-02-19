@@ -2,11 +2,11 @@ import WeatherTile from "../components/WeatherTile";
 import NavBar from "../components/NavBar";
 import Header from "../components/Header";
 import { useState, useContext, useEffect } from "react";
-import { FavoritesContext } from "../context/FavoritesContext";
+import { AppContext } from "../context/AppContext";
 import { fetchWeatherData } from "../api/weatherAPI";
 
 function Favorites() {
-    const { favorites } = useContext(FavoritesContext);
+    const { favorites } = useContext(AppContext);
 
     const [results, setResults] = useState([]);
     const [expandedId, setExpandedId] = useState(null);

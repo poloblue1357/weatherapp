@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect } from "react"
 
-export const FavoritesContext = createContext()
+export const AppContext = createContext()
 
-export function FavoritesProvider({children}) {
+export function AppProvider({children}) {
 
     const [favorites, setFavorites] = useState(() => {
         const saved = localStorage.getItem('exitwx-favorites')
@@ -46,7 +46,7 @@ export function FavoritesProvider({children}) {
     }
 
     return (
-        <FavoritesContext.Provider value={{
+        <AppContext.Provider value={{
             favorites, 
             addFavorite,
             removeFavorite,
@@ -54,7 +54,7 @@ export function FavoritesProvider({children}) {
             updateFavoriteName
         }}>
             {children}
-        </FavoritesContext.Provider>
+        </AppContext.Provider>
     )
 }
 

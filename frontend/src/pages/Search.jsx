@@ -5,7 +5,7 @@ import WeatherCard from '../components/WeatherCard';
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Header from "../components/Header";
-import { useFavorites } from '../hooks/useFavorites';
+import { useApp } from '../hooks/useApp';
 import Forecast from '../components/Forecast';
 import GeoSearch from '../components/GeoSearch';
 
@@ -22,8 +22,16 @@ function Search() {
   const [selectedCoords, setSelectedCoords] = useState(null)
   const [loading, setLoading] = useState(false)
 
+      // const [favorites, setFavorites] = useState(() => {
+      //     const saved = localStorage.getItem('exitwx-favorites')
+      //     return saved ? JSON.parse(saved) : []
+      // })
+      // useEffect(() => {
+      //     localStorage.setItem('exitwx-favorites', JSON.stringify(favorites))
+      // }, [favorites])
+
   const navigate = useNavigate();
-  const { addFavorite, removeFavorite, isFavorited } = useFavorites();
+  const { addFavorite, removeFavorite, isFavorited } = useApp();
 
   const isFavorite = currentLat && currentLon ? isFavorited(currentLat, currentLon) : false;
 
