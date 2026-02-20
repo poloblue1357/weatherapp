@@ -6,7 +6,7 @@ const GEOAPIFY_BASE = 'https://api.geoapify.com/v1/geocode/autocomplete';
 
 router.get('/autocomplete', async (req, res) => {
     try {
-        const { text, limit = 5, filter, lang, ...otherParams } = req.query;
+        const { text, limit = 4, filter, lang, ...otherParams } = req.query;
 
         if (!text || text.length < 2) {
             return res.status(400).json({ error: 'Query too short' });

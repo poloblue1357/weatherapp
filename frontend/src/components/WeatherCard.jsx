@@ -1,7 +1,7 @@
-
 import { Heart, Wind, Droplets, Gauge, Eye, Sunrise, Sunset, MapPin, Plus, AlertCircle, Navigation } from 'lucide-react';
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import MoonInfo from './MoonInfo';
+import { useApp } from '../hooks/useApp';
 
 const DetailCard = ({ icon, label, value, color }) => {
     const colorClasses = {
@@ -10,7 +10,7 @@ const DetailCard = ({ icon, label, value, color }) => {
         green: 'bg-green-50 border-green-200',
         gray: 'bg-gray-50 border-gray-200'
     };
-    
+   
     return (
         <div className={`${colorClasses[color]} p-4 rounded-xl border`}>
             <div className="flex items-center gap-2 mb-2">
@@ -40,9 +40,24 @@ function displayGust(windGusts, windSpeed) {
     return `${windGusts} mph`;
 }
 
+export default function WeatherCard({
+    weatherInfo, // Optional - for Favorites page (local data)
+    lat,         // Optional - for Favorites page
+    lon,         // Optional - for Favorites page
+    isFavorite,
+    onToggleFavorite
+}) {
+    // Get from context if not passed as props (for Search page)
+    const { currentWeather, currentForecast, currentLocation } = useApp();
+   
+    // Use props if available (Favorites), otherwise use context (Search)
+    const weather = weatherInfo || currentWeather;
+    const latitude = lat || currentLocation.lat;
+    const longitude = lon || currentLocation.lon;
 
+    // Safety check
+    if (!weather) return null;
 
-export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite, lat, lon, forecastInfo }) {
     const getWindConditions = (windSpeed) => {
         const speed = parseFloat(windSpeed);
         if (isNaN(speed)) {
@@ -58,12 +73,11 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite,
         }
     };
 
-    const windConditions = getWindConditions(weatherInfo?.windSpeed);
-    const windDeg = Number(weatherInfo.windDirectionDegrees); // API: where wind comes FROM
-    const ICON_OFFSET = 45; // Navigation icon points 45° clockwise by default
-
+    const windConditions = getWindConditions(weather?.windSpeed);
+    const windDeg = Number(weather.windDirectionDegrees);
+    const ICON_OFFSET = 45;
     const rotation = (windDeg + 180 - ICON_OFFSET + 360) % 360;
-    
+   
     return (
         <div className="space-y-4">
             {/* Wind Condition Alert Banner */}
@@ -85,11 +99,11 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite,
                         <div>
                             <div className="flex items-center gap-2 mb-2">
                                 <MapPin className="w-5 h-5" />
-                                <h2 className="text-2xl font-bold">{weatherInfo.city}</h2>
+                                <h2 className="text-2xl font-bold">{weather.city}</h2>
                             </div>
-                            <p className="text-blue-100 text-base mb-4 capitalize">{weatherInfo.condition}</p>
+                            <p className="text-blue-100 text-base mb-4 capitalize">{weather.condition}</p>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-bold">{weatherInfo.temp}</span>
+                                <span className="text-5xl font-bold">{weather.temp}</span>
                                 <span className="text-xl font-semibold">°F</span>
                             </div>
                         </div>
@@ -111,62 +125,51 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite,
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
                             <div className="relative w-28 h-28 mx-auto">
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-300 to-sky-100 rounded-full"></div>
-    <div className="absolute inset-2 bg-white rounded-full shadow-inner"></div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-300 to-sky-100 rounded-full"></div>
+                                <div className="absolute inset-2 bg-white rounded-full shadow-inner"></div>
 
-    {/* Compass background */}
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="absolute w-px h-full bg-gray-300 opacity-60" />
-        <div className="absolute h-px w-full bg-gray-300 opacity-60" />
+                                {/* Compass background */}
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="absolute w-px h-full bg-gray-300 opacity-60" />
+                                    <div className="absolute h-px w-full bg-gray-300 opacity-60" />
 
-        <span className="absolute top-1 left-1/2 -translate-x-1/2 text-xs font-semibold text-black">N</span>
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs text-black">S</span>
-        <span className="absolute right-1 top-1/2 -translate-y-1/2 text-xs text-black">E</span>
-        <span className="absolute left-1 top-1/2 -translate-y-1/2 text-xs text-black">W</span>
-    </div>
+                                    <span className="absolute top-1 left-1/2 -translate-x-1/2 text-xs font-semibold text-black">N</span>
+                                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs text-black">S</span>
+                                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-xs text-black">E</span>
+                                    <span className="absolute left-1 top-1/2 -translate-y-1/2 text-xs text-black">W</span>
+                                </div>
 
-    {/* Rotating arrow */}
-    {weatherInfo.windDirectionDegrees && (
-        <div
-            className="absolute inset-0 flex items-center justify-center transition-transform duration-500"
-            style={{ transform: `rotate(${rotation}deg)` }}
-        >
-            <Navigation className="w-12 h-12 text-blue-600" fill="currentColor" />
-        </div>
-    )}
-
-    {/* Direction label */}
-    <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center mt-16">
-            {/* <div className="text-xs font-bold text-gray-500 capitalize">
-                {toDirection(weatherInfo.windDirectionCode) || 'N/A'}
-            </div> */}
-        </div>
-    </div>
-</div>
-<div className="mt-2 text-center text-xs text-gray-600">
-  Wind from {weatherInfo.windDirectionDegrees}° 
-</div>
-
+                                {/* Rotating arrow */}
+                                {weather.windDirectionDegrees && (
+                                    <div
+                                        className="absolute inset-0 flex items-center justify-center transition-transform duration-500"
+                                        style={{ transform: `rotate(${rotation}deg)` }}
+                                    >
+                                        <Navigation className="w-12 h-12 text-blue-600" fill="currentColor" />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="mt-2 text-center text-xs text-gray-600">
+                                Wind from {weather.windDirectionDegrees}°
+                            </div>
                         </div>
                         <div className="flex-1 space-y-3">
                             <div className="bg-blue-50 p-3 rounded-xl">
                                 <div className="text-xs text-gray-600 font-medium mb-1">Speed</div>
                                 <div className="text-xl font-bold text-blue-900">
-                                    {weatherInfo.windSpeed} <span className="text-sm font-normal">mph</span>
+                                    {weather.windSpeed} <span className="text-sm font-normal">mph</span>
                                 </div>
                             </div>
                             <div className="bg-amber-50 p-3 rounded-xl">
                                 <div className="text-xs text-gray-600 font-medium mb-1">Gusts</div>
-                                    <div className="text-xl font-bold text-amber-900">
-                                        {displayGust(weatherInfo.windGusts, weatherInfo.windSpeed)}
-                                    </div>
-
+                                <div className="text-xl font-bold text-amber-900">
+                                    {displayGust(weather.windGusts, weather.windSpeed)}
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="mt-3 text-center text-sm text-gray-600 font-medium">
-                        {weatherInfo.windType}
+                        {weather.windType}
                     </div>
                 </div>
 
@@ -175,50 +178,39 @@ export default function WeatherCard({ weatherInfo, isFavorite, onToggleFavorite,
                     <DetailCard
                         icon={<Droplets className="w-5 h-5 text-blue-600" />}
                         label="Humidity"
-                        value={`${weatherInfo.humidity}%`}
+                        value={`${weather.humidity}%`}
                         color="blue"
                     />
                     <DetailCard
                         icon={<Wind className="w-5 h-5 text-gray-600" />}
                         label="Direction"
-                        value={toDirection(weatherInfo.windDirectionCode)}
+                        value={toDirection(weather.windDirectionCode)}
                         color="gray"
                     />
-                    {/* <DetailCard
-                        icon={<Gauge className="w-5 h-5 text-purple-600" />}
-                        label="Pressure"
-                        value={`${weatherInfo.pressure} inHg`}
-                        color="purple"
-                    />
-                    <DetailCard
-                        icon={<Eye className="w-5 h-5 text-green-600" />}
-                        label="Visibility"
-                        value={`${weatherInfo.visibility} mi`}
-                        color="green"
-                    /> */}
                 </div>
-                 {/* Moon Info - Full Width Below Detail Cards */}
+
+                {/* Moon Info - Full Width Below Detail Cards */}
                 <div className="px-6 pb-6">
-                    <MoonInfo weatherInfo={weatherInfo} lat={lat} lon={lon} />
+                    <MoonInfo weatherInfo={weather} lat={latitude} lon={longitude} />
                 </div>
+
                 {/* Sun Times */}
                 <div className="px-6 pb-6 grid grid-cols-2 gap-4">
                     <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-200">
                         <Sunrise className="w-6 h-6 text-orange-600 mb-2" />
                         <div className="text-xs font-medium text-gray-600">Sunrise</div>
-                        <div className="text-base font-semibold text-orange-900">{weatherInfo.sunrise}</div>
+                        <div className="text-base font-semibold text-orange-900">{weather.sunrise}</div>
                     </div>
                     <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
                         <Sunset className="w-6 h-6 text-indigo-600 mb-2" />
                         <div className="text-xs font-medium text-gray-600">Sunset</div>
-                        <div className="text-base font-semibold text-indigo-900">{weatherInfo.sunset}</div>
+                        <div className="text-base font-semibold text-indigo-900">{weather.sunset}</div>
                     </div>
                 </div>
 
-
                 {/* Last Updated */}
                 <div className="px-6 pb-4 text-center text-xs text-gray-500">
-                    Updated {weatherInfo.lastUpdate}
+                    Updated {weather.lastUpdate}
                 </div>
 
                 {/* Add/Remove Favorites Button */}

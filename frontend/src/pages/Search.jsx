@@ -10,22 +10,31 @@ import Forecast from '../components/Forecast';
 import GeoSearch from '../components/GeoSearch';
 
 function Search() {
-  const [weatherInfo, setWeatherInfo] = useState(null);
-  const [forecastInfo, setForecastInfo] = useState(null);
+  // LOCAL UI STATE (stays here)
   const [location, setLocation] = useState('');
   const [error, setError] = useState('');
-  const [currentLat, setCurrentLat] = useState(null);
-  const [currentLon, setCurrentLon] = useState(null);
   const [activeTab, setActiveTab] = useState('current');
   const [geoSearch, setGeoSearch] = useState(null);
-  const geoSearchRef = useRef(); // Add ref
+  const geoSearchRef = useRef();
   const [selectedCoords, setSelectedCoords] = useState(null)
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate();
-  const { addFavorite, removeFavorite, isFavorited } = useApp();
+ 
+  // GET FROM CONTEXT
+  const {
+    addFavorite,
+    removeFavorite,
+    isFavorited,
+    currentWeather,
+    currentForecast,
+    currentLocation,
+    updateWeather
+  } = useApp();
 
-  const isFavorite = currentLat && currentLon ? isFavorited(currentLat, currentLon) : false;
+  const isFavorite = currentLocation.lat && currentLocation.lon
+    ? isFavorited(currentLocation.lat, currentLocation.lon)
+    : false;
 
   const handleLocationSelect = (lat, lon) => {
     setSelectedCoords({ lat, lon })
@@ -36,12 +45,10 @@ function Search() {
     setError('');
     setLoading(true)
    
-    // use coordinates if available, otherwise use location string
     const searchParam = selectedCoords
-    ? `${selectedCoords.lat},${selectedCoords.lon}`
-    : location;
-    
-    // Cancel any pending geocoding fetch
+      ? `${selectedCoords.lat},${selectedCoords.lon}`
+      : location;
+   
     geoSearchRef.current?.cancelPendingFetch();
     setGeoSearch(null);
     setLocation('')
@@ -50,28 +57,19 @@ function Search() {
     try {
         const data = await fetchWeatherData(searchParam);
         if (data && data.weather && data.forecast) {
-          setWeatherInfo(data.weather);
-          setForecastInfo(data.forecast);
-          setCurrentLat(data.weather.lat);
-          setCurrentLon(data.weather.lon);
-          setLocation('');
-          setSelectedCoords(null)
+          // UPDATE CONTEXT instead of local state
+          updateWeather(data.weather, data.forecast, data.weather.lat, data.weather.lon);
         } else {
           throw new Error(`Invalid data format`)
-        } 
+        }
       } catch (err) {
           setError('Could not fetch weather data. Please check the location.');
-          setWeatherInfo(null);
-          setForecastInfo(null);
-          setCurrentLat(null);
-          setCurrentLon(null);
-          setSelectedCoords('null')
+          updateWeather(null, null, null, null);
           console.error(`fetch error:`, err)
       } finally {
         setLoading(false)
       }
-    }
-  // };
+  }
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -80,17 +78,17 @@ function Search() {
   };
 
   const toggleFavorite = () => {
-    if (!currentLat || !currentLon) return;
-    const cityName = weatherInfo?.city || location;
+    if (!currentLocation.lat || !currentLocation.lon) return;
+    const cityName = currentWeather?.city || location;
    
     if (isFavorite) {
-      const favoriteId = `${currentLat}-${currentLon}`;
+      const favoriteId = `${currentLocation.lat}-${currentLocation.lon}`;
       removeFavorite(favoriteId);
     } else {
       addFavorite({
         name: cityName,
-        lat: currentLat,
-        lon: currentLon
+        lat: currentLocation.lat,
+        lon: currentLocation.lon
       });
     }
   };
@@ -122,17 +120,16 @@ function Search() {
               </button>
             </div>
            
-            {/* Overlay GeoSearch suggestions */}
-              <div className="absolute w-full z-10 mt-2">
-                  <GeoSearch
-                    ref={geoSearchRef}
-                    location={location}
-                    setLocation={setLocation}
-                    geoSearch={geoSearch}
-                    setGeoSearch={setGeoSearch}
-                    onLocationSelect={handleLocationSelect}
-                  />
-                </div>
+            <div className="absolute w-full z-10 mt-2">
+              <GeoSearch
+                ref={geoSearchRef}
+                location={location}
+                setLocation={setLocation}
+                geoSearch={geoSearch}
+                setGeoSearch={setGeoSearch}
+                onLocationSelect={handleLocationSelect}
+              />
+            </div>
           </div>
         </div>
 
@@ -141,15 +138,14 @@ function Search() {
             {error}
           </div>
         )}
-        {/* loading spinner for when weatherapi is running */}
+
         {loading && (
           <div className="flex justify-center items-center space-x-2 mt-10 mb-10">
             <div className="w-8 h-8 border-4 border-t-4 border-gray-300 rounded-full animate-spin border-t-indigo-600"></div>
           </div>
         )}
 
-
-        {weatherInfo && forecastInfo && (
+        {currentWeather && currentForecast && (
           <>
             <div className='flex gap-3 mb-6 p-1 bg-white rounded-xl shadow-lg'>
               <button
@@ -177,16 +173,12 @@ function Search() {
             {activeTab === 'current' ? (
               <div className="mb-4">
                 <WeatherCard
-                  weatherInfo={weatherInfo}
-                  lat={currentLat}
-                  lon={currentLon}
-                  forecastInfo={forecastInfo}
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                 />
               </div>
             ) : (
-              <Forecast forecastInfo={forecastInfo} />
+              <Forecast forecastInfo={currentForecast} />
             )}
           </>
         )}
