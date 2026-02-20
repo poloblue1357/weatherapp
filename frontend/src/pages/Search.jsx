@@ -22,14 +22,6 @@ function Search() {
   const [selectedCoords, setSelectedCoords] = useState(null)
   const [loading, setLoading] = useState(false)
 
-      // const [favorites, setFavorites] = useState(() => {
-      //     const saved = localStorage.getItem('exitwx-favorites')
-      //     return saved ? JSON.parse(saved) : []
-      // })
-      // useEffect(() => {
-      //     localStorage.setItem('exitwx-favorites', JSON.stringify(favorites))
-      // }, [favorites])
-
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorited } = useApp();
 
