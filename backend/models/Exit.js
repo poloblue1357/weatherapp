@@ -7,6 +7,7 @@ const exitSchema = new mongoose.Schema({
     lat: { type: Number, required: true },
     lon: { type: Number, required: true },
     name: { type: String, required: true }, // exit name should be required
+    email: { type: String, required: true},
     zip: { type: String }, // changed to string for leading zeros
 
     // current weather info

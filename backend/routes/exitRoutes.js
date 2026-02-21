@@ -15,8 +15,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     console.log("Received data:", req.body);  // Log the incoming data
-    const { name, city, country, lat, lon, zip, weather, forecast } = req.body;
-    const location = new Exit({ name, city, country, lat, lon, zip, weather, forecast });
+    const { name, city, country, lat, lon, zip, weather, forecast, email } = req.body;
+    const location = new Exit({ name, city, country, lat, lon, zip, weather, forecast, email });
     
     try {
         const savedLocation = await location.save();

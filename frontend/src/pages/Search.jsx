@@ -37,16 +37,20 @@ function Search() {
     : false;
 
   const handleLocationSelect = (lat, lon) => {
-    setSelectedCoords({ lat, lon })
-  }
+    const coords = { lat, lon };
+    setSelectedCoords(coords);
+    handleSearch(null, coords);
+  };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = async (e, coordsOverride) => {
+    e?.preventDefault();
     setError('');
     setLoading(true)
+
+    const coordsToUse = coordsOverride || selectedCoords
    
     const searchParam = selectedCoords
-      ? `${selectedCoords.lat},${selectedCoords.lon}`
+      ? `${coordsToUse.lat},${coordsToUse.lon}`
       : location;
    
     geoSearchRef.current?.cancelPendingFetch();
