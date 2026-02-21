@@ -39,19 +39,24 @@ router.get("/", async (req, res) => {
         units
     }
 
+    // DECODE the location first (handles URL encoding)
+    const decodedLocation = decodeURIComponent(location);
+
     // determine type of location
-    const isLatLon = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(location);
-    const isZip = /^\d{5}$/.test(location);
+    const isLatLon = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(decodedLocation);
+    const isZip = /^\d{5}$/.test(decodedLocation);
 
     if (isLatLon) {
-        const [lat, lon] = location.split(",");
+        const [lat, lon] = decodedLocation.split(",");
         params.lat = parseFloat(lat.trim());
         params.lon = parseFloat(lon.trim());
+        // console.log('Parsed lat/lon:', params.lat, params.lon)
     } else if (isZip) {
-        params.zip = `${location},US`;
+        params.zip = `${decodedLocation},US`;
     } else {
-        params.q = location;
+        params.q = decodedLocation;
     }
+
 
     try {
         // Fetch 5-day forecast data
@@ -67,7 +72,7 @@ router.get("/", async (req, res) => {
             { params: { ...params, mode: "xml" } }
         )
         const xmlData = await parseStringPromise(xmlResponse.data)
-        // console.log(xmlData.current)
+        // console.log('XML Data Structure:', JSON.stringify(xmlData, null, 2))
         // Fetch current weather in JSON format (for wind gusts)
         const jsonResponse = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
@@ -132,27 +137,33 @@ router.get("/", async (req, res) => {
         const windSpeed = Math.round(xmlData.current.wind[0].speed[0].$.value * 10) / 10
         const windGust = Math.round(jsonData.wind?.gust * 10) / 10
 
+        // ADD SAFETY CHECKS for wind direction
+        const windDirection = xmlData.current.wind[0].direction[0];
+        const hasWindDirection = windDirection && typeof windDirection === 'object';
+
         const weather = {
-            dt: jsonData.dt,
-            city: xmlData.current.city[0].$.name, // string
-            lat: parseFloat(xmlData.current.city[0].coord[0].$.lat), // num
-            lon: parseFloat(xmlData.current.city[0].coord[0].$.lon), // num
-            country: xmlData.current.city[0].country[0], // string
-            temp: Math.round(Number(xmlData.current.temperature[0].$.value) * 10) / 10, // num
+            city: xmlData.current.city[0].$.name,
+            lat: parseFloat(xmlData.current.city[0].coord[0].$.lat),
+            lon: parseFloat(xmlData.current.city[0].coord[0].$.lon),
+            country: xmlData.current.city[0].country[0],
+            temp: Math.round(Number(xmlData.current.temperature[0].$.value) * 10) / 10,
             condition: xmlData.current.weather[0].$.value,
-            windSpeed: Number(windSpeed), 
-            windType: xmlData.current.wind[0].speed[0].$.name, //str
-            windDirection: xmlData.current.wind[0].direction[0].$.name, //str
-            windDirectionCode: convertDegreesToCode(xmlData.current.wind[0].direction[0].$.value), //str
-            windDirectionDegrees: Number(xmlData.current.wind[0].direction[0].$.value), //str
-            windGusts: (windGust && windGust !== windSpeed) ? Number(windGust) : 0, // num
-            sunrise: formatTime(xmlData.current.city[0].sun[0].$.rise, xmlData.current.city[0].timezone[0]), //str
-            sunset: formatTime(xmlData.current.city[0].sun[0].$.set, xmlData.current.city[0].timezone[0]), //str
-            lastUpdate: formatLastUpdate(xmlData.current.lastupdate[0].$.value), // str
-            timezone: Number(xmlData.current.city[0].timezone[0]), // str
-            visibility: Math.round(Number(xmlData.current.visibility[0].$.value) / 1609.34 * 10) / 10, // num
-            pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(1)), // num
-            humidity: Number(xmlData.current.humidity[0].$.value), // num
+            windSpeed: Number(windSpeed),
+            windType: xmlData.current.wind[0].speed[0].$.name,
+        
+            // FIX: Handle missing wind direction
+            windDirection: hasWindDirection ? xmlData.current.wind[0].direction[0].$.name : 'Light & Variable',
+            windDirectionCode: hasWindDirection ? convertDegreesToCode(xmlData.current.wind[0].direction[0].$.value) : 'N/A',
+            windDirectionDegrees: hasWindDirection ? Number(xmlData.current.wind[0].direction[0].$.value) : 0,
+        
+            windGusts: (windGust && windGust !== windSpeed) ? Number(windGust) : 0,
+            sunrise: formatTime(xmlData.current.city[0].sun[0].$.rise, xmlData.current.city[0].timezone[0]),
+            sunset: formatTime(xmlData.current.city[0].sun[0].$.set, xmlData.current.city[0].timezone[0]),
+            lastUpdate: formatLastUpdate(xmlData.current.lastupdate[0].$.value),
+            timezone: Number(xmlData.current.city[0].timezone[0]),
+            visibility: Math.round(Number(xmlData.current.visibility[0].$.value) / 1609.34 * 10) / 10,
+            pressure: Number((Number(xmlData.current.pressure[0].$.value) / 33.8639).toFixed(1)),
+            humidity: Number(xmlData.current.humidity[0].$.value),
         }
         // Helper to format day
         function formatDay(utcMillis, timezoneOffset) {

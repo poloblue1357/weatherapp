@@ -36,48 +36,53 @@ function Search() {
     ? isFavorited(currentLocation.lat, currentLocation.lon)
     : false;
 
+  // NEW: Separate handler for GeoSearch selection
   const handleLocationSelect = (lat, lon) => {
-    const coords = { lat, lon };
-    setSelectedCoords(coords);
-    handleSearch(null, coords);
+    performSearch(`${lat},${lon}`);
   };
 
-  const handleSearch = async (e, coordsOverride) => {
-    e?.preventDefault();
-    setError('');
-    setLoading(true)
-
-    const coordsToUse = coordsOverride || selectedCoords
+  // NEW: Main search function (no parameters)
+  const handleSearchClick = (e) => {
+    e.preventDefault();
    
     const searchParam = selectedCoords
-      ? `${coordsToUse.lat},${coordsToUse.lon}`
+      ? `${selectedCoords.lat},${selectedCoords.lon}`
       : location;
    
+    performSearch(searchParam);
+  };
+
+  // NEW: Actual search logic (DRY - Don't Repeat Yourself)
+  const performSearch = async (searchParam) => {
+    if (!searchParam) return;
+
+    setError('');
+    setLoading(true);
+
     geoSearchRef.current?.cancelPendingFetch();
     setGeoSearch(null);
-    setLocation('')
-    setSelectedCoords(null)
+    setLocation('');
+    setSelectedCoords(null);
 
     try {
-        const data = await fetchWeatherData(searchParam);
-        if (data && data.weather && data.forecast) {
-          // UPDATE CONTEXT instead of local state
-          updateWeather(data.weather, data.forecast, data.weather.lat, data.weather.lon);
-        } else {
-          throw new Error(`Invalid data format`)
-        }
-      } catch (err) {
-          setError('Could not fetch weather data. Please check the location.');
-          updateWeather(null, null, null, null);
-          console.error(`fetch error:`, err)
-      } finally {
-        setLoading(false)
+      const data = await fetchWeatherData(searchParam);
+      if (data && data.weather && data.forecast) {
+        updateWeather(data.weather, data.forecast, data.weather.lat, data.weather.lon);
+      } else {
+        throw new Error('Invalid data format');
       }
-  }
+    } catch (err) {
+      setError('Could not fetch weather data. Please check the location.');
+      updateWeather(null, null, null, null);
+      console.error('fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleSearch(e);
+      handleSearchClick(e);
     }
   };
 
@@ -117,7 +122,7 @@ function Search() {
                 className="w-full p-5 pr-14 border-0 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg bg-white shadow-lg"
               />
               <button
-                onClick={handleSearch}
+                onClick={handleSearchClick}
                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-3 rounded-xl transition-all shadow-lg"
               >
                 <SearchIcon className="w-6 h-6" />
