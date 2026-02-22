@@ -27,16 +27,16 @@ app.get("/api/health", (req, res) => {
     res.json({ status: "ok" })
 })
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
-// Serve Vite build files
-app.use(express.static(path.join(__dirname, "dist")));
+// // Serve Vite build files
+// app.use(express.static(path.join(__dirname, "dist")));
 
-// SPA fallback
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
+// // SPA fallback
+// app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
