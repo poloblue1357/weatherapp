@@ -72,6 +72,7 @@ router.get("/", async (req, res) => {
             { params: { ...params, mode: "xml" } }
         )
         const xmlData = await parseStringPromise(xmlResponse.data)
+        console.log(xmlData.current)
         // console.log('XML Data Structure:', JSON.stringify(xmlData, null, 2))
         // Fetch current weather in JSON format (for wind gusts)
         const jsonResponse = await axios.get(
@@ -142,6 +143,7 @@ router.get("/", async (req, res) => {
         const hasWindDirection = windDirection && typeof windDirection === 'object';
 
         const weather = {
+            dt: jsonData.dt,
             city: xmlData.current.city[0].$.name,
             lat: parseFloat(xmlData.current.city[0].coord[0].$.lat),
             lon: parseFloat(xmlData.current.city[0].coord[0].$.lon),

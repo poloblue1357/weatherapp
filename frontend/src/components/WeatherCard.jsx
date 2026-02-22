@@ -36,7 +36,7 @@ function toDirection(code) {
 
 function displayGust(windGusts, windSpeed) {
     if (!windGusts || windGusts === "N/A") return "N/A";
-    if (Number(windGusts) <= Number(windSpeed)) return "Light and variable";
+    if (Number(windGusts) <= Number(windSpeed)) return "Light and Variable";
     return `${windGusts} mph`;
 }
 

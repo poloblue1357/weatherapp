@@ -5,8 +5,8 @@ import exitRoutes from "./routes/exitRoutes.js"
 import weatherRoutes from "./routes/weather.js"
 import 'dotenv/config'; 
 import geoRoutes from "./routes/geo.js"
-import path from "path";
-import { fileURLToPath } from "url";
+// import path from "path";
+// import { fileURLToPath } from "url";
 
 const app = express()
 
