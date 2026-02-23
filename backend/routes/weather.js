@@ -65,14 +65,14 @@ router.get("/", async (req, res) => {
             { params: { ...params, mode: 'json' } }
         )
         const fiveDayData = fiveDayResponse.data
-        // console.log(fiveDayData)
+        // console.log(fiveDayData.list[0].clouds)
         // Fetch current weather in XML format
         const xmlResponse = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
             { params: { ...params, mode: "xml" } }
         )
         const xmlData = await parseStringPromise(xmlResponse.data)
-        console.log(xmlData.current)
+        // console.log(xmlData.current)
         // console.log('XML Data Structure:', JSON.stringify(xmlData, null, 2))
         // Fetch current weather in JSON format (for wind gusts)
         const jsonResponse = await axios.get(
