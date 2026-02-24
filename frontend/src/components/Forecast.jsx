@@ -26,11 +26,17 @@ function groupByDate(forecastInfo) {
 }
 
 // Get bar color based on gust delta
+// function getBarColor(windSpeed, gust) {
+//     const delta = gust - windSpeed;
+//     if (delta < 4) return 'from-green-200 to-emerald-300';      // Safe
+//     if (delta < 7) return 'from-amber-200 to-yellow-300';       // Caution
+//     return 'from-red-200 to-rose-300';                          // Danger
+// }
 function getBarColor(windSpeed, gust) {
     const delta = gust - windSpeed;
-    if (delta < 4) return 'from-green-200 to-emerald-300';      // Safe
-    if (delta < 7) return 'from-amber-200 to-yellow-300';       // Caution
-    return 'from-red-200 to-rose-300';                          // Danger
+    if (delta < 4) return 'from-green-200 to-green-300';
+    if (delta < 7) return 'from-orange-200 to-orange-300';
+    return 'from-red-200 to-red-300';
 }
 
 // Get weather icon
@@ -166,7 +172,7 @@ export default function Forecast({ forecastInfo }) {
                         <span className="text-gray-700">Safe (&lt;4 mph)</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gradient-to-t from-amber-200 to-yellow-300 rounded"></div>
+                        <div className="w-4 h-4 bg-gradient-to-t from-orange-200 to-orange-300 rounded"></div>
                         <span className="text-gray-700">Caution (4-7 mph)</span>
                     </div>
                     <div className="flex items-center gap-2">
