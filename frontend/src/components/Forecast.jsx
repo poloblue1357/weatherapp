@@ -72,7 +72,7 @@ function ForecastColumn({ data }) {
                     <div
                         className="absolute text-3xl font-bold text-gray-800"  // Changed from text-2xl to text-3xl
                         style={{
-                            bottom: `${barHeight + 7.5}px`,
+                            bottom: `${barHeight + 2}px`,
                             transform: `rotate(${rotation}deg)`
                         }}
                     >
