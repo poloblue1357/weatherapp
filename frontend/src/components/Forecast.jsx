@@ -25,18 +25,12 @@ function groupByDate(forecastInfo) {
     return groups;
 }
 
-// Get bar color based on gust delta
-// function getBarColor(windSpeed, gust) {
-//     const delta = gust - windSpeed;
-//     if (delta < 4) return 'from-green-200 to-emerald-300';      // Safe
-//     if (delta < 7) return 'from-amber-200 to-yellow-300';       // Caution
-//     return 'from-red-200 to-rose-300';                          // Danger
-// }
-function getBarColor(windSpeed, gust) {
+// Get bar gradient based on gust delta
+function getBarGradient(windSpeed, gust) {
     const delta = gust - windSpeed;
-    if (delta < 4) return 'from-green-200 to-green-300';
-    if (delta < 7) return 'from-orange-200 to-orange-300';
-    return 'from-red-200 to-red-300';
+    if (delta < 4) return 'linear-gradient(to top, #30D158, #25A244)';
+    if (delta < 7) return 'linear-gradient(to top, #FF9F0A, #CC7A00)';
+    return 'linear-gradient(to top, #FF453A, #CC2A1F)';
 }
 
 // Get weather icon
@@ -63,65 +57,64 @@ function toDirection(code) {
     return i === -1 ? code : DIRECTIONS[(i + 8) % 16];
 }
 
+// ── Apple dark palette ──────────────────────────────────────────
+const T = {
+    card:      { background: '#1C1C1E' },
+    elevated:  { background: '#2C2C2E' },
+    border:    '#38383A',
+    header:    { background: 'linear-gradient(to right, #1C1C1E, #2C2C2E, #3A3A3C)' },
+    dayBadge:  { background: '#2C2C2E', border: '1px solid rgba(10,132,255,0.4)', color: 'white' },
+    textPrim:  { color: '#FFFFFF' },
+    textSec:   { color: 'rgba(235,235,245,0.6)' },
+    textThird: { color: 'rgba(235,235,245,0.35)' },
+    arrow:     { color: '#0A84FF' },
+};
+
 // Individual forecast column
 function ForecastColumn({ data }) {
     const maxHeight = 120;
     const barHeight = Math.max(Math.min(data.windSpeed * 10, maxHeight - 25), 35);
-    const barColor = getBarColor(data.windSpeed, data.gust);
-    const windDeg = Number(data.degree);
-    const rotation = (windDeg + 180 + 360) % 360;
+    const rotation = (Number(data.degree) + 180 + 360) % 360;
 
     return (
-        <div className="flex-shrink-0 relative border-r border-gray-200 pr-3 last:border-r-0">
-            <div className="w-16 flex flex-col items-center">
-                <div className="relative flex items-end justify-center mb-1" style={{ height: `${maxHeight}px` }}>
-                    <div
-                        className="absolute text-3xl font-bold text-gray-800"  // Changed from text-2xl to text-3xl
-                        style={{
-                            bottom: `${barHeight + 2}px`,
-                            transform: `rotate(${rotation}deg)`
-                        }}
-                    >
+        <div style={{ flexShrink: 0, borderRight: `1px solid ${T.border}`, paddingRight: 12 }}
+             className="last:border-r-0">
+            <div style={{ width: 64, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {/* Bar + arrow */}
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', height: maxHeight, marginBottom: 4 }}>
+                    <div style={{ position: 'absolute', bottom: barHeight + 4, fontSize: 22, fontWeight: 'bold', transform: `rotate(${rotation}deg)`, ...T.arrow }}>
                         ↑
                     </div>
-                   
-                    {/* Bar with Wind Speed Inside */}
-                    <div
-                        className={`w-16 bg-gradient-to-t ${barColor} rounded-t-lg transition-all shadow-md relative flex items-center justify-center px-1`}
-                        style={{ height: `${barHeight}px` }}
-                    >
-                        {/* Wind Speed with mph Inside Bar */}
-                        <div className="text-xs font-bold text-gray-900 text-center leading-tight">
-                            {data.windSpeed} mph
-                        </div>
+                    <div style={{ width: 64, height: barHeight, background: getBarGradient(data.windSpeed, data.gust), borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 11, fontWeight: 'bold', color: 'white' }}>{data.windSpeed} mph</span>
                     </div>
                 </div>
 
-                {/* Gust Value BELOW BAR */}
-                <div className="mt-2 flex flex-col items-center">
-                    <div className="text-xs font-semibold text-gray-700">Gust</div>
-                    <div className="text-sm font-bold text-gray-900">{data.gust}</div>
+                {/* Gust */}
+                <div style={{ marginTop: 8, textAlign: 'center' }}>
+                    <div style={{ fontSize: 11, ...T.textSec }}>Gust</div>
+                    <div style={{ fontSize: 13, fontWeight: 'bold', ...T.textPrim }}>{data.gust}</div>
                 </div>
 
-                <div className="w-full border-t border-gray-300 my-2"></div>
+                <div style={{ width: '100%', borderTop: `1px solid ${T.border}`, margin: '8px 0' }} />
 
-                {/* Wind Direction Info */}
-                <div className="flex flex-col items-center">
-                    <div className="text-xs font-bold text-gray-800">{toDirection(data.direction)}</div>
-                    <div className="text-xs text-gray-500">From {data.degree}°</div>
+                {/* Direction */}
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 11, fontWeight: 'bold', ...T.textPrim }}>{toDirection(data.direction)}</div>
+                    <div style={{ fontSize: 11, ...T.textThird }}>From {data.degree}°</div>
                 </div>
 
-                <div className="w-full border-t border-gray-300 my-2"></div>
+                <div style={{ width: '100%', borderTop: `1px solid ${T.border}`, margin: '8px 0' }} />
             </div>
 
-            {/* Additional Info Below */}
-            <div className="mt-3 text-center space-y-1 w-16">
-                <div className="text-sm font-bold text-gray-800">{data.time}</div>
-                <div className="text-xs text-gray-700 capitalize flex items-center justify-center gap-1">
+            {/* Time / condition / temp */}
+            <div style={{ textAlign: 'center', width: 64 }}>
+                <div style={{ fontSize: 13, fontWeight: 'bold', ...T.textPrim }}>{data.time}</div>
+                <div style={{ fontSize: 11, ...T.textSec, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
                     <span>{getWeatherIcon(data.condition)}</span>
-                    <span className="truncate">{data.condition}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 48 }}>{data.condition}</span>
                 </div>
-                <div className="text-sm font-medium text-gray-900">{data.temp}°F</div>
+                <div style={{ fontSize: 13, fontWeight: 500, ...T.textPrim }}>{data.temp}°F</div>
             </div>
         </div>
     );
@@ -130,17 +123,14 @@ function ForecastColumn({ data }) {
 // Day group component
 function DayGroup({ date, items }) {
     return (
-        <div className="relative inline-flex flex-col border-r-2 border-gray-300 pr-6 mr-6 last:border-r-0 last:mr-0">
-            <div className="mb-4 text-center bg-gradient-to-r from-blue-100 to-sky-100 text-blue-900 py-3 px-5 rounded-xl shadow-md border border-blue-200">
-                <div className="text-base font-bold">{date}</div>
+        <div style={{ display: 'inline-flex', flexDirection: 'column', borderRight: `2px solid ${T.border}`, paddingRight: 24, marginRight: 24 }}
+             className="last:border-r-0 last:mr-0">
+            <div style={{ marginBottom: 16, textAlign: 'center', ...T.dayBadge, padding: '8px 16px', borderRadius: 12, fontSize: 13, fontWeight: 'bold' }}>
+                {date}
             </div>
-
-            <div className="flex gap-2">
+            <div style={{ display: 'flex', gap: 8 }}>
                 {items.map((item, idx) => (
-                    <ForecastColumn
-                        key={idx}
-                        data={item}
-                    />
+                    <ForecastColumn key={idx} data={item} />
                 ))}
             </div>
         </div>
@@ -149,54 +139,49 @@ function DayGroup({ date, items }) {
 
 // Main Timeline Component
 export default function Forecast({ forecastInfo }) {
-    // Safety check - return null if no data
-    if (!forecastInfo || forecastInfo.length === 0) {
-        return null;
-    }
+    if (!forecastInfo || forecastInfo.length === 0) return null;
 
     const groupedData = groupByDate(forecastInfo);
 
     return (
-        <div className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden mb-4">
+        <div style={{ ...T.card, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.6)', marginBottom: 16 }}>
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-900 via-blue-700 to-sky-500 text-white p-5">
-                <h2 className="text-xl font-bold text-center">5-Day Wind Forecast</h2>
+            <div style={{ ...T.header, padding: 20 }}>
+                <h2 style={{ color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold', margin: 0 }}>
+                    5-Day Wind Forecast
+                </h2>
             </div>
 
             {/* Legend */}
-            <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
-                <div className="text-center text-sm font-bold text-gray-700 mb-2">Bar Color = Gust Severity</div>
-                <div className="flex justify-center gap-6 text-xs">
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gradient-to-t from-green-200 to-emerald-300 rounded"></div>
-                        <span className="text-gray-700">Safe (&lt;4 mph)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gradient-to-t from-orange-200 to-orange-300 rounded"></div>
-                        <span className="text-gray-700">Caution (4-7 mph)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gradient-to-t from-red-200 to-rose-300 rounded"></div>
-                        <span className="text-gray-700">Danger (&gt;7 mph)</span>
-                    </div>
+            <div style={{ ...T.elevated, borderBottom: `1px solid ${T.border}`, padding: '12px 24px' }}>
+                <div style={{ textAlign: 'center', fontSize: 11, fontWeight: 'bold', marginBottom: 8, ...T.textSec }}>
+                    Bar Color = Gust Severity
                 </div>
-            </div>
-
-            {/* Scrollable Timeline */}
-            <div className="overflow-x-auto p-6 pb-8">
-                <div className="inline-flex">
-                    {groupedData.map((group, idx) => (
-                        <DayGroup
-                            key={idx}
-                            date={group.date}
-                            items={group.items}
-                        />
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 20 }}>
+                    {[
+                        { bg: 'linear-gradient(to top, #30D158, #25A244)', label: 'Safe (<4 mph)' },
+                        { bg: 'linear-gradient(to top, #FF9F0A, #CC7A00)',  label: 'Caution (4–7 mph)' },
+                        { bg: 'linear-gradient(to top, #FF453A, #CC2A1F)',  label: 'Danger (>7 mph)' },
+                    ].map(({ bg, label }) => (
+                        <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ width: 14, height: 14, background: bg, borderRadius: 4 }} />
+                            <span style={{ fontSize: 11, ...T.textSec }}>{label}</span>
+                        </div>
                     ))}
                 </div>
             </div>
 
-            {/* Footer Note */}
-            <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-center text-xs text-gray-600">
+            {/* Scrollable Timeline */}
+            <div style={{ overflowX: 'auto', padding: 24 }}>
+                <div style={{ display: 'inline-flex' }}>
+                    {groupedData.map((group, idx) => (
+                        <DayGroup key={idx} date={group.date} items={group.items} />
+                    ))}
+                </div>
+            </div>
+
+            {/* Footer */}
+            <div style={{ ...T.elevated, borderTop: `1px solid ${T.border}`, padding: '12px 24px', textAlign: 'center', fontSize: 11, ...T.textThird }}>
                 Arrow shows wind direction • Numbers in MPH • Bar color shows gust severity
             </div>
         </div>

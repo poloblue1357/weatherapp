@@ -1,25 +1,26 @@
-import { Heart, Wind, Droplets, Gauge, Eye, Sunrise, Sunset, MapPin, Plus, AlertCircle, Navigation } from 'lucide-react';
-import React from 'react'
+import { Heart, Wind, Droplets, Sunrise, Sunset, MapPin, AlertCircle, Navigation, Cloud, Thermometer } from 'lucide-react';
 import MoonInfo from './MoonInfo';
 import { useApp } from '../hooks/useApp';
 
-const DetailCard = ({ icon, label, value, color }) => {
-    const colorClasses = {
-        blue: 'bg-blue-50 border-blue-200',
-        purple: 'bg-purple-50 border-purple-200',
-        green: 'bg-green-50 border-green-200',
-        gray: 'bg-gray-50 border-gray-200'
-    };
-   
-    return (
-        <div className={`${colorClasses[color]} p-4 rounded-xl border`}>
-            <div className="flex items-center gap-2 mb-2">
-                {icon}
-                <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">{label}</span>
-            </div>
-            <p className="text-xl font-bold text-gray-900">{value}</p>
-        </div>
-    );
+// ── Apple dark tokens ──────────────────────────────────────────
+const T = {
+    card:      { background: "#1C1C1E" },
+    elevated:  { background: "#2C2C2E" },
+    border:    "#38383A",
+    textPrim:  { color: "#FFFFFF" },
+    textSec:   { color: "rgba(235,235,245,0.8)" },
+    textThird: { color: "rgba(235,235,245,0.75)" },
+    blue:      { background: "rgba(10,132,255,0.15)",  border: "1px solid rgba(10,132,255,0.25)" },
+    yellow:    { background: "rgba(255,214,10,0.15)",  border: "1px solid rgba(255,214,10,0.25)" },
+    orange:    { background: "rgba(255,159,10,0.15)",  border: "1px solid rgba(255,159,10,0.25)" },
+    purple:    { background: "rgba(191,90,242,0.15)",  border: "1px solid rgba(191,90,242,0.25)" },
+    gray:      { background: "rgba(235,235,245,0.08)", border: "1px solid rgba(235,235,245,0.12)" },
+    teal:      { background: "rgba(90,200,250,0.15)",  border: "1px solid rgba(90,200,250,0.25)" },
+    mint:      { background: "rgba(99,230,185,0.15)",  border: "1px solid rgba(99,230,185,0.25)" },
+    blueText:  { color: "#64D2FF" },
+    yellowText:{ color: "#FFD60A" },
+    tealText:  { color: "#5AC8FA" },
+    mintText:  { color: "#63E6B9" },
 };
 
 const DIRECTIONS = [
@@ -40,202 +41,189 @@ function displayGust(windGusts, windSpeed) {
     return `${windGusts} mph`;
 }
 
+function getWindConditions(windSpeed) {
+    const s = parseFloat(windSpeed);
+    if (isNaN(s)) return { bg: "linear-gradient(to right, #3A3A3C, #6C6C70)", text: "WIND DATA UNAVAILABLE" };
+    if (s <= 13)  return { bg: "linear-gradient(to right, #1a7a3a, #30D158)", text: "GOOD CONDITIONS FOR JUMPING" };
+    if (s === 14) return { bg: "linear-gradient(to right, #b35a00, #FF9F0A)", text: "PROCEED WITH CAUTION" };
+    return          { bg: "linear-gradient(to right, #991F16, #FF453A)", text: "EVALUATE CONDITIONS ON SITE" };
+}
+
+function DetailCard({ icon, label, value, tint, textColor }) {
+    return (
+        <div style={{ ...tint, borderRadius: 12, padding: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                {icon}
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...T.textSec }}>{label}</span>
+            </div>
+            <p style={{ fontSize: 20, fontWeight: 700, margin: 0, ...textColor }}>{value}</p>
+        </div>
+    );
+}
+
 export default function WeatherCard({
-    weatherInfo, // Optional - for Favorites page (local data)
-    lat,         // Optional - for Favorites page
-    lon,         // Optional - for Favorites page
+    weatherInfo,
+    lat,
+    lon,
     isFavorite,
     onToggleFavorite
 }) {
-    // Get from context if not passed as props (for Search page)
-    const { currentWeather, currentForecast, currentLocation } = useApp();
-   
-    // Use props if available (Favorites), otherwise use context (Search)
+    const { currentWeather, currentLocation } = useApp();
+
     const weather = weatherInfo || currentWeather;
     const latitude = lat || currentLocation.lat;
     const longitude = lon || currentLocation.lon;
 
-    // Safety check
     if (!weather) return null;
 
-    const getWindConditions = (windSpeed) => {
-        const speed = parseFloat(windSpeed);
-        if (isNaN(speed)) {
-            return { color: 'from-gray-500 to-gray-600', text: 'WIND DATA UNAVAILABLE' };
-        }
+    const windConditions = getWindConditions(weather.windSpeed);
+    const rotation = (Number(weather.windDirectionDegrees) + 180 - 45 + 360) % 360;
 
-        if (speed <= 13) {
-            return { color: 'from-green-500 to-emerald-600', text: 'GOOD CONDITIONS FOR JUMPING' };
-        } else if (speed === 14) {
-            return { color: 'from-amber-500 to-orange-600', text: 'PROCEED WITH CAUTION' };
-        } else {
-            return { color: 'from-red-500 to-rose-600', text: 'EVALUATE CONDITIONS ON SITE' };
-        }
-    };
-
-    const windConditions = getWindConditions(weather?.windSpeed);
-    const windDeg = Number(weather.windDirectionDegrees);
-    const ICON_OFFSET = 45;
-    const rotation = (windDeg + 180 - ICON_OFFSET + 360) % 360;
-   
     return (
-        <div className="space-y-4">
-            {/* Wind Condition Alert Banner */}
-            <div className={`bg-gradient-to-r ${windConditions.color} text-white p-5 rounded-2xl shadow-xl flex items-center justify-between`}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+            {/* Alert banner */}
+            <div style={{ background: windConditions.bg, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
                 <div>
-                    <div className="text-xs font-semibold opacity-90 mb-1 uppercase tracking-wide">Status</div>
-                    <div className="text-base font-bold leading-tight">{windConditions.text}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.85, textTransform: "uppercase", letterSpacing: 1, color: "white", marginBottom: 4 }}>Status</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>{windConditions.text}</div>
                 </div>
-                <AlertCircle className="w-8 h-8 opacity-80 shrink-0 ml-2" />
+                <AlertCircle style={{ width: 28, height: 28, opacity: 0.85, color: "white", flexShrink: 0, marginLeft: 8 }} />
             </div>
 
-            {/* Main Weather Card */}
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-sky-600 text-white p-6 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
+            {/* Main card */}
+            <div style={{ ...T.card, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
 
-                    <div className="relative flex items-start justify-between">
+                {/* Header */}
+                <div style={{ background: "linear-gradient(to bottom right, #1C3A6E, #2255A4, #1a6aad)", padding: 24, position: "relative", overflow: "hidden" }}>
+                    <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, background: "rgba(255,255,255,0.06)", borderRadius: "50%", transform: "translate(50%,-50%)" }} />
+                    <div style={{ position: "absolute", bottom: 0, left: 0, width: 128, height: 128, background: "rgba(255,255,255,0.06)", borderRadius: "50%", transform: "translate(-40%,40%)" }} />
+                    <div style={{ position: "relative", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <MapPin className="w-5 h-5" />
-                                <h2 className="text-2xl font-bold">{weather.city}</h2>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                                <MapPin style={{ width: 18, height: 18, color: "rgba(235,235,245,0.8)" }} />
+                                <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", margin: 0 }}>{weather.city}</h2>
                             </div>
-                            <p className="text-blue-100 text-base mb-4 capitalize">{weather.condition}</p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-bold">{weather.temp}</span>
-                                <span className="text-xl font-semibold">°F</span>
+                            <p style={{ fontSize: 16, fontWeight: 500, color: "rgba(235,235,245,0.85)", margin: "0 0 12px", textTransform: "capitalize" }}>{weather.condition}</p>
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 8 }}>
+                                <span style={{ fontSize: 52, fontWeight: 700, color: "white", lineHeight: 1 }}>{weather.temp}</span>
+                                <span style={{ fontSize: 20, fontWeight: 600, color: "rgba(235,235,245,0.8)" }}>°F</span>
                             </div>
+                            <div style={{ fontSize: 13, ...T.textThird }}>Updated {weather.lastUpdate}</div>
                         </div>
                         <button
                             onClick={onToggleFavorite}
-                            className="p-3 hover:bg-white/20 rounded-full transition-all"
+                            style={{ padding: 10, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.1)", cursor: "pointer" }}
                         >
-                            <Heart
-                                className={`w-7 h-7 ${isFavorite ? 'fill-rose-600' : ''}`}
-                                strokeWidth={2}
-                            />
+                            <Heart style={{ width: 26, height: 26, color: isFavorite ? "#FF453A" : "white", fill: isFavorite ? "#FF453A" : "none" }} />
                         </button>
                     </div>
                 </div>
 
-                {/* Wind Compass */}
-                <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b">
-                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Wind Analysis</h3>
-                    <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                            <div className="relative w-28 h-28 mx-auto">
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-300 to-sky-100 rounded-full"></div>
-                                <div className="absolute inset-2 bg-white rounded-full shadow-inner"></div>
+                {/* Wind compass */}
+                <div style={{ padding: 24, borderBottom: `1px solid ${T.border}` }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...T.textSec, marginBottom: 16 }}>Wind Analysis</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
 
-                                {/* Compass background */}
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div className="absolute w-px h-full bg-gray-300 opacity-60" />
-                                    <div className="absolute h-px w-full bg-gray-300 opacity-60" />
-
-                                    <span className="absolute top-1 left-1/2 -translate-x-1/2 text-xs font-semibold text-black">N</span>
-                                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs text-black">S</span>
-                                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-xs text-black">E</span>
-                                    <span className="absolute left-1 top-1/2 -translate-y-1/2 text-xs text-black">W</span>
+                        {/* Compass — equal half */}
+                        <div style={{ flex: 1, flexShrink: 0 }}>
+                            <div style={{ position: "relative", width: 160, height: 160, margin: "0 auto" }}>
+                                <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle, #2a5a8c, #1a3a5c)", borderRadius: "50%" }} />
+                                <div style={{ position: "absolute", inset: 10, background: "#2C2C2E", borderRadius: "50%", boxShadow: "inset 0 2px 8px rgba(0,0,0,0.4)" }} />
+                                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+                                    <div style={{ position: "absolute", width: 1, height: "100%", background: "rgba(235,235,245,0.2)" }} />
+                                    <div style={{ position: "absolute", height: 1, width: "100%", background: "rgba(235,235,245,0.2)" }} />
+                                    {[["N","top",4],["S","bottom",4],["E","right",4],["W","left",4]].map(([d,side,o]) => (
+                                        <span key={d} style={{ position: "absolute", [side]: o, fontSize: 12, fontWeight: 700, color: "rgba(235,235,245,0.85)",
+                                            ...(side==="top"||side==="bottom" ? {left:"50%",transform:"translateX(-50%)"} : {top:"50%",transform:"translateY(-50%)"}) }}>
+                                            {d}
+                                        </span>
+                                    ))}
                                 </div>
-
-                                {/* Rotating arrow */}
-                                {weather.windDirectionDegrees && (
-                                    <div
-                                        className="absolute inset-0 flex items-center justify-center transition-transform duration-500"
-                                        style={{ transform: `rotate(${rotation}deg)` }}
-                                    >
-                                        <Navigation className="w-12 h-12 text-blue-600" fill="currentColor" />
-                                    </div>
-                                )}
+                                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", transform: `rotate(${rotation}deg)`, transition: "transform 0.5s" }}>
+                                    <Navigation style={{ width: 64, height: 64, color: "#0A84FF", fill: "#0A84FF" }} />
+                                </div>
                             </div>
-                            <div className="mt-2 text-center text-xs text-gray-600">
-                                Wind from {weather.windDirectionDegrees}°
-                            </div>
+                            <div style={{ marginTop: 8, textAlign: "center", fontSize: 11, ...T.textSec }}>From {weather.windDirectionDegrees}°</div>
                         </div>
-                        <div className="flex-1 space-y-3">
-                            <div className="bg-blue-50 p-3 rounded-xl">
-                                <div className="text-xs text-gray-600 font-medium mb-1">Speed</div>
-                                <div className="text-xl font-bold text-blue-900">
-                                    {weather.windSpeed} <span className="text-sm font-normal">mph</span>
-                                </div>
+
+                        {/* Speed + gusts — equal half */}
+                        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+                            <div style={{ ...T.blue, borderRadius: 12, padding: 12 }}>
+                                <div style={{ fontSize: 11, ...T.textSec, marginBottom: 4 }}>Speed</div>
+                                <div style={{ fontSize: 20, fontWeight: 700, ...T.blueText }}>{weather.windSpeed} <span style={{ fontSize: 13, fontWeight: 400 }}>mph</span></div>
                             </div>
-                            <div className="bg-amber-50 p-3 rounded-xl">
-                                <div className="text-xs text-gray-600 font-medium mb-1">Gusts</div>
-                                <div className="text-xl font-bold text-amber-900">
-                                    {displayGust(weather.windGusts, weather.windSpeed)}
-                                </div>
+                            <div style={{ ...T.yellow, borderRadius: 12, padding: 12 }}>
+                                <div style={{ fontSize: 11, ...T.textSec, marginBottom: 4 }}>Gusts</div>
+                                <div style={{ fontSize: 20, fontWeight: 700, ...T.yellowText }}>{displayGust(weather.windGusts, weather.windSpeed)}</div>
                             </div>
                         </div>
                     </div>
-                    <div className="mt-3 text-center text-sm text-gray-600 font-medium">
-                        {weather.windType}
-                    </div>
+                    <div style={{ marginTop: 12, textAlign: "center", fontSize: 13, ...T.textSec, fontWeight: 500 }}>{weather.windType}</div>
                 </div>
 
-                {/* Weather Details */}
-                <div className="p-6 grid grid-cols-2 gap-4">
+                {/* Detail cards — 2x2 grid */}
+                <div style={{ padding: 24, paddingBottom: 0, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     <DetailCard
-                        icon={<Droplets className="w-5 h-5 text-blue-600" />}
-                        label="Humidity"
-                        value={`${weather.humidity}%`}
-                        color="blue"
+                        icon={<Droplets style={{ width: 18, height: 18, color: "#0A84FF" }} />}
+                        label="Humidity" value={`${weather.humidity}%`}
+                        tint={T.blue} textColor={T.blueText}
                     />
                     <DetailCard
-                        icon={<Wind className="w-5 h-5 text-gray-600" />}
-                        label="Direction"
-                        value={toDirection(weather.windDirectionCode)}
-                        color="gray"
+                        icon={<Wind style={{ width: 18, height: 18, color: "rgba(235,235,245,0.7)" }} />}
+                        label="Direction" value={toDirection(weather.windDirectionCode)}
+                        tint={T.gray} textColor={T.textPrim}
+                    />
+                    <DetailCard
+                        icon={<Cloud style={{ width: 18, height: 18, color: "#5AC8FA" }} />}
+                        label="Cloud Cover" value={`${weather.cloudCover}%`}
+                        tint={T.teal} textColor={T.tealText}
+                    />
+                    <DetailCard
+                        icon={<Thermometer style={{ width: 18, height: 18, color: "#63E6B9" }} />}
+                        label="Feels Like" value={`${weather.feelsLike}°F`}
+                        tint={T.mint} textColor={T.mintText}
                     />
                 </div>
 
-                {/* Moon Info - Full Width Below Detail Cards */}
-                <div className="px-6 pb-6">
+                {/* Moon info */}
+                <div style={{ padding: "24px 24px 0" }}>
                     <MoonInfo weatherInfo={weather} lat={latitude} lon={longitude} />
                 </div>
 
-                {/* Sun Times */}
-                <div className="px-6 pb-6 grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-200">
-                        <Sunrise className="w-6 h-6 text-orange-600 mb-2" />
-                        <div className="text-xs font-medium text-gray-600">Sunrise</div>
-                        <div className="text-base font-semibold text-orange-900">{weather.sunrise}</div>
+                {/* Sunrise / Sunset */}
+                <div style={{ padding: 24, paddingBottom: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    <div style={{ ...T.orange, borderRadius: 12, padding: 16 }}>
+                        <Sunrise style={{ width: 22, height: 22, color: "#FF9F0A", marginBottom: 8 }} />
+                        <div style={{ fontSize: 11, fontWeight: 500, ...T.textSec }}>Sunrise</div>
+                        <div style={{ fontSize: 15, fontWeight: 600, ...T.textPrim }}>{weather.sunrise}</div>
                     </div>
-                    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
-                        <Sunset className="w-6 h-6 text-indigo-600 mb-2" />
-                        <div className="text-xs font-medium text-gray-600">Sunset</div>
-                        <div className="text-base font-semibold text-indigo-900">{weather.sunset}</div>
+                    <div style={{ ...T.purple, borderRadius: 12, padding: 16 }}>
+                        <Sunset style={{ width: 22, height: 22, color: "#BF5AF2", marginBottom: 8 }} />
+                        <div style={{ fontSize: 11, fontWeight: 500, ...T.textSec }}>Sunset</div>
+                        <div style={{ fontSize: 15, fontWeight: 600, ...T.textPrim }}>{weather.sunset}</div>
                     </div>
                 </div>
 
-                {/* Last Updated */}
-                <div className="px-6 pb-4 text-center text-xs text-gray-500">
-                    Updated {weather.lastUpdate}
-                </div>
-
-                {/* Add/Remove Favorites Button */}
-                <div className="p-6 pt-0">
+                {/* Favorite button */}
+                <div style={{ padding: "0 24px 24px" }}>
                     <button
                         onClick={onToggleFavorite}
-                        className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
-                            isFavorite
-                                ? 'bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 text-red-900 border-2 border-red-300'
-                                : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
-                        }`}
+                        style={{
+                            width: "100%", padding: "14px 0", borderRadius: 12, border: "none",
+                            fontWeight: 700, fontSize: 15, cursor: "pointer", transition: "all 0.2s",
+                            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                            background: isFavorite
+                                ? "linear-gradient(to right, #7B241C, #C0392B)"
+                                : "linear-gradient(to right, #0055AA, #0A84FF)",
+                            color: "white",
+                        }}
                     >
-                        {isFavorite ? (
-                            <>
-                                <Heart className="w-5 h-5 fill-red-900" />
-                                Remove from Favorites
-                            </>
-                        ) : (
-                            <>
-                                <Plus className="w-5 h-5" />
-                                Add to Favorites
-                            </>
-                        )}
+                        <Heart style={{ width: 18, height: 18, fill: "white", color: "white" }} />
+                        {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
                     </button>
                 </div>
+
             </div>
         </div>
     );

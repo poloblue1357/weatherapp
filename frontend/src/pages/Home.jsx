@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Search, Heart, Wind, MapPin } from 'lucide-react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';  // Add this import
+import Footer from '../components/Footer';
 
 function Home() {
     return (
@@ -18,7 +18,7 @@ function Home() {
                             LIVE CONDITIONS
                         </div>
                     </div>
-                   
+
                     <h2 className="text-4xl font-bold text-white mb-3">Ready to Jump?</h2>
                     <p className="text-blue-100 max-w-sm mx-auto leading-relaxed text-base px-4">
                         Check the weather at your favorite spots — made for sky and BASE jumpers.
@@ -26,12 +26,14 @@ function Home() {
                 </div>
 
                 <div className="space-y-4 w-full max-w-sm px-4">
+                    {/* Search Locations — solid Apple blue */}
                     <Link
                         to="/search"
-                        className="w-full bg-white hover:bg-blue-50 text-blue-900 font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
+                        style={{ background: "#0A84FF" }}
+                        className="w-full text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
                     >
                         <span className="flex items-center gap-3">
-                            <div className="bg-blue-600 p-2 rounded-lg group-hover:bg-blue-700 transition-colors">
+                            <div style={{ background: "rgba(255,255,255,0.2)" }} className="p-2 rounded-lg flex">
                                 <Search className="w-5 h-5 text-white" />
                             </div>
                             Search Locations
@@ -39,6 +41,7 @@ function Home() {
                         <span className="text-2xl">→</span>
                     </Link>
 
+                    {/* Known Exits — unchanged */}
                     <Link
                         to="/exits"
                         className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
@@ -50,6 +53,7 @@ function Home() {
                         <span className="text-2xl">→</span>
                     </Link>
 
+                    {/* My Favorites — unchanged */}
                     <Link
                         to="/favorites"
                         className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
@@ -63,7 +67,7 @@ function Home() {
                 </div>
             </main>
 
-            <Footer />  {/* Add this */}
+            <Footer />
         </div>
     );
 }
