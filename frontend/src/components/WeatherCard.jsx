@@ -23,6 +23,24 @@ const T = {
     mintText:  { color: "#63E6B9" },
 };
 
+// ── Weather-based header gradients (mapped by OWM condition code) ──
+function getHeaderGradient(id) {
+    if (!id) return "linear-gradient(to bottom right, #1C3A6E, #2255A4, #1a6aad)";
+    if (id >= 200 && id < 300) return "linear-gradient(to bottom right, #1a1a2e, #2d2d44, #4a4a6a)"; // Thunderstorm
+    if (id >= 300 && id < 400) return "linear-gradient(to bottom right, #1e3a5f, #1e40af, #3B82F6)"; // Drizzle
+    if (id >= 500 && id < 600) return "linear-gradient(to bottom right, #1e3a5f, #1e40af, #3B82F6)"; // Rain
+    if (id >= 600 && id < 700) return "linear-gradient(to bottom right, #1e3a5f, #2d5a8e, #94a3b8)"; // Snow
+    if (id >= 700 && id < 800) return "linear-gradient(to bottom right, #374151, #4B5563, #6B7280)"; // Atmosphere
+    if (id === 800)             return "linear-gradient(to bottom right, #0369A1, #0EA5E9, #38BDF8)"; // Clear
+    if (id > 800)               return "linear-gradient(to bottom right, #1d4ed8, #0284C7, #7DD3FC)"; // Clouds
+    return "linear-gradient(to bottom right, #1C3A6E, #2255A4, #1a6aad)";                            // Fallback
+}
+
+// Snow needs a dark overlay behind text for readability
+function isSnow(id) {
+    return id >= 600 && id < 700;
+}
+
 const DIRECTIONS = [
     "N","NNE","NE","ENE",
     "E","ESE","SE","SSE",
@@ -78,6 +96,8 @@ export default function WeatherCard({
 
     const windConditions = getWindConditions(weather.windSpeed);
     const rotation = (Number(weather.windDirectionDegrees) + 180 - 45 + 360) % 360;
+    const headerGradient = getHeaderGradient(weather.id);
+    const snowOverlay = isSnow(weather.id);
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -92,10 +112,14 @@ export default function WeatherCard({
             </div>
 
             {/* Main card */}
-            <div style={{ ...T.card, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+            <div style={{ ...T.card, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", border: "1.5px solid rgba(255,255,255,0.1)" }}>
 
                 {/* Header */}
-                <div style={{ background: "linear-gradient(to bottom right, #1C3A6E, #2255A4, #1a6aad)", padding: 24, position: "relative", overflow: "hidden" }}>
+                <div style={{ background: headerGradient, padding: 24, position: "relative", overflow: "hidden" }}>
+                    {/* Snow text overlay for readability */}
+                    {snowOverlay && (
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)" }} />
+                    )}
                     <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, background: "rgba(255,255,255,0.06)", borderRadius: "50%", transform: "translate(50%,-50%)" }} />
                     <div style={{ position: "absolute", bottom: 0, left: 0, width: 128, height: 128, background: "rgba(255,255,255,0.06)", borderRadius: "50%", transform: "translate(-40%,40%)" }} />
                     <div style={{ position: "relative", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>

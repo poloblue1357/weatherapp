@@ -80,7 +80,7 @@ router.get("/", async (req, res) => {
             { params }
         )
         const jsonData = jsonResponse.data
-        // console.log(jsonData)
+        // console.log(jsonData.weather[0].id)
 
         // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {
@@ -143,7 +143,10 @@ router.get("/", async (req, res) => {
         const hasWindDirection = windDirection && typeof windDirection === 'object';
 
         const weather = {
+            id: jsonData.weather[0].id,
             dt: jsonData.dt,
+            feelsLike: Math.round(jsonData.main.feels_like * 10) / 10,
+            cloudCover: jsonData.clouds.all,
             city: xmlData.current.city[0].$.name,
             lat: parseFloat(xmlData.current.city[0].coord[0].$.lat),
             lon: parseFloat(xmlData.current.city[0].coord[0].$.lon),

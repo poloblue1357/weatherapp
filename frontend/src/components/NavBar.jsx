@@ -7,7 +7,7 @@ const NavButton = ({ to, icon, label, active }) => (
         to={to}
         style={{
             display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-            padding: "8px 16px", borderRadius: 12, textDecoration: "none", transition: "all 0.2s",
+            padding: "12px 24px", borderRadius: 12, textDecoration: "none", transition: "all 0.2s",
             color: active ? "#0A84FF" : "rgba(235,235,245,0.45)",
         }}
     >
