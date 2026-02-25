@@ -4,9 +4,8 @@ import { fetchGeoData } from '../api/geoAPI';
 const GeoSearch = forwardRef(({ location, setLocation, geoSearch, setGeoSearch, onLocationSelect }, ref) => {
     const [loading, setLoading] = useState(false);
     const timeoutRef = useRef(null);
-    const skipNextFetch = useRef(false); // Flag to skip fetch after selection
+    const skipNextFetch = useRef(false);
 
-    // Expose cancelPendingFetch to parent via ref
     useImperativeHandle(ref, () => ({
         cancelPendingFetch: () => {
             if (timeoutRef.current) {
@@ -22,7 +21,6 @@ const GeoSearch = forwardRef(({ location, setLocation, geoSearch, setGeoSearch, 
             return;
         }
 
-        // Skip fetch if flag is set (after clicking a suggestion)
         if (skipNextFetch.current) {
             skipNextFetch.current = false;
             return;
@@ -30,19 +28,26 @@ const GeoSearch = forwardRef(({ location, setLocation, geoSearch, setGeoSearch, 
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
+        // ── Fix: cancelled flag prevents stale responses from updating state ──
+        let cancelled = false;
+
         timeoutRef.current = setTimeout(async () => {
             setLoading(true);
             try {
                 const data = await fetchGeoData(location);
-                setGeoSearch(data);
+                if (!cancelled) setGeoSearch(data);
             } catch (error) {
-                console.error('Failed to fetch:', error);
+                if (!cancelled) console.error('Failed to fetch:', error);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         }, 300);
 
-        return () => clearTimeout(timeoutRef.current);
+        return () => {
+            cancelled = true;
+            clearTimeout(timeoutRef.current);
+            setLoading(false);
+        };
     }, [location, setGeoSearch]);
 
     return (
@@ -55,20 +60,18 @@ const GeoSearch = forwardRef(({ location, setLocation, geoSearch, setGeoSearch, 
                             key={city.place_id}
                             className="p-3 cursor-pointer hover:bg-blue-100 border-b border-gray-100 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
                             onClick={() => {
-                                skipNextFetch.current = true; // Skip next fetch
+                                skipNextFetch.current = true;
                                 setLocation(city.formatted);
-
-                                if(onLocationSelect && city.lat && city.lon) {
-                                    onLocationSelect(city.lat, city.lon)
+                                if (onLocationSelect && city.lat && city.lon) {
+                                    onLocationSelect(city.lat, city.lon);
                                 }
-
                                 setGeoSearch(null);
                             }}
                         >
-                    {city.formatted}
+                            {city.formatted}
+                        </div>
+                    ))}
                 </div>
-            ))}
-            </div>
             )}
         </>
     );

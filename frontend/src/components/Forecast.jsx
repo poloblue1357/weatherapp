@@ -182,7 +182,7 @@ export default function Forecast({ forecastInfo }) {
 
             {/* Footer */}
             <div style={{ ...T.elevated, borderTop: `1px solid ${T.border}`, padding: '12px 24px', textAlign: 'center', fontSize: 11, ...T.textThird }}>
-                Arrow shows wind direction • Numbers in MPH • Bar color shows gust severity
+                Arrow shows wind direction • Numbers in MPH <br />• Bar color shows gust severity
             </div>
         </div>
     );
