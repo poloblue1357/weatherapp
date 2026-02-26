@@ -65,13 +65,13 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId 
                         size={20}
                         style={{ flexShrink: 0, marginLeft: 10, transition: "transform 0.2s", transform: isExpanded ? "rotate(45deg)" : "rotate(0deg)", ...T.arrow }}
                     />
-                    <span style={{ margin: "0 6px 0 8px", fontWeight: 600, fontSize: 14, width: 96, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...T.textPrim }}>
+                    <span style={{ margin: "0 6px 0 8px", fontWeight: 600, fontSize: 14, width: 105, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...T.textPrim }}>
                         {weatherInfo.city}
                     </span>
-                    <span style={{ fontWeight: 700, fontSize: 17, marginRight: 8, flexShrink: 0, ...T.textPrim }}>
+                    <span style={{ margin: '0 20px 0', fontWeight: 700, fontSize: 17, marginRight: 8, flexShrink: 0, ...T.textPrim }}>
                         {Math.round(weatherInfo.temp)}°
                     </span>
-                    <span style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, ...T.textSec, textTransform: "capitalize" }}>
+                    <span style={{fontSize: 16, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, ...T.textSec, textTransform: "capitalize" }}>
                         {weatherInfo.condition}
                     </span>
                 </div>
@@ -85,7 +85,7 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId 
                 style={{
                     transition: "opacity 0.3s, max-height 0.5s ease-in-out",
                     opacity: isExpanded ? 1 : 0,
-                    maxHeight: isExpanded ? 1000 : 0,
+                    maxHeight: isExpanded ? 2000 : 0,
                     overflow: "hidden",
                     marginBottom: isExpanded ? 16 : 0,
                 }}
