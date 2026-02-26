@@ -146,7 +146,7 @@ export default function WeatherCard({
 
                 {/* Wind compass */}
                 <div style={{ padding: 24, borderBottom: `1px solid ${T.border}` }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...T.textSec, marginBottom: 16 }}>Wind Analysis</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...T.textSec, marginBottom: 16 }}>Wind Analysis</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
 
                         {/* Compass — equal half */}
@@ -158,7 +158,7 @@ export default function WeatherCard({
                                     <div style={{ position: "absolute", width: 1, height: "100%", background: "rgba(235,235,245,0.2)" }} />
                                     <div style={{ position: "absolute", height: 1, width: "100%", background: "rgba(235,235,245,0.2)" }} />
                                     {[["N","top",4],["S","bottom",4],["E","right",4],["W","left",4]].map(([d,side,o]) => (
-                                        <span key={d} style={{ position: "absolute", [side]: o, fontSize: 12, fontWeight: 700, color: "rgba(235,235,245,0.85)",
+                                        <span key={d} style={{ position: "absolute", [side]: o, fontSize: 14, fontWeight: 700, color: "rgba(235,235,245,0.85)",
                                             ...(side==="top"||side==="bottom" ? {left:"50%",transform:"translateX(-50%)"} : {top:"50%",transform:"translateY(-50%)"}) }}>
                                             {d}
                                         </span>
@@ -168,7 +168,7 @@ export default function WeatherCard({
                                     <Navigation style={{ width: 64, height: 64, color: "#0A84FF", fill: "#0A84FF" }} />
                                 </div>
                             </div>
-                            <div style={{ marginTop: 8, textAlign: "center", fontSize: 11, ...T.textSec }}>From {weather.windDirectionDegrees}°</div>
+                            <div style={{ marginTop: 8, textAlign: "center", fontSize: 13, ...T.textSec }}>From {weather.windDirectionDegrees}°</div>
                         </div>
 
                         {/* Speed + gusts — equal half */}
@@ -183,7 +183,7 @@ export default function WeatherCard({
                             </div>
                         </div>
                     </div>
-                    <div style={{ marginTop: 12, textAlign: "center", fontSize: 13, ...T.textSec, fontWeight: 500 }}>{weather.windType}</div>
+                    <div style={{ marginTop: 12, textAlign: "center", fontSize: 15, ...T.textSec, fontWeight: 500 }}>{weather.windType}</div>
                 </div>
 
                 {/* Detail cards — 2x2 grid */}
@@ -219,12 +219,12 @@ export default function WeatherCard({
                 <div style={{ padding: 24, paddingBottom: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     <div style={{ ...T.orange, borderRadius: 12, padding: 16 }}>
                         <Sunrise style={{ width: 22, height: 22, color: "#FF9F0A", marginBottom: 8 }} />
-                        <div style={{ fontSize: 11, fontWeight: 500, ...T.textSec }}>Sunrise</div>
+                        <div style={{ fontSize: 15, fontWeight: 500, ...T.textSec }}>Sunrise</div>
                         <div style={{ fontSize: 15, fontWeight: 600, ...T.textPrim }}>{weather.sunrise}</div>
                     </div>
                     <div style={{ ...T.purple, borderRadius: 12, padding: 16 }}>
                         <Sunset style={{ width: 22, height: 22, color: "#BF5AF2", marginBottom: 8 }} />
-                        <div style={{ fontSize: 11, fontWeight: 500, ...T.textSec }}>Sunset</div>
+                        <div style={{ fontSize: 15, fontWeight: 500, ...T.textSec }}>Sunset</div>
                         <div style={{ fontSize: 15, fontWeight: 600, ...T.textPrim }}>{weather.sunset}</div>
                     </div>
                 </div>

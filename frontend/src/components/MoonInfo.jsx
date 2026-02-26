@@ -3,7 +3,7 @@ import * as SunCalc from 'suncalc';
 // ── Apple dark tokens ──────────────────────────────────────────
 const T = {
     wrap:   { background: "rgba(88,86,214,0.12)", border: "1px solid rgba(88,86,214,0.28)", borderRadius: 12, padding: 16 },
-    label:  { color: "rgba(235,235,245,0.8)", fontSize: 11, fontWeight: 500 },
+    label:  { color: "rgba(235,235,245,0.8)", fontSize: 15, fontWeight: 500 },
     value:  { color: "#7D7AFF" },
     times:  { color: "#7D7AFF" },
 };
@@ -57,11 +57,11 @@ function MoonInfo({ weatherInfo, lat, lon }) {
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ textAlign: "right" }}>
                         <div style={{ ...T.label }}>Moonrise</div>
-                        <div style={{ fontSize: 13, fontWeight: 600, ...T.times }}>{formatTime(times.rise)}</div>
+                        <div style={{ fontSize: 15, fontWeight: 600, ...T.times }}>{formatTime(times.rise)}</div>
                     </div>
                     <div style={{ textAlign: "right" }}>
                         <div style={{ ...T.label }}>Moonset</div>
-                        <div style={{ fontSize: 13, fontWeight: 600, ...T.times }}>{formatTime(times.set)}</div>
+                        <div style={{ fontSize: 15, fontWeight: 600, ...T.times }}>{formatTime(times.set)}</div>
                     </div>
                 </div>
             </div>
