@@ -12,7 +12,7 @@ const NavButton = ({ to, icon, label, active }) => (
         }}
     >
         {React.cloneElement(icon, { size: 22, strokeWidth: active ? 2.5 : 2 })}
-        <span style={{ fontSize: 11, fontWeight: active ? 700 : 500 }}>{label}</span>
+        <span style={{ fontSize: 15, fontWeight: active ? 700 : 500 }}>{label}</span>
     </Link>
 );
 
