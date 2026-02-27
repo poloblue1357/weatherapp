@@ -120,7 +120,6 @@ export default function WeatherCard({
     const { currentWeather, currentLocation, currentForecast } = useApp();
 
     const weather = weatherInfo || currentWeather;
-    console.log(currentWeather)
     const latitude = lat || currentLocation.lat;
     const longitude = lon || currentLocation.lon;
 
