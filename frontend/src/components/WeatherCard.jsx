@@ -250,7 +250,7 @@ export default function WeatherCard({
                 </div>
 
                 {/* Moon info */}
-                <div style={{ padding: "12px 24px 0" }}>
+                <div style={{ padding: "24px 24px 0", paddingBottom: '12px' }}>
                     <MoonInfo weatherInfo={weather} lat={latitude} lon={longitude} />
                 </div>
 

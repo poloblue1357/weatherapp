@@ -13,7 +13,7 @@ function Exits() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
-            <Header title="Known Exits" showBackButton={false} />
+            <Header title="Exits and Dropzones" showBackButton={false} />
             <h1 className="m-5 text-white">Coming Soon!</h1>
 
 
