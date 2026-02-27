@@ -1,6 +1,7 @@
 import { Heart, Wind, Droplets, Sunrise, Sunset, MapPin, AlertCircle, Navigation, Cloud, Thermometer } from 'lucide-react';
 import MoonInfo from './MoonInfo';
 import { useApp } from '../hooks/useApp';
+import { useLocation } from "react-router-dom"
 
 // ── Apple dark tokens ──────────────────────────────────────────
 const T = {
@@ -59,12 +60,41 @@ function displayGust(windGusts, windSpeed) {
     return `${windGusts} mph`;
 }
 
-function getWindConditions(windSpeed) {
-    const s = parseFloat(windSpeed);
-    if (isNaN(s)) return { bg: "linear-gradient(to right, #3A3A3C, #6C6C70)", text: "WIND DATA UNAVAILABLE" };
-    if (s <= 13)  return { bg: "linear-gradient(to right, #1a7a3a, #30D158)", text: "GOOD CONDITIONS FOR JUMPING" };
-    if (s === 14) return { bg: "linear-gradient(to right, #b35a00, #FF9F0A)", text: "PROCEED WITH CAUTION" };
-    return          { bg: "linear-gradient(to right, #991F16, #FF453A)", text: "EVALUATE CONDITIONS ON SITE" };
+// function getWindConditions(windSpeed, currentForecast, weather) {
+//     const s = parseFloat(windSpeed);
+//     console.log('current forecast:', currentForecast)
+//     const x = weather.windGusts - weather.windSpeed
+//     const z = currentForecast[0].gust - currentForecast[0].windSpeed
+//     if (isNaN(s)) return { bg: "linear-gradient(to right, #3A3A3C, #6C6C70)", text: "WIND DATA UNAVAILABLE" };
+//     if (s <= 14 && x <= 7 && z <= 7)  return { bg: "linear-gradient(to right, #1a7a3a, #30D158)", text: "GOOD CONDITIONS FOR SKYDIVING" };
+//     if (s === 15 && x === 7 && z === 7) return { bg: "linear-gradient(to right, #b35a00, #FF9F0A)", text: "PROCEED WITH CAUTION" };
+//     return          { bg: "linear-gradient(to right, #991F16, #FF453A)", text: "EVALUATE CONDITIONS ON SITE" };
+// }
+
+function getWindConditions(windSpeed, currentForecast, weather) {
+    const s = parseFloat(windSpeed);  
+    if (isNaN(s)) 
+        return { bg: "linear-gradient(to right, #3A3A3C, #6C6C70)", text: "WIND DATA UNAVAILABLE" };
+
+    if (!currentForecast || !currentForecast[0]) 
+        return { bg: "linear-gradient(to right, #3A3A3C, #6C6C70)", text: "FORECAST DATA UNAVAILABLE" };
+
+    if (!weather || typeof weather.windGusts === 'undefined' || typeof weather.windSpeed === 'undefined') 
+        return { bg: "linear-gradient(to right, #3A3A3C, #6C6C70)", text: "WEATHER DATA UNAVAILABLE" };
+
+    const x = weather.windGusts - weather.windSpeed;
+    const z = currentForecast[0].gust - currentForecast[0].windSpeed;
+
+    // Skydiving good conditions
+    if (s <= 14 && x <= 7 && z <= 7)  
+        return { bg: "linear-gradient(to right, #1a7a3a, #30D158)", text: "GOOD CONDITIONS FOR SKYDIVING" };
+
+    // Proceed with caution
+    if (s <= 15 && x <= 7 && z <= 7) 
+        return { bg: "linear-gradient(to right, #b35a00, #FF9F0A)", text: "PROCEED WITH CAUTION" };
+
+    // Evaluate conditions on site
+    return { bg: "linear-gradient(to right, #991F16, #FF453A)", text: "EVALUATE CONDITIONS ON SITE" };
 }
 
 function DetailCard({ icon, label, value, tint, textColor }) {
@@ -86,31 +116,35 @@ export default function WeatherCard({
     isFavorite,
     onToggleFavorite
 }) {
-    const { currentWeather, currentLocation } = useApp();
+    const location = useLocation()
+    const { currentWeather, currentLocation, currentForecast } = useApp();
 
     const weather = weatherInfo || currentWeather;
+    console.log(currentWeather)
     const latitude = lat || currentLocation.lat;
     const longitude = lon || currentLocation.lon;
 
     if (!weather) return null;
 
-    const windConditions = getWindConditions(weather.windSpeed);
+    const windConditions = getWindConditions(weather.windSpeed, currentForecast, weather);
     const rotation = (Number(weather.windDirectionDegrees) + 180 - 45 + 360) % 360;
     const headerGradient = getHeaderGradient(weather.id);
     const snowOverlay = isSnow(weather.id);
+    
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 
             {/* Alert banner */}
-            <div style={{ background: windConditions.bg, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
-                <div>
-                    <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.85, textTransform: "uppercase", letterSpacing: 1, color: "white", marginBottom: 4 }}>Status</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>{windConditions.text}</div>
+            {location.pathname.startsWith('/exits') && (
+                <div style={{ background: windConditions.bg, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+                    <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.85, textTransform: "uppercase", letterSpacing: 1, color: "white", marginBottom: 4 }}>Status</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>{windConditions.text}</div>
+                    </div>
+                    <AlertCircle style={{ width: 28, height: 28, opacity: 0.85, color: "white", flexShrink: 0, marginLeft: 8 }} />
                 </div>
-                <AlertCircle style={{ width: 28, height: 28, opacity: 0.85, color: "white", flexShrink: 0, marginLeft: 8 }} />
-            </div>
-
+            )}
             {/* Main card */}
             <div style={{ ...T.card, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", border: "1.5px solid rgba(255,255,255,0.1)" }}>
 
@@ -211,12 +245,12 @@ export default function WeatherCard({
                 </div>
 
                 {/* Moon info */}
-                <div style={{ padding: "24px 24px 0" }}>
+                <div style={{ padding: "12px 24px 0" }}>
                     <MoonInfo weatherInfo={weather} lat={latitude} lon={longitude} />
                 </div>
 
                 {/* Sunrise / Sunset */}
-                <div style={{ padding: 24, paddingBottom: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div style={{ padding: '12px 24px', paddingBottom: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     <div style={{ ...T.orange, borderRadius: 12, padding: 16 }}>
                         <Sunrise style={{ width: 22, height: 22, color: "#FF9F0A", marginBottom: 8 }} />
                         <div style={{ fontSize: 15, fontWeight: 500, ...T.textSec }}>Sunrise</div>

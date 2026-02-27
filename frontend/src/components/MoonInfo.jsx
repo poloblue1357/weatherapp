@@ -2,7 +2,7 @@ import * as SunCalc from 'suncalc';
 
 // ── Apple dark tokens ──────────────────────────────────────────
 const T = {
-    wrap:   { background: "rgba(88,86,214,0.12)", border: "1px solid rgba(88,86,214,0.28)", borderRadius: 12, padding: 16 },
+    wrap:   { background: "rgba(88,86,214,0.12)", border: "1px solid rgba(88,86,214,0.28)", borderRadius: 12, padding: 12 },
     label:  { color: "rgba(235,235,245,0.8)", fontSize: 15, fontWeight: 500 },
     value:  { color: "#7D7AFF" },
     times:  { color: "#7D7AFF" },
