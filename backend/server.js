@@ -5,8 +5,6 @@ import exitRoutes from "./routes/exitRoutes.js"
 import weatherRoutes from "./routes/weather.js"
 import 'dotenv/config'; 
 import geoRoutes from "./routes/geo.js"
-// import path from "path";
-// import { fileURLToPath } from "url";
 
 const app = express()
 
@@ -26,17 +24,6 @@ mongoose.connect(process.env.MONGO_URI)
 app.get("/api/health", (req, res) => {
     res.json({ status: "ok" })
 })
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// // Serve Vite build files
-// app.use(express.static(path.join(__dirname, "dist")));
-
-// // SPA fallback
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "dist", "index.html"));
-// });
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

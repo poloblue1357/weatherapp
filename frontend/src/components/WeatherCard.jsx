@@ -1,4 +1,4 @@
-import { Heart, Wind, Droplets, Sunrise, Sunset, MapPin, AlertCircle, Navigation, Cloud, Thermometer } from 'lucide-react';
+import { Heart, Wind, Droplets, Sunrise, Sunset, MapPin, AlertCircle, MoveUp, Cloud, Thermometer } from 'lucide-react';
 import MoonInfo from './MoonInfo';
 import { useApp } from '../hooks/useApp';
 import { useLocation } from "react-router-dom"
@@ -102,7 +102,7 @@ function DetailCard({ icon, label, value, tint, textColor }) {
         <div style={{ ...tint, borderRadius: 12, padding: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 {icon}
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...T.textSec }}>{label}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...(label === 'Direction' ? { color: '#3A3A3C'} : T.textSec) }}>{label}</span>
             </div>
             <p style={{ fontSize: 20, fontWeight: 700, margin: 0, ...textColor }}>{value}</p>
         </div>
@@ -197,8 +197,8 @@ export default function WeatherCard({
                                         </span>
                                     ))}
                                 </div>
-                                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", transform: `rotate(${rotation}deg)`, transition: "transform 0.5s" }}>
-                                    <Navigation style={{ width: 64, height: 64, color: "#0A84FF", fill: "#0A84FF" }} />
+                                <div style={{ position: "absolute",top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${rotation}deg)`, transition: 'transform 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <MoveUp style={{ width: 90, height: 90, color: "#0A84FF" }} />
                                 </div>
                             </div>
                             <div style={{ marginTop: 8, textAlign: "center", fontSize: 13, ...T.textSec }}>From {weather.windDirectionDegrees}°</div>
@@ -226,20 +226,26 @@ export default function WeatherCard({
                         label="Humidity" value={`${weather.humidity}%`}
                         tint={T.blue} textColor={T.blueText}
                     />
-                    <DetailCard
+                    {/* <DetailCard
                         icon={<Wind style={{ width: 18, height: 18, color: "rgba(235,235,245,0.7)" }} />}
                         label="Direction" value={toDirection(weather.windDirectionCode)}
                         tint={T.gray} textColor={T.textPrim}
-                    />
+                    /> */}
                     <DetailCard
-                        icon={<Cloud style={{ width: 18, height: 18, color: "#5AC8FA" }} />}
-                        label="Cloud Cover" value={`${weather.cloudCover}%`}
-                        tint={T.teal} textColor={T.tealText}
+                        icon={<Wind style={{ width: 18, height: 18, color: "#2C2C2E" }} />}
+                        label="Direction" value={toDirection(weather.windDirectionCode)}
+                        tint={{ background: "rgba(232,226,220,0.92)", border: "1px solid rgba(210,200,195,0.7))" }} 
+                        textColor={{ color: "#1C1C1E" }}
                     />
                     <DetailCard
                         icon={<Thermometer style={{ width: 18, height: 18, color: "#63E6B9" }} />}
                         label="Feels Like" value={`${weather.feelsLike}°F`}
                         tint={T.mint} textColor={T.mintText}
+                    />
+                    <DetailCard
+                        icon={<Cloud style={{ width: 18, height: 18, color: "#5AC8FA" }} />}
+                        label="Cloud Cover" value={`${weather.cloudCover}%`}
+                        tint={T.teal} textColor={T.tealText}
                     />
                 </div>
 
