@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 import { useApp } from "../hooks/useApp";
 import WeatherCard from "./WeatherCard";
 import Forecast from "./Forecast";
@@ -61,9 +61,9 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId 
                 onClick={() => setExpandedId(isExpanded ? null : String(id))}
             >
                 <div style={{ display: "flex", alignItems: "center", flex: 1, overflow: "hidden" }}>
-                    <Plus
+                    <ChevronDown
                         size={20}
-                        style={{ flexShrink: 0, marginLeft: 10, transition: "transform 0.2s", transform: isExpanded ? "rotate(45deg)" : "rotate(0deg)", ...T.arrow }}
+                        style={{ flexShrink: 0, marginLeft: 10, transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)", ...T.arrow }}
                     />
                     <span style={{ margin: "0 6px 0 8px", fontWeight: 600, fontSize: 14, width: 105, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...T.textPrim }}>
                         {weatherInfo.city}

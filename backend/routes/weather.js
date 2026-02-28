@@ -80,7 +80,7 @@ router.get("/", async (req, res) => {
             { params }
         )
         const jsonData = jsonResponse.data
-        // console.log(jsonData.weather[0].id)
+        console.log(jsonData)
 
         // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {

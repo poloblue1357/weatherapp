@@ -122,7 +122,6 @@ export default function WeatherCard({
     const weather = weatherInfo || currentWeather;
     const latitude = lat || currentLocation.lat;
     const longitude = lon || currentLocation.lon;
-
     if (!weather) return null;
 
     const windConditions = getWindConditions(weather.windSpeed, currentForecast, weather);
