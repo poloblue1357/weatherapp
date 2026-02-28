@@ -196,7 +196,7 @@ export default function WeatherCard({
                                         </span>
                                     ))}
                                 </div>
-                                <div style={{ position: "absolute",top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${rotation}deg)`, transition: 'transform 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <div style={{ position: "absolute",top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${rotation + 45}deg)`, transition: 'transform 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <MoveUp style={{ width: 90, height: 90, color: "#0A84FF" }} />
                                 </div>
                             </div>
