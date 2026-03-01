@@ -15,7 +15,7 @@ function Home() {
                             <Wind className="w-16 h-16 text-white" strokeWidth={1.5} />
                         </div>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 px-4 py-1 rounded-full text-xs font-bold shadow-lg">
-                            WEATHER CONDITIONS
+                            SKY REPORT
                         </div>
                     </div>
 

@@ -156,9 +156,25 @@ export default function WeatherCard({
                     <div style={{ position: "absolute", bottom: 0, left: 0, width: 128, height: 128, background: "rgba(255,255,255,0.06)", borderRadius: "50%", transform: "translate(-40%,40%)" }} />
                     <div style={{ position: "relative", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                         <div>
+                            {/* <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                                <MapPin style={{ width: 18, height: 18, color: "rgba(235,235,245,0.8)" }} />
+                                <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", margin: 0 }}>{weather.city},</h2>
+                                <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", margin: 0 }}>{weather.state || weather.country}</h2>
+                            </div> */}
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                                 <MapPin style={{ width: 18, height: 18, color: "rgba(235,235,245,0.8)" }} />
-                                <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", margin: 0 }}>{weather.city}</h2>
+                                <h2
+                                    style={{
+                                    fontSize: 22,
+                                    fontWeight: 700,
+                                    color: "white",
+                                    margin: 0,
+                                    lineHeight: 1.2
+                                    }}
+                                >
+                                    {weather.city},{" "}
+                                    {weather.state || weather.country}
+                                </h2>
                             </div>
                             <p style={{ fontSize: 16, fontWeight: 500, color: "rgba(235,235,245,0.85)", margin: "0 0 12px", textTransform: "capitalize" }}>{weather.condition}</p>
                             <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 8 }}>

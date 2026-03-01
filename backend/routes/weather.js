@@ -65,22 +65,41 @@ router.get("/", async (req, res) => {
             { params: { ...params, mode: 'json' } }
         )
         const fiveDayData = fiveDayResponse.data
-        // console.log(fiveDayData.list[0].clouds)
+        // console.log(fiveDayData)
         // Fetch current weather in XML format
         const xmlResponse = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
             { params: { ...params, mode: "xml" } }
         )
         const xmlData = await parseStringPromise(xmlResponse.data)
-        // console.log(xmlData.current)
-        // console.log('XML Data Structure:', JSON.stringify(xmlData, null, 2))
+        // console.log(xmlData.current.city)
         // Fetch current weather in JSON format (for wind gusts)
         const jsonResponse = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
             { params }
         )
         const jsonData = jsonResponse.data
-        console.log(jsonData)
+        // console.log(jsonData)
+
+        const { lat, lon } = jsonData.coord;
+
+        // code to get country and state/province
+        const geoResponse = await axios.get(
+        "https://api.openweathermap.org/geo/1.0/reverse",
+        {
+            params: {
+            lat,
+            lon,
+            limit: 1,
+            appid: process.env.OPENWEATHER_API_KEY
+            }
+        }
+        );
+
+        const geoData = geoResponse.data[0];
+
+        const state = geoData?.state || null;
+        const country = geoData?.country || null;
 
         // function to format the sunrise/sunset
         function formatTime(rawTime, timezoneOffset) {
@@ -143,6 +162,8 @@ router.get("/", async (req, res) => {
         const hasWindDirection = windDirection && typeof windDirection === 'object';
 
         const weather = {
+            state: state,
+            country: country,
             id: jsonData.weather[0].id,
             dt: jsonData.dt,
             feelsLike: Math.round(jsonData.main.feels_like * 10) / 10,
