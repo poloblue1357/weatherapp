@@ -3,7 +3,6 @@ import Header from "../components/Header"
 import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
 // upload new exits 
-// limit to 10 exits in favorites
 // input field + form for submitting new exit
 // only need to save lat/lon and name on backend
 // search bar - browse known exits
