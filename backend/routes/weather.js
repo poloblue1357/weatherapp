@@ -154,7 +154,7 @@ router.get("/", async (req, res) => {
             return `${diffHours} hours ago`;
         }
 
-        const windSpeed = Math.round(xmlData.current.wind[0].speed[0].$.value * 10) / 10
+        const windSpeed = Math.round(xmlData.current.wind[0].speed[0].$.value)
         const windGust = Math.round(jsonData.wind?.gust * 10) / 10
 
         // ADD SAFETY CHECKS for wind direction
@@ -224,10 +224,10 @@ router.get("/", async (req, res) => {
             date: formatDay(item.dt * 1000, fiveDayTimezone), // str       // "Tue, Feb 10"
             time: getTime(item.dt * 1000, fiveDayTimezone), //str      // "3:00 PM"
             temp: Math.round(item.main.temp * 10) / 10, // num
-            windSpeed: Math.round(item.wind.speed * 10) / 10, // num
+            windSpeed: Math.round(item.wind.speed), // num
             degree: item.wind.deg, // num
             direction: convertDegreesToCode(item.wind.deg), // str
-            gust: item.wind.gust ? Math.round(item.wind.gust * 10) / 10 : 0, // num
+            gust: item.wind.gust ? Math.round(item.wind.gust) : 0, // num
             condition: item.weather[0].main || "N/A", // str
             description: item.weather[0].description || 'N/A', // str
             clouds: item.clouds.all, // num
