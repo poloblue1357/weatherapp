@@ -41,31 +41,82 @@ const ALL_COUNTRY_SLUGS = [
 ];
 
 function extractPageData(html) {
-    const scriptMatch = html.match(/\{"id":"[^"]+","name":"[^"]+","latitude":([-\d.]+),"longitude":([-\d.]+),"country":"[^"]+","dropzoneCount":\d+,"slug":"[^"]+"\}/g);
-    if (!scriptMatch) return null;
-    return scriptMatch.map(match => {
-        try { return JSON.parse(match); } catch { return null; }
-    }).filter(Boolean);
+    const $ = cheerio.load(html);
+
+    // Try meta tag first (individual DZ pages use this)
+    const metaContent = $('meta[name="application/ld+json"]').attr('content');
+    if (metaContent) {
+        try {
+            const parsed = JSON.parse(metaContent);
+            const entries = Array.isArray(parsed) ? parsed : [parsed];
+            const business = entries.find(e => e.geo);
+            if (business) return [business];
+        } catch {}
+    }
+
+    // Fallback: inline script tags
+    let result = null;
+    $('script[type="application/ld+json"]').each((_, el) => {
+        try {
+            const json = JSON.parse($(el).html());
+            const entries = Array.isArray(json) ? json : [json];
+            const business = entries.find(e => e.geo);
+            if (business && !result) result = [business];
+        } catch {}
+    });
+
+    return result;
 }
 
 function extractStructuredData(html) {
     const $ = cheerio.load(html);
     let result = {};
+
+    // Try meta tag first
+    const metaContent = $('meta[name="application/ld+json"]').attr('content');
+    if (metaContent) {
+        try {
+            const parsed = JSON.parse(metaContent);
+            const entries = Array.isArray(parsed) ? parsed : [parsed];
+            const business = entries.find(e => e.geo);
+            if (business) {
+                result.telephone = business.telephone || null;
+                result.email = business.email || null;
+                // website is in sameAs array, not url (url is the dropzonefinder page)
+                result.url = (business.sameAs && business.sameAs[0]) || null;
+                result.latitude = business.geo?.latitude || null;
+                result.longitude = business.geo?.longitude || null;
+                if (business.address) {
+                    result.city = business.address.addressLocality || null;
+                    result.state = business.address.addressRegion || null;
+                    result.country = business.address.addressCountry || null;
+                }
+                return result;
+            }
+        } catch {}
+    }
+
+    // Fallback: inline script tags
     $('script[type="application/ld+json"]').each((_, el) => {
         try {
             const json = JSON.parse($(el).html());
-            if (json.geo) {
-                result.telephone = json.telephone || null;
-                result.email = json.email || null;
-                result.url = json.url || null;
-                if (json.address) {
-                    result.city = json.address.addressLocality || null;
-                    result.state = json.address.addressRegion || null;
-                    result.country = json.address.addressCountry || null;
+            const entries = Array.isArray(json) ? json : [json];
+            const business = entries.find(e => e.geo);
+            if (business && !result.latitude) {
+                result.telephone = business.telephone || null;
+                result.email = business.email || null;
+                result.url = (business.sameAs && business.sameAs[0]) || null;
+                result.latitude = business.geo?.latitude || null;
+                result.longitude = business.geo?.longitude || null;
+                if (business.address) {
+                    result.city = business.address.addressLocality || null;
+                    result.state = business.address.addressRegion || null;
+                    result.country = business.address.addressCountry || null;
                 }
             }
         } catch {}
     });
+
     return result;
 }
 
@@ -119,27 +170,29 @@ async function scrapeDZ(countrySlug, dzSlug) {
     const url = `${BASE_URL}/dropzones/${countrySlug}/${dzSlug}`;
     try {
         const { data: html } = await axios.get(url);
-        const pageData = extractPageData(html);
-        const structuredData = extractStructuredData(html);
+        const sd = extractStructuredData(html);
 
-        if (!pageData || pageData.length === 0) {
-            console.warn(`  No page data found for ${dzSlug}`);
+        if (!sd.latitude || !sd.longitude) {
+            console.warn(`  No structured data found for ${dzSlug}`);
             return null;
         }
 
-        const dz = pageData[0];
+        // Get name from page title as fallback
+        const $ = cheerio.load(html);
+        const titleText = $('title').text().split('|')[0].trim();
+
         return {
-            id: dz.id,
-            name: dz.name,
-            slug: dz.slug,
-            latitude: dz.latitude,
-            longitude: dz.longitude,
-            city: structuredData.city || null,
-            state: structuredData.state || null,
-            country: structuredData.country || dz.country,
-            telephone: structuredData.telephone || null,
-            email: structuredData.email || null,
-            website: structuredData.url || null,
+            id: dzSlug, // use slug as id since there's no UUID in static HTML
+            name: titleText || dzSlug,
+            slug: dzSlug,
+            latitude: sd.latitude,
+            longitude: sd.longitude,
+            city: sd.city || null,
+            state: sd.state || null,
+            country: sd.country || countrySlug,
+            telephone: sd.telephone || null,
+            email: sd.email || null,
+            website: sd.url || null,
             source: 'scraped',
         };
     } catch (err) {
