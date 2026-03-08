@@ -102,7 +102,7 @@ function DetailCard({ icon, label, value, tint, textColor }) {
         <div style={{ ...tint, borderRadius: 12, padding: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 {icon}
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...(label === 'Direction' ? { color: '#3A3A3C'} : T.textSec) }}>{label}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, ...(label === 'Direction' ? { color: '#FFFFFF'} : T.textSec) }}>{label}</span>
             </div>
             <p style={{ fontSize: 20, fontWeight: 700, margin: 0, ...textColor }}>{value}</p>
         </div>
@@ -241,17 +241,19 @@ export default function WeatherCard({
                         label="Humidity" value={`${weather.humidity}%`}
                         tint={T.blue} textColor={T.blueText}
                     />
-                    {/* <DetailCard
+                    <DetailCard
                         icon={<Wind style={{ width: 18, height: 18, color: "rgba(235,235,245,0.7)" }} />}
                         label="Direction" value={toDirection(weather.windDirectionCode)}
-                        tint={T.gray} textColor={T.textPrim}
-                    /> */}
-                    <DetailCard
+                        tint={T.gray} 
+                        textColor={{ color: "#FFFFFF" }}
+                        labelColor={{ color: "#FFFFFF" }}
+                    />
+                    {/* <DetailCard
                         icon={<Wind style={{ width: 18, height: 18, color: "#2C2C2E" }} />}
                         label="Direction" value={toDirection(weather.windDirectionCode)}
                         tint={{ background: "rgba(232,226,220,0.92)", border: "1px solid rgba(210,200,195,0.7))" }} 
                         textColor={{ color: "#1C1C1E" }}
-                    />
+                    /> */}
                     <DetailCard
                         icon={<Thermometer style={{ width: 18, height: 18, color: "#63E6B9" }} />}
                         label="Feels Like" value={`${weather.feelsLike}°F`}
