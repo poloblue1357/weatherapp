@@ -41,7 +41,7 @@ const GeoSearch = forwardRef(({ location, setLocation, geoSearch, setGeoSearch, 
             } finally {
                 if (!cancelled) setLoading(false);
             }
-        }, 300);
+        }, 150);
 
         return () => {
             cancelled = true;

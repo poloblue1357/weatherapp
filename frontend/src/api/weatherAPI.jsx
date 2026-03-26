@@ -10,9 +10,9 @@ export const fetchWeatherData = async (location) => {
     try {
         const response = await fetch(url)
         if (!response.ok) {
-        const errText = await response.text()
-        console.error('API error response:', errText)
-        throw new Error(`HTTP ${response.status}: ${errText}`)
+            const errText = await response.text()
+            console.error('API error response:', errText)
+            throw new Error(`HTTP ${response.status}: ${errText}`)
         }
         const jsonData = await response.json()
         return jsonData
