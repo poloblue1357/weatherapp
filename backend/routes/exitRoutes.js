@@ -5,18 +5,22 @@ import axios from 'axios'
 const router = express.Router()
 
 router.get("/", async (req, res) => {
-    try{
-        const locations = await Exit.find()
-        res.json(locations)
+    const { location } = req.query;
+    try {
+        const query = location
+            ? { name: { $regex: location.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&").replace(/s$/, "('s)?"), $options: "i" } }
+            : {};
+        const results = await Exit.find(query);
+        res.json(results);
     } catch (err) {
-        res.status(500).json({ message: err.message})
+        res.status(500).json({ message: err.message });
     }
-})
+});
 
 router.post("/", async (req, res) => {
     console.log("Received data:", req.body);  // Log the incoming data
-    const { name, city, country, lat, lon, zip, weather, forecast, email } = req.body;
-    const location = new Exit({ name, city, country, lat, lon, zip, weather, forecast, email });
+    const { id, slug, telephone, website, city, country, lat, lon, name, email, zip, state, source } = req.body;
+    const location = new Exit({ id, slug, telephone, website, city, country, lat, lon, name, email, zip, state, source });
     
     try {
         const savedLocation = await location.save();

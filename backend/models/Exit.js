@@ -8,8 +8,8 @@ const exitSchema = new mongoose.Schema({
     website: { type: String},
     city: { type: String },
     country: { type: String },
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
+    lat: { type: Number, required: true },
+    lon: { type: Number, required: true },
     name: { type: String, required: true }, // exit name should be required
     email: { type: String, match: /.+\@.+\..+/ },
     zip: { type: String }, // changed to string for leading zeros
