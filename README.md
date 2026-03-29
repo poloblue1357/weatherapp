@@ -9,6 +9,7 @@ A MERN weather application that lets users save locations and view real-time wea
 - Node.js
 - OpenWeatherMap API (XML and JSON)
 - Tailwind CSS
+- Geoapify API
 
 ## Running locally
 ```bash
