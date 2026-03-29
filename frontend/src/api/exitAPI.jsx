@@ -17,7 +17,6 @@ export const fetchExitData = async(location) => {
             throw new Error(`HTTP ${response.status}: ${errText}`)
         }
         const jsonData = await response.json()
-        console.log('jsonData: ', jsonData)
         return jsonData
     } catch (error) {
         console.error('Fetch failed:', error)
@@ -25,7 +24,7 @@ export const fetchExitData = async(location) => {
     }
 }
 
-export const postExitData = async(location) => {
+export const postExitData = async(formData) => {
 
     const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8000'
@@ -34,8 +33,17 @@ export const postExitData = async(location) => {
     const url = `${API_URL}/api/exits`
 
     const bodyData = {
-        
-    }
+            name: formData.name,     // Get the exit name from the form state
+            lat: formData.latitude,      // Get latitude from the form state
+            lon: formData.longitude,     // Get longitude from the form state
+            city: formData.city,         // Optional 
+            state: formData.state,       // Optional 
+            country: formData.country,   // Optional 
+            telephone: formData.telephone, // Optional 
+            email: formData.email,       // Optional 
+            website: formData.website,   // Optional 
+            source: formData.source,     
+        }
 
         try {
             const response = await fetch(url, {
