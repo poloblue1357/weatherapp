@@ -13,17 +13,20 @@ function Exits() {
     const [searchInput, setSearchInput] = useState('')
     const [showForm, setShowForm] = useState(false)
     const [testSearch, setTestSearch] = useState([])
+    const [visible, setVisible] = useState('')
+    const [fading, setFading] = useState('')
     const [formData, setFormData] = useState({
-        name: '',
-        lat: '',
-        lon: '',
-        city: '',
-        state: '',
-        country: '',
-        telephone: '',
-        email: '',
-        website: '',
-        source: 'user',  
+        telephone: '', // 
+        website: '', // 
+        city: '', // 
+        country: '', //
+        lat: '', // 
+        lon: '', // 
+        name: '', // 
+        email: '', // 
+        zip: '', // 
+        state: '', // 
+        source: 'user',
     });
 
     const handleChange = (e) => {
@@ -46,8 +49,9 @@ function Exits() {
     }
     const changeShowForm = () => {
         setShowForm(prev => !prev)
-        console.log(showForm)
+        // console.log(showForm)
     }
+    
     const handleForm = (e) => {
         const { name, value } = e.target
 
@@ -56,7 +60,19 @@ function Exits() {
     const formSubmit = (e) => {
         e.preventDefault()
         postExitData(formData)
+
+        setVisible(true);
+        setFading(false);
+
+        setTimeout(() => {
+            setFading(true); // start fade
+        }, 4000);
+
+        setTimeout(() => {
+            setVisible(false); // remove after fade
+        }, 5000);
     }
+    
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
@@ -91,7 +107,7 @@ function Exits() {
             {showForm && 
                 <form onSubmit={formSubmit}>
                     <input 
-                        placeholder="Exit Name"
+                        placeholder="Exit / DZ Name"
                         name='name'
                         value={formData.name}
                         onChange={handleForm}
@@ -111,9 +127,64 @@ function Exits() {
                         onChange={handleForm}
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
                     />
+                    <input 
+                        placeholder="City"
+                        name='city'
+                        value={formData.city}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
+                    <input 
+                        placeholder="State / Province"
+                        name='state'
+                        value={formData.state}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
+                    <input 
+                        placeholder="Country"
+                        name='country'
+                        value={formData.country}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
+                    <input 
+                        placeholder="Postal Code"
+                        name='zip'
+                        value={formData.zip}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
+                    <input 
+                        placeholder="Email"
+                        name='email'
+                        value={formData.email}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
+                    <input 
+                        placeholder="Website"
+                        name='website'
+                        value={formData.website}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
+                    <input 
+                        placeholder="Telephone"
+                        name='telephone'
+                        value={formData.telephone}
+                        onChange={handleForm}
+                        style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                    />
                     <button
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                        type="submit"
                     >Submit</button>
+                    {visible && (
+                        <div style={{opacity: fading ? 0 : 1, transition: "opacity 1s ease", color: 'white', fontSize: '14px'}}>
+                            Submission received!
+                        </div>
+                    )}
                 </form>
             }
             <NavBar currentPage="exits"/>
