@@ -15,6 +15,8 @@ function Exits() {
     const [testSearch, setTestSearch] = useState([])
     const [visible, setVisible] = useState('')
     const [fading, setFading] = useState('')
+    const [error, setError] = useState()
+    const [data, setData] = useState()
     const [formData, setFormData] = useState({
         telephone: '', // 
         website: '', // 
@@ -57,20 +59,26 @@ function Exits() {
 
         setFormData(prev => ({...prev, [name]: value}))
     }
-    const formSubmit = (e) => {
+    const formSubmit = async(e) => {
         e.preventDefault()
-        postExitData(formData)
+        try {
+            await postExitData(formData)
 
-        setVisible(true);
-        setFading(false);
 
-        setTimeout(() => {
-            setFading(true); // start fade
-        }, 4000);
+            setVisible(true);
+            setFading(false);
+    
+            setTimeout(() => {
+                setFading(true); // start fade
+            }, 4000);
+    
+            setTimeout(() => {
+                setVisible(false); // remove after fade
+            }, 5000);
+        }
+        catch (error) {
 
-        setTimeout(() => {
-            setVisible(false); // remove after fade
-        }, 5000);
+        }
     }
     
 
@@ -103,26 +111,31 @@ function Exits() {
             <button
                 style={{background: 'white', border: '1px solid black', margin: "10px", padding: '5px', width: '145px'}}
                 onClick={changeShowForm}
-            >{showForm ? 'Hide' : 'Submit an Exit'}</button>
+            >{showForm ? 'Hide' : 'Submit a DZ / Exit'}</button>
+            <span style={{color: 'white'}}>* required fields</span>
+            <span style={{color: 'red', fontSize: '14px'}}>{error ? error : ''}</span>
             {showForm && 
-                <form onSubmit={formSubmit}>
+                <form 
+                    onSubmit={formSubmit}
+                    style={{paddingBottom: '0px'}}
+                >
                     <input 
-                        placeholder="Exit / DZ Name"
+                        placeholder="* DZ / Exit Name"
                         name='name'
                         value={formData.name}
                         onChange={handleForm}
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
                     />
                     <input 
-                        placeholder="Latitude"
-                        name='latitude'
+                        placeholder="* Latitude"
+                        name='lat'
                         value={formData.lat}
                         onChange={handleForm}
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
                     />
                     <input 
-                        placeholder="Longitude"
-                        name='longitude'
+                        placeholder="* Longitude"
+                        name='lon'
                         value={formData.lon}
                         onChange={handleForm}
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
@@ -179,8 +192,9 @@ function Exits() {
                     <button
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
                         type="submit"
-                    >Submit</button>
-                    {visible && (
+                    >Submit the DZ / Exit Information</button>
+                    {/* notice the submission was received + fading out */}
+                    {visible && !error && (
                         <div style={{opacity: fading ? 0 : 1, transition: "opacity 1s ease", color: 'white', fontSize: '14px'}}>
                             Submission received!
                         </div>
