@@ -54,15 +54,15 @@ export const postExitData = async(formData) => {
                                         body: JSON.stringify(bodyData)
                                     })
             if(!response.ok) {
-                const errText = await response.text()
-                console.error('API error response:', errText)
-                throw new Error(`HTTP ${response.status}: ${errText}`)
+                const errData = await response.json()
+                console.error('API error response:', errData)
+                throw new Error(`HTTP ${response.status}: ${errData.message}`)
             }
             const jsonData = await response.json()
             console.log('jsonData: ', jsonData)
             return jsonData
         } catch (error) {
             console.error('Fetch failed:', error)
-            return null
+            throw error
         }
 }

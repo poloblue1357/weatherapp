@@ -4,6 +4,7 @@ import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
 import { useState } from 'react'
 import { fetchExitData, postExitData } from "../api/exitAPI"
+import { init } from "@emailjs/browser";
 // upload new exits 
 // input field + form for submitting new exit
 // only need to save lat/lon and name on backend
@@ -16,8 +17,9 @@ function Exits() {
     const [visible, setVisible] = useState('')
     const [fading, setFading] = useState('')
     const [error, setError] = useState()
-    const [data, setData] = useState()
-    const [formData, setFormData] = useState({
+    const [success, setSuccess] = useState()
+    const [loading, setLoading] = useState(false)
+    const initialFormState = {
         telephone: '', // 
         website: '', // 
         city: '', // 
@@ -29,7 +31,8 @@ function Exits() {
         zip: '', // 
         state: '', // 
         source: 'user',
-    });
+    }
+    const [formData, setFormData] = useState(initialFormState);
 
     const handleChange = (e) => {
         const value = e.target.value
@@ -61,23 +64,35 @@ function Exits() {
     }
     const formSubmit = async(e) => {
         e.preventDefault()
+
+        setError(null)
+        setSuccess(false)
+        setLoading(true)
+
         try {
-            await postExitData(formData)
+            const response = await postExitData(formData)
 
+            if(response) {
+                setSuccess(true)
 
-            setVisible(true);
-            setFading(false);
-    
-            setTimeout(() => {
-                setFading(true); // start fade
-            }, 4000);
-    
-            setTimeout(() => {
-                setVisible(false); // remove after fade
-            }, 5000);
+                setVisible(true);
+                setFading(false);
+                setFormData(initialFormState)
+        
+                setTimeout(() => {
+                    setFading(true); // start fade
+                }, 4000);
+        
+                setTimeout(() => {
+                    setVisible(false); // remove after fade
+                }, 5000);
+            }
         }
         catch (error) {
-
+            console.log('error message: ',error.message)
+            setError(error.message || 'Something went wrong')
+        } finally {
+            setLoading(false)
         }
     }
     
@@ -87,17 +102,18 @@ function Exits() {
             <Header title="Dropzones and Exits" showBackButton={false} />
             <h1 className="m-5 text-white">Coming Soon!</h1>
 
-            <form onSubmit={((e) => searchLocation(e, searchInput))}>
-                <input 
-                    style={{background: 'white', border: '1px solid black', margin: "10px", padding: '5px'}} 
-                    placeholder="Search by DZ or Exit name" 
-                    onChange={handleChange} 
-                    value={searchInput}
-                />
-                <button
-                    style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
-                >Search</button>
-            </form>
+            <input 
+                style={{background: 'white', border: '1px solid black', margin: "10px", padding: '5px'}} 
+                placeholder="Search by DZ or Exit name" 
+                onChange={handleChange} 
+                value={searchInput}
+            />
+            <button
+                style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
+                onClick={((e) => searchLocation(e, searchInput))}
+            >
+                Search
+            </button>
             <br />
             <br />
 
@@ -111,14 +127,27 @@ function Exits() {
             <button
                 style={{background: 'white', border: '1px solid black', margin: "10px", padding: '5px', width: '145px'}}
                 onClick={changeShowForm}
-            >{showForm ? 'Hide' : 'Submit a DZ / Exit'}</button>
+            >
+                {showForm ? 'Hide' : 'Submit a DZ / Exit'
+            }</button>
+
+
             <span style={{color: 'white'}}>* required fields</span>
-            <span style={{color: 'red', fontSize: '14px'}}>{error ? error : ''}</span>
+            <br />
+            <br />
+
             {showForm && 
                 <form 
                     onSubmit={formSubmit}
                     style={{paddingBottom: '0px'}}
                 >
+                    {error && (
+                        <ul style={{ color: 'red', fontSize: '14px' }}>
+                            {error.split(',').map((msg, idx) => (
+                            <li key={idx}>{msg.replace(/Path `.*?` is required./, 'is required').trim()}</li>
+                            ))}
+                        </ul>
+                    )}
                     <input 
                         placeholder="* DZ / Exit Name"
                         name='name'
@@ -192,9 +221,12 @@ function Exits() {
                     <button
                         style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
                         type="submit"
-                    >Submit the DZ / Exit Information</button>
+                        disabled={loading}
+                    >
+                        {loading ? 'Submitting…' : 'Submit the DZ / Exit Information'}
+                    </button>
                     {/* notice the submission was received + fading out */}
-                    {visible && !error && (
+                    {visible && success && (
                         <div style={{opacity: fading ? 0 : 1, transition: "opacity 1s ease", color: 'white', fontSize: '14px'}}>
                             Submission received!
                         </div>
