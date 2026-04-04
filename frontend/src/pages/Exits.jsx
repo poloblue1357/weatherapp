@@ -4,7 +4,7 @@ import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
 import { useState } from 'react'
 import { fetchExitData, postExitData } from "../api/exitAPI"
-import { init } from "@emailjs/browser";
+
 // upload new exits 
 // input field + form for submitting new exit
 // only need to save lat/lon and name on backend
@@ -58,9 +58,12 @@ function Exits() {
     }
     
     const handleForm = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
 
-        setFormData(prev => ({...prev, [name]: value}))
+        setFormData(prev => ({
+            ...prev,
+            [name]: typeof value === 'string' ? value.trim() : value
+        }));
     }
     const formSubmit = async(e) => {
         e.preventDefault()
@@ -70,6 +73,9 @@ function Exits() {
         setLoading(true)
 
         try {
+
+            formValidation(formData)
+
             const response = await postExitData(formData)
 
             if(response) {
@@ -95,8 +101,39 @@ function Exits() {
             setLoading(false)
         }
     }
-    
+    const formValidation = (formData) => {
 
+        const lat = Number(formData.lat)
+        const lon = Number(formData.lon)
+        const postalRegex = /^[A-Za-z0-9\s\-]{3,10}$/;
+        const zip = formData.zip;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^[+()0-9-\s]{7,20}$/;
+        const websiteRegex = /^https?:\/\/.+\..+/i;
+
+        if(typeof formData.name !== 'string' || formData.name === '') {
+            throw new Error("DZ / Exit name isn't valid")
+        } else if(isNaN(lat) || lat < -90 || lat > 90) {
+            throw new Error("Latitude value isn't valid")
+        } else if(isNaN(lon) || lon < -180 || lon > 180) {
+            throw new Error("Longitude value isn't valid")
+        } else if(formData.city && typeof formData.city !== 'string') {
+            throw new Error("City value isn't valid")
+        } else if(formData.state && typeof formData.state !== 'string') {
+            throw new Error("State / Province isn't valid")
+        } else if(formData.country && typeof formData.country !== 'string') {
+            throw new Error("Country value isn't valid")
+        } else if(zip && !postalRegex.test(zip)) {
+            throw new Error("Postal code isn't valid")
+        } else if(formData.email && !emailRegex.test(formData.email)) {
+            throw new Error("Email isn't valid");
+        } else if(formData.telephone && !phoneRegex.test(formData.telephone)) {
+            throw new Error("Telephone isn't valid");
+        } else if(formData.website && !websiteRegex.test(formData.website)) {
+            throw new Error("Website URL isn't valid");
+        }
+    }
+    
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
             <Header title="Dropzones and Exits" showBackButton={false} />
@@ -125,27 +162,33 @@ function Exits() {
             <br />
             {/* exit / dz input form  */}
             <button
-                style={{background: 'white', border: '1px solid black', margin: "10px", padding: '5px', width: '145px'}}
+                style={{background: 'white', border: '1px solid black', margin: "2px", padding: '5px', width: '145px'}}
                 onClick={changeShowForm}
             >
-                {showForm ? 'Hide' : 'Submit a DZ / Exit'
-            }</button>
+                {showForm ? 'Hide' : 'Submit a DZ / Exit'}
+            </button>
 
 
             <span style={{color: 'white'}}>* required fields</span>
             <br />
-            <br />
-
+            
             {showForm && 
                 <form 
                     onSubmit={formSubmit}
                     style={{paddingBottom: '0px'}}
                 >
                     {error && (
-                        <ul style={{ color: 'red', fontSize: '14px' }}>
-                            {error.split(',').map((msg, idx) => (
-                            <li key={idx}>{msg.replace(/Path `.*?` is required./, 'is required').trim()}</li>
-                            ))}
+                        <ul style={{ color: 'red', fontSize: '16px', margin: '4px' }}>
+                            {error
+                            /* remove HTTP code and the 'Exit validation failed:' part */
+                            .replace(/HTTP \d+: Exit validation failed:\s*/, '')
+                            .split(',')  // split by commas
+                            .map((msg, idx) => (
+                                <li key={idx}>
+                                {msg.replace(/Path `.*?`/g, '').trim()} {/* remove Path `…` */}
+                                </li>
+                            ))
+                            }
                         </ul>
                     )}
                     <input 
