@@ -71,6 +71,14 @@ function Exits() {
         setError(null)
         setSuccess(false)
         setLoading(true)
+        
+        const errors = formValidation(formData);
+
+        if (errors.length > 0) {
+            setError(errors);
+            setLoading(false)
+            return;
+        }
 
         try {
 
@@ -102,37 +110,75 @@ function Exits() {
         }
     }
     const formValidation = (formData) => {
+        const formErrors = [];
 
-        const lat = Number(formData.lat)
-        const lon = Number(formData.lon)
+        const name = formData.name?.trim() ?? '';
+        const city = formData.city?.trim() ?? '';
+        const state = formData.state?.trim() ?? '';
+        const country = formData.country?.trim() ?? '';
+        const zip = formData.zip?.trim() ?? '';
+        const email = formData.email?.trim() ?? '';
+        const telephone = formData.telephone?.trim() ?? '';
+        const website = formData.website?.trim() ?? '';
+
         const postalRegex = /^[A-Za-z0-9\s\-]{3,10}$/;
-        const zip = formData.zip;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^[+()0-9-\s]{7,20}$/;
         const websiteRegex = /^https?:\/\/.+\..+/i;
 
-        if(typeof formData.name !== 'string' || formData.name === '') {
-            throw new Error("DZ / Exit name isn't valid")
-        } else if(isNaN(lat) || lat < -90 || lat > 90) {
-            throw new Error("Latitude value isn't valid")
-        } else if(isNaN(lon) || lon < -180 || lon > 180) {
-            throw new Error("Longitude value isn't valid")
-        } else if(formData.city && typeof formData.city !== 'string') {
-            throw new Error("City value isn't valid")
-        } else if(formData.state && typeof formData.state !== 'string') {
-            throw new Error("State / Province isn't valid")
-        } else if(formData.country && typeof formData.country !== 'string') {
-            throw new Error("Country value isn't valid")
-        } else if(zip && !postalRegex.test(zip)) {
-            throw new Error("Postal code isn't valid")
-        } else if(formData.email && !emailRegex.test(formData.email)) {
-            throw new Error("Email isn't valid");
-        } else if(formData.telephone && !phoneRegex.test(formData.telephone)) {
-            throw new Error("Telephone isn't valid");
-        } else if(formData.website && !websiteRegex.test(formData.website)) {
-            throw new Error("Website URL isn't valid");
+        // REQUIRED
+        if (!name) formErrors.push("DZ / Exit name isn't valid");
+
+        if (formData.lat === '') {
+            formErrors.push("Latitude value isn't valid");
         }
-    }
+
+        if (formData.lon === '') {
+            formErrors.push("Longitude value isn't valid");
+        }
+
+        const lat = Number(formData.lat);
+        const lon = Number(formData.lon);
+
+        if (formData.lat !== '' && (isNaN(lat) || lat < -90 || lat > 90)) {
+            formErrors.push("Latitude value isn't valid");
+        }
+
+        if (formData.lon !== '' && (isNaN(lon) || lon < -180 || lon > 180)) {
+            formErrors.push("Longitude value isn't valid");
+        }
+
+        // OPTIONAL
+        if (city && city.length < 2) {
+            formErrors.push("City value isn't valid");
+        }
+
+        if (state && state.length < 2) {
+            formErrors.push("State / Province isn't valid");
+        }
+
+        if (country && country.length < 2) {
+            formErrors.push("Country value isn't valid");
+        }
+
+        if (zip && !postalRegex.test(zip)) {
+            formErrors.push("Postal code isn't valid");
+        }
+
+        if (email && !emailRegex.test(email)) {
+            formErrors.push("Email isn't valid");
+        }
+
+        if (telephone && !phoneRegex.test(telephone)) {
+            formErrors.push("Telephone isn't valid");
+        }
+
+        if (website && !websiteRegex.test(website)) {
+            formErrors.push("Website URL isn't valid");
+        }
+
+        return formErrors;
+    };
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
@@ -179,16 +225,9 @@ function Exits() {
                 >
                     {error && (
                         <ul style={{ color: 'red', fontSize: '16px', margin: '4px' }}>
-                            {error
-                            /* remove HTTP code and the 'Exit validation failed:' part */
-                            .replace(/HTTP \d+: Exit validation failed:\s*/, '')
-                            .split(',')  // split by commas
-                            .map((msg, idx) => (
-                                <li key={idx}>
-                                {msg.replace(/Path `.*?`/g, '').trim()} {/* remove Path `…` */}
-                                </li>
-                            ))
-                            }
+                            {error.map((msg, idx) => (
+                                <li key={idx}>{msg}</li>
+                            ))}
                         </ul>
                     )}
                     <input 
