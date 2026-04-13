@@ -8,11 +8,12 @@ import Header from "../components/Header";
 import { useApp } from '../hooks/useApp';
 import Forecast from '../components/Forecast';
 import GeoSearch from '../components/GeoSearch';
+import Spinner from '../components/Spinner'
 
 // ── Apple dark palette ─────────────────────────────────────────
 const T = {
     tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
-    tabActive:   { background: "linear-gradient(to right, #6E3FBF, #9B59D4)", color: "#FFFFFF" },
+    tabActive:   { background: "linear-gradient(to right, rgb(168, 85, 247), rgb(99, 102, 241))", color: "#FFFFFF" },
     tabInactive: { background: "transparent", color: "rgba(235,235,245,0.55)" },
 };
 
@@ -141,9 +142,7 @@ function Search() {
 
                 {/* Spinner */}
                 {loading && (
-                    <div className="flex justify-center items-center space-x-2 mt-10 mb-10">
-                        <div className="w-8 h-8 border-4 border-t-4 border-gray-300 rounded-full animate-spin border-t-indigo-600" />
-                    </div>
+                    <Spinner />
                 )}
 
                 {/* Tabs + content */}

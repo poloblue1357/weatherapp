@@ -26,11 +26,10 @@ function Home() {
                 </div>
 
                 <div className="space-y-4 w-full max-w-sm px-4">
-                    {/* Search Locations — solid Apple blue */}
+                    {/* Search Locations - Purple */}
                     <Link
                         to="/search"
-                        style={{ background: "#0A84FF" }}
-                        className="w-full text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
+                        className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
                     >
                         <span className="flex items-center gap-3">
                             <div style={{ background: "rgba(255,255,255,0.2)" }} className="p-2 rounded-lg flex">
@@ -41,22 +40,22 @@ function Home() {
                         <span className="text-2xl">→</span>
                     </Link>
 
-                    {/* Known Exits — unchanged */}
+                    {/* DZs & Exits - Teal/Light Blue */}
                     <Link
                         to="/exits"
-                        className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
+                        className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
                     >
                         <span className="flex items-center gap-3">
                             <MapPin className="w-5 h-5" />
-                            Known Exits
+                            Dropzones & Exits
                         </span>
                         <span className="text-2xl">→</span>
                     </Link>
 
-                    {/* My Favorites — unchanged */}
+                    {/* My Favorites - Pink/Rose */}
                     <Link
                         to="/favorites"
-                        className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
+                        className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-5 px-6 rounded-2xl shadow-2xl transition-all hover:scale-105 flex items-center justify-between group"
                     >
                         <span className="flex items-center gap-3">
                             <Heart className="w-5 h-5" />

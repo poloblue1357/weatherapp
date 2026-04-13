@@ -1,71 +1,46 @@
 import NavBar from "../components/NavBar";
 import Header from "../components/Header"
-import WeatherCard from "../components/WeatherCard";
-import Forecast from "../components/Forecast";
 import ExitSubmit from "../components/ExitSubmit"
 import { useState } from 'react'
-import { fetchExitData } from "../api/exitAPI"
+import ExitSearch from "../components/ExitSearch";
 
-// upload new exits 
-// input field + form for submitting new exit
-// only need to save lat/lon and name on backend
-// search bar - browse known exits
+const T = {
+    tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
+    tabActive:   { background: "linear-gradient(to right, rgb(14, 165, 233), rgb(59, 130, 246))", color: "#FFFFFF" },
+    tabInactive: { background: "transparent", color: "rgba(235,235,245,0.55)" },
+};
+
 function Exits() {
-
-    const [searchInput, setSearchInput] = useState('')
-    const [testSearch, setTestSearch] = useState([])
-
-    const handleChange = (e) => {
-        const value = e.target.value
-        setSearchInput(value)
-    }
-    const searchLocation = async (e, searchInput) => {
-        e.preventDefault()
-        setSearchInput('')
-        try {
-            const data = await fetchExitData(searchInput)
-            if(data) {
-                setTestSearch(data)
-            } else {
-                throw new Error('Invalid data format')
-            }
-        } catch (err) {
-            console.error('fetch error: ', err)
-        }
-    }
-
+    const [activeTab, setActiveTab] = useState('search')
+   
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
-            <Header title="Dropzones and Exits" showBackButton={false} />
-            <h1>TABS UP HERE - ABOVE THE SEARCH INPUT!</h1>
-            <h1 className="m-5 text-white">Coming Soon!</h1>
-
-            <form onSubmit={((e) => searchLocation(e, searchInput))}>
-                <input 
-                    style={{background: 'white', border: '1px solid black', margin: "10px", padding: '5px'}} 
-                    placeholder="Search by DZ or Exit name" 
-                    onChange={handleChange} 
-                    value={searchInput}
-                />
-                <button
-                    style={{padding: '10px', border: '1px solid black', margin: '5px', background: 'white'}}
-                    
-                >
-                    Search
-                </button>
-            </form>
-            <br />
-            <br />
-
-            <h1 style={{color: 'white', margin: '10px', padding: '10px'}}>{testSearch[0]?.name}</h1>
-            <h1 style={{color: 'white', margin: '10px', padding: '10px'}}>{testSearch[0]?.lat}</h1>
-            <h1 style={{color: 'white', margin: '10px', padding: '10px'}}>{testSearch[0]?.lon}</h1>
-
-            <br />
-            <br />
-
-            <ExitSubmit />
-            
+            <Header title="Dropzones & Exits" showBackButton={false} />
+           
+            <div style={{ padding: '16px', maxWidth: '448px', marginBottom: '84px' }}>
+                <div style={T.tabBar}>
+                    {["search", "submit"].map(tab => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            style={{
+                                flex: 1, padding: "10px 0", borderRadius: 9, border: "none",
+                                fontWeight: 700, fontSize: 14, cursor: "pointer", transition: "all 0.2s",
+                                ...(activeTab === tab ? T.tabActive : T.tabInactive),
+                            }}
+                        >
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                    ))}
+                </div>
+               
+                {activeTab === 'search' ? (
+                    <ExitSearch />
+                ) : (
+                    <ExitSubmit />
+                )}
+            </div>
+           
             <NavBar currentPage="exits"/>
         </div>
     )

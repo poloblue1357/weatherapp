@@ -13,9 +13,13 @@ const T = {
     textSec:    { color: "rgba(235,235,245,0.7)" },
 };
 
-function FormInput({ label, type = "text", name, placeholder, value, onChange, multiline }) {
+function FormInput({ label, type = "text", name, placeholder, value, onChange, multiline, error }) {
     const [focused, setFocused] = useState(false);
-    const style = { ...T.input, ...(focused ? T.inputFocus : {}) };
+    const style = { 
+        ...T.input, 
+        ...(focused ? T.inputFocus : {}),
+        ...(error ? { border: "2px solid #FF453A" } : {})
+    };
     return (
         <div style={{ marginBottom: 16 }}>
             <label style={T.label}>{label}</label>
@@ -27,6 +31,11 @@ function FormInput({ label, type = "text", name, placeholder, value, onChange, m
                     onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
                     style={style} />
             }
+            {error && (
+                <div style={{ color: "#FF453A", fontSize: 12, marginTop: 6, fontWeight: 500 }}>
+                    {error}
+                </div>
+            )}
         </div>
     );
 }
@@ -35,14 +44,59 @@ function Contact() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ name: "", email: "", message: "" });
     const [submitted, setSubmitted] = useState(false);
+    const [errors, setErrors] = useState({ name: "", email: "", message: "" });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: "" });
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = { name: "", email: "", message: "" };
+        let isValid = true;
+
+        // Validate name
+        if (!formData.name.trim()) {
+            newErrors.name = "Name is required";
+            isValid = false;
+        } else if (formData.name.trim().length < 2) {
+            newErrors.name = "Name must be at least 2 characters";
+            isValid = false;
+        }
+
+        // Validate email
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+            isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = "Please enter a valid email address";
+            isValid = false;
+        }
+
+        // Validate message
+        if (!formData.message.trim()) {
+            newErrors.message = "Message is required";
+            isValid = false;
+        } else if (formData.message.trim().length < 10) {
+            newErrors.message = "Message must be at least 10 characters";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
+
         emailjs.send(
             import.meta.env.VITE_EMAILJS_SERVICE_ID,
             import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
@@ -52,6 +106,7 @@ function Contact() {
         .then(() => {
             setSubmitted(true);
             setFormData({ name: "", email: "", message: "" });
+            setErrors({ name: "", email: "", message: "" });
             setTimeout(() => setSubmitted(false), 3000);
         })
         .catch((error) => {
@@ -65,14 +120,14 @@ function Contact() {
 
             {/* Header */}
             <header style={{ background: "linear-gradient(to right, #003366, #0A84FF)", padding: "16px 20px" }}>
-                <div style={{ maxWidth: 448, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <button
+                <div style={{ maxWidth: 448, margin: "0 auto", alignItems: "center" }}>
+                    {/* <button
                         onClick={() => navigate("/")}
                         style={{ padding: 8, borderRadius: 8, border: "none", background: "rgba(255,255,255,0.1)", cursor: "pointer", color: "white", display: "flex", alignItems: "center" }}
                     >
                         <ArrowLeft size={22} />
-                    </button>
-                    <h1 style={{ color: "white", fontSize: 18, fontWeight: 600, margin: 0 }}>Contact Us</h1>
+                    </button> */}
+                    <h1 style={{ color: "white", fontSize: 18, fontWeight: 600, margin: 0, display: 'flex', justifyContent: 'center', width: '100%' }}>Contact Us</h1>
                     <div style={{ width: 38 }} />
                 </div>
             </header>
@@ -94,9 +149,9 @@ function Contact() {
                         </p>
 
                         <form onSubmit={handleSubmit}>
-                            <FormInput label="Name"    name="name"    placeholder="Your name"                  value={formData.name}    onChange={handleChange} />
-                            <FormInput label="Email"   name="email"   placeholder="your.email@example.com"     value={formData.email}   onChange={handleChange} type="email" />
-                            <FormInput label="Message" name="message" placeholder="Tell us what's on your mind..." value={formData.message} onChange={handleChange} multiline />
+                            <FormInput label="Name"    name="name"    placeholder="Your name"                  value={formData.name}    onChange={handleChange} error={errors.name} />
+                            <FormInput label="Email"   name="email"   placeholder="your.email@example.com"     value={formData.email}   onChange={handleChange} type="email" error={errors.email} />
+                            <FormInput label="Message" name="message" placeholder="Tell us what's on your mind..." value={formData.message} onChange={handleChange} multiline error={errors.message} />
 
                             <button
                                 type="submit"

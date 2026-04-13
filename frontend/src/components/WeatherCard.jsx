@@ -187,7 +187,7 @@ export default function WeatherCard({
                             onClick={onToggleFavorite}
                             style={{ padding: 10, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.1)", cursor: "pointer" }}
                         >
-                            <Heart style={{ width: 26, height: 26, color: isFavorite ? "#FF453A" : "white", fill: isFavorite ? "#FF453A" : "none" }} />
+                            <Heart style={{ width: 26, height: 26, color: isFavorite ? "rgb(236, 72, 153)" : "white", fill: isFavorite ? "rgb(236, 72, 153)" : "none" }} />
                         </button>
                     </div>
                 </div>
@@ -294,7 +294,7 @@ export default function WeatherCard({
                             fontWeight: 700, fontSize: 15, cursor: "pointer", transition: "all 0.2s",
                             display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                             background: isFavorite
-                                ? "linear-gradient(to right, #7B241C, #C0392B)"
+                                ? "linear-gradient(to right, rgb(236, 72, 153), rgb(244, 63, 94))"
                                 : "linear-gradient(to right, #0055AA, #0A84FF)",
                             color: "white",
                         }}

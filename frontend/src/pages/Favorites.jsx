@@ -4,15 +4,18 @@ import Header from "../components/Header";
 import { useState, useContext, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import { fetchWeatherData } from "../api/weatherAPI";
+import Spinner from '../components/Spinner'
 
 function Favorites() {
     const { favorites } = useContext(AppContext);
 
     const [results, setResults] = useState([]);
     const [expandedId, setExpandedId] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const fetchAllWeather = async () => {
+            setLoading(true)
             const weatherResults = [];
 
             for (const fav of favorites) {
@@ -31,6 +34,7 @@ function Favorites() {
                 }
             }
             setResults(weatherResults);
+            setLoading(false)
         };
 
         if (favorites.length > 0) {
@@ -53,6 +57,9 @@ function Favorites() {
                         </p>
                     </div>
                 )}
+                {loading &&
+                    <Spinner />
+                }
 
                 <div className="space-y-2">
                     {results.map((favoriteLocation) => (
