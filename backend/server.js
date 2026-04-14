@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose"
 import exitRoutes from "./routes/exitRoutes.js"
-import weatherRoutes from "./routes/weather.js"
+import weatherRoutes from "./routes/weatherRoutes.js"
 import 'dotenv/config'; 
-import geoRoutes from "./routes/geo.js"
+import geoRoutes from "./routes/geoRoutes.js"
 
 const app = express()
 

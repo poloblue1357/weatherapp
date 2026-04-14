@@ -2,6 +2,7 @@ import { useState } from "react"
 import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
 import { fetchExitData } from "../api/exitAPI"
+import Spinner from "../components/Spinner"
 
 const T = {
     tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },

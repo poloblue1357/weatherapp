@@ -24,9 +24,11 @@ function RemoveButton({ onClick }) {
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             style={{
-                background: hovered ? "rgba(255,69,58,0.22)" : "rgba(255,69,58,0.12)",
+                background: hovered
+                    ? "linear-gradient(to right, rgb(244, 63, 94), rgb(220, 38, 38))"
+                    : "linear-gradient(to right, rgb(236, 72, 153), rgb(244, 63, 94))",
                 border: "none",
-                color: "#FF453A",
+                color: "#FFFFFF",
                 borderRadius: 8,
                 padding: "8px 10px",
                 cursor: "pointer",
