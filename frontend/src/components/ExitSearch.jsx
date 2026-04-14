@@ -14,6 +14,7 @@ function ExitSearch() {
     const [searchInput, setSearchInput] = useState('')
     const [testSearch, setTestSearch] = useState([])
     const [activeTab, setActiveTab] = useState('current')
+    const [loading, setLoading] = useState(false)
    
     const handleChange = (e) => {
         const value = e.target.value
@@ -22,6 +23,7 @@ function ExitSearch() {
    
     const searchLocation = async (e, searchInput) => {
         e.preventDefault()
+        setLoading(true)
         setSearchInput('')
         try {
             const data = await fetchExitWeather(searchInput)
@@ -35,12 +37,14 @@ function ExitSearch() {
                         city: data.exitName || data.weather.city
                     }
                 }
+                setLoading(false)
                 setTestSearch(modifiedData)
             } else {
                 throw new Error('Invalid data format')
             }
         } catch (err) {
             console.error('fetch error: ', err)
+            setLoading(false)
         }
     }
    
@@ -93,6 +97,10 @@ function ExitSearch() {
 
             {/* 32px spacing */}
             <div style={{ height: '32px' }}></div>
+
+            {loading &&
+                <Spinner />
+            }
 
             {/* Weather Results */}
             {Object.keys(testSearch).length > 0 && (
