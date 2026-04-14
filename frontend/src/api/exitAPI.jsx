@@ -67,3 +67,28 @@ export const postExitData = async(formData) => {
             throw error
         }
 }
+
+export const fetchExitWeather = async(exitName) => {
+    const API_URL = window.location.hostname === 'localhost'
+        ? 'http://localhost:8000'
+        : import.meta.env.VITE_API_URL
+
+    const url = `${API_URL}/api/exits/weather?query=${encodeURIComponent(exitName)}`
+
+    try {
+        const response = await fetch(url)
+
+        if(!response.ok) {
+            const errText = await response.text()
+            console.error('API error response:', errText)
+            throw new Error(`HTTP ${response.status}: ${errText}`)
+        }
+
+        const jsonData = await response.json()
+        // console.log("exit data:", jsonData)
+        return jsonData
+    } catch (error) {
+        console.error('Fetch failed:', error)
+        return null
+    }
+}

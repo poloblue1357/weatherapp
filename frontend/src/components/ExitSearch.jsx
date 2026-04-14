@@ -1,7 +1,7 @@
 import { useState } from "react"
 import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
-import { fetchExitData } from "../api/exitAPI"
+import { fetchExitWeather } from "../api/exitAPI"
 import Spinner from "../components/Spinner"
 
 const T = {
@@ -24,9 +24,18 @@ function ExitSearch() {
         e.preventDefault()
         setSearchInput('')
         try {
-            const data = await fetchExitData(searchInput)
+            const data = await fetchExitWeather(searchInput)
+            console.log("Exit weather data:", data)
             if(data) {
-                setTestSearch(data)
+
+                const modifiedData = {
+                    ...data,
+                    weather: {
+                        ...data.weather,
+                        city: data.exitName || data.weather.city
+                    }
+                }
+                setTestSearch(modifiedData)
             } else {
                 throw new Error('Invalid data format')
             }
@@ -86,7 +95,7 @@ function ExitSearch() {
             <div style={{ height: '32px' }}></div>
 
             {/* Weather Results */}
-            {testSearch.length > 0 && (
+            {Object.keys(testSearch).length > 0 && (
                 <>
                     {/* Current/Forecast Tabs */}
                     <div style={T.tabBar}>
@@ -107,9 +116,13 @@ function ExitSearch() {
 
                     {/* Weather Content */}
                     {activeTab === 'current' ? (
-                        <WeatherCard weatherInfo={testSearch[0]} />
+                        <WeatherCard 
+                            weatherInfo={testSearch.weather} 
+                        />
                     ) : (
-                        <Forecast forecastInfo={testSearch[0].forecast} />
+                        <Forecast 
+                            forecastInfo={testSearch.forecast} 
+                        />
                     )}
                 </>
             )}
