@@ -134,15 +134,15 @@ export default function WeatherCard({
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 
             {/* Alert banner */}
-            {location.pathname.startsWith('/exits') && (
-                <div style={{ background: windConditions.bg, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+            {/* {location.pathname.startsWith('/exits') && windConditions && (
+                <div style={{ background: windConditions?.bg, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
                     <div>
                         <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.85, textTransform: "uppercase", letterSpacing: 1, color: "white", marginBottom: 4 }}>Status</div>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>{windConditions.text}</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>{windConditions?.text}</div>
                     </div>
                     <AlertCircle style={{ width: 28, height: 28, opacity: 0.85, color: "white", flexShrink: 0, marginLeft: 8 }} />
                 </div>
-            )}
+            )} */}
             {/* Main card */}
             <div style={{ ...T.card, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", border: "1.5px solid rgba(255,255,255,0.1)" }}>
 
