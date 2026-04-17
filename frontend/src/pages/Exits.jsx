@@ -4,6 +4,7 @@ import ExitSubmit from "../components/ExitSubmit"
 import { useState } from 'react'
 import ExitSearch from "../components/ExitSearch";
 
+
 const T = {
     tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
     tabActive:   { background: "linear-gradient(to right, rgb(14, 165, 233), rgb(59, 130, 246))", color: "#FFFFFF" },
@@ -33,7 +34,7 @@ function Exits() {
                         </button>
                     ))}
                 </div>
-               
+                
                 {activeTab === 'search' ? (
                     <ExitSearch />
                 ) : (

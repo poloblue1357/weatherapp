@@ -3,6 +3,8 @@ import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
 import { fetchExitWeather } from "../api/exitAPI"
 import Spinner from "../components/Spinner"
+import ExitAutocomplete from "./ExitAutocomplete";
+import Exit from "../../../backend/models/Exit";
 
 const T = {
     tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
@@ -94,7 +96,10 @@ function ExitSearch() {
                     </button>
                 </div>
             </form>
-
+            <ExitAutocomplete 
+                searchInput={searchInput} 
+                setSearchInput={setSearchInput}
+            />
             {/* 32px spacing */}
             <div style={{ height: '32px' }}></div>
 
