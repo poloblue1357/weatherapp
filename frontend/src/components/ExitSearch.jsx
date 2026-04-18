@@ -1,10 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
-import { fetchExitWeather } from "../api/exitAPI"
+import { fetchExitData, fetchExitWeather } from "../api/exitAPI"
 import Spinner from "../components/Spinner"
 import ExitAutocomplete from "./ExitAutocomplete";
-import Exit from "../../../backend/models/Exit";
+
 
 const T = {
     tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
@@ -17,12 +17,14 @@ function ExitSearch() {
     const [testSearch, setTestSearch] = useState([])
     const [activeTab, setActiveTab] = useState('current')
     const [loading, setLoading] = useState(false)
-   
+    const [searchResults, setSearchResults] = useState()
+    const [searchSelect, setSearchSelect] = useState('')
+
     const handleChange = (e) => {
         const value = e.target.value
         setSearchInput(value)
     }
-   
+
     const searchLocation = async (e, searchInput) => {
         e.preventDefault()
         setLoading(true)
@@ -41,6 +43,7 @@ function ExitSearch() {
                 }
                 setLoading(false)
                 setTestSearch(modifiedData)
+                setSearchResults('')
             } else {
                 throw new Error('Invalid data format')
             }
@@ -49,11 +52,21 @@ function ExitSearch() {
             setLoading(false)
         }
     }
-   
+
+    useEffect(() => {
+        const timeout = setTimeout(async () => {
+            if (searchInput.length > 2) {
+                const data = await fetchExitData(searchInput)
+                setSearchResults(data)
+            }   
+        }, 200);
+        return () => clearTimeout(timeout)
+    }, [searchInput])
+
     return (
         <div>
             {/* Search Input */}
-            <form onSubmit={((e) => searchLocation(e, searchInput))} style={{ marginBottom: '24px' }}>
+            <form onSubmit={((e) => searchLocation(e, searchInput))} style={{  }}>
                 <div style={{ position: 'relative', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
                     <input
                         style={{
@@ -96,10 +109,16 @@ function ExitSearch() {
                     </button>
                 </div>
             </form>
+
             <ExitAutocomplete 
                 searchInput={searchInput} 
                 setSearchInput={setSearchInput}
+                searchResults={searchResults}
+                searchSelect={searchSelect}
+                setSearchSelect={setSearchSelect}
+                testSearch={testSearch}
             />
+
             {/* 32px spacing */}
             <div style={{ height: '32px' }}></div>
 

@@ -11,8 +11,8 @@ router.get("/", async (req, res) => {
         const query = location
             ? { name: { $regex: location.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&").replace(/s$/, "('s)?"), $options: "i" } }
             : {};
-        const results = await Exit.find(query);
-        // console.log(results[0].lat)
+        const results = await Exit.find(query).limit(5);
+        
         res.json(results);
     } catch (err) {
         res.status(500).json({ message: err.message });

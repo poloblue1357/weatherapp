@@ -174,7 +174,7 @@ function ExitSubmit() {
                 <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                         <h3 style={{ color: 'white', fontSize: '15px', fontWeight: '600', margin: 0 }}>DZ / Exit Information</h3>
-                        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>* required</span>
+                        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px' }}>* required</span>
                     </div>
                    
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
