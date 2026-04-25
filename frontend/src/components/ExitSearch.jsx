@@ -17,7 +17,7 @@ function ExitSearch() {
     const [testSearch, setTestSearch] = useState([])
     const [activeTab, setActiveTab] = useState('current')
     const [loading, setLoading] = useState(false)
-    const [searchResults, setSearchResults] = useState()
+    const [searchResults, setSearchResults] = useState([])
     const [searchSelect, setSearchSelect] = useState('')
 
     const handleChange = (e) => {
@@ -25,12 +25,20 @@ function ExitSearch() {
         setSearchInput(value)
     }
 
-    const searchLocation = async (e, searchInput) => {
+    const handleSubmit = (e) => {
         e.preventDefault()
+        const term = searchInput
+
         setLoading(true)
         setSearchInput('')
+
+        searchLocation(term)
+    }
+
+    const searchLocation = async (term) => {
+
         try {
-            const data = await fetchExitWeather(searchInput)
+            const data = await fetchExitWeather(term)
             console.log("Exit weather data:", data)
             if(data) {
 
@@ -43,7 +51,7 @@ function ExitSearch() {
                 }
                 setLoading(false)
                 setTestSearch(modifiedData)
-                setSearchResults('')
+                setSearchResults([])
             } else {
                 throw new Error('Invalid data format')
             }
@@ -66,7 +74,7 @@ function ExitSearch() {
     return (
         <div>
             {/* Search Input */}
-            <form onSubmit={((e) => searchLocation(e, searchInput))} style={{  }}>
+            <form onSubmit={handleSubmit} style={{  }}>
                 <div style={{ position: 'relative', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
                     <input
                         style={{
@@ -112,11 +120,10 @@ function ExitSearch() {
 
             <ExitAutocomplete 
                 searchInput={searchInput} 
-                setSearchInput={setSearchInput}
                 searchResults={searchResults}
-                searchSelect={searchSelect}
-                setSearchSelect={setSearchSelect}
-                testSearch={testSearch}
+                searchLocation={searchLocation}
+                setSearchResults={setSearchResults}
+                setSearchInput={setSearchInput}
             />
 
             {/* 32px spacing */}

@@ -1,13 +1,13 @@
-import { useState } from "react"
 
-function ExitAutocomplete({searchInput, setSearchInput, searchResults, searchSelect, testSearch, setSearchSelect}) {
+
+function ExitAutocomplete({ setSearchResults, searchLocation, setSearchInput, searchResults }) {
 
 
 
     return (
         <div>
-            {searchResults && 
-                searchResults?.map((input, index) => 
+            {searchResults.length > 0 && 
+                searchResults.map((input, index) => 
                     <div
                         key={index}
                         style={{
@@ -19,6 +19,11 @@ function ExitAutocomplete({searchInput, setSearchInput, searchResults, searchSel
                                 background: 'white',
                                 boxSizing: 'border-box',
                                 outline: 'none'
+                        }}
+                        onClick={() => {
+                            setSearchInput(input.name)
+                            setSearchResults([])
+                            searchLocation(input.name)
                         }}
                     >
                         {input.name}
