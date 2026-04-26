@@ -14,11 +14,12 @@ const T = {
 
 function ExitSearch() {
     const [searchInput, setSearchInput] = useState('')
+    const [selectedTerm, setSelectedTerm] = useState('')
     const [testSearch, setTestSearch] = useState([])
     const [activeTab, setActiveTab] = useState('current')
     const [loading, setLoading] = useState(false)
     const [searchResults, setSearchResults] = useState([])
-    const [searchSelect, setSearchSelect] = useState('')
+    const [isSelecting, setIsSelecting] = useState(false)
 
     const handleChange = (e) => {
         const value = e.target.value
@@ -30,16 +31,17 @@ function ExitSearch() {
         const term = searchInput
 
         setLoading(true)
-        setSearchInput('')
-
         searchLocation(term)
+
+        setSearchInput('')
+        setSelectedTerm('')
     }
 
     const searchLocation = async (term) => {
 
         try {
             const data = await fetchExitWeather(term)
-            console.log("Exit weather data:", data)
+            // console.log("Exit weather data:", data)
             if(data) {
 
                 const modifiedData = {
@@ -62,14 +64,18 @@ function ExitSearch() {
     }
 
     useEffect(() => {
+        if (!searchInput || searchInput.length <= 2) return
+
+        // 🚫 don't refetch when user just selected something
+        if (searchInput === selectedTerm) return
+
         const timeout = setTimeout(async () => {
-            if (searchInput.length > 2) {
-                const data = await fetchExitData(searchInput)
-                setSearchResults(data)
-            }   
-        }, 200);
+            const data = await fetchExitData(searchInput)
+            setSearchResults(data)
+        }, 200)
+
         return () => clearTimeout(timeout)
-    }, [searchInput])
+    }, [searchInput, selectedTerm])
 
     return (
         <div>
@@ -124,6 +130,8 @@ function ExitSearch() {
                 searchLocation={searchLocation}
                 setSearchResults={setSearchResults}
                 setSearchInput={setSearchInput}
+                setSelectedTerm={setSelectedTerm}
+                setIsSelecting={setIsSelecting}
             />
 
             {/* 32px spacing */}

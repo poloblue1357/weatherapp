@@ -1,6 +1,6 @@
 
 
-function ExitAutocomplete({ setSearchResults, searchLocation, setSearchInput, searchResults }) {
+function ExitAutocomplete({ setIsSelecting, setSelectedTerm, setSearchResults, searchLocation, setSearchInput, searchResults }) {
 
 
 
@@ -21,9 +21,10 @@ function ExitAutocomplete({ setSearchResults, searchLocation, setSearchInput, se
                                 outline: 'none'
                         }}
                         onClick={() => {
-                            setSearchInput(input.name)
+                            setSelectedTerm(input.name)
                             setSearchResults([])
                             searchLocation(input.name)
+                            setSearchInput('')
                         }}
                     >
                         {input.name}
