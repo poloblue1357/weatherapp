@@ -16,7 +16,6 @@ const T = {
 function ExitSearch() {
     const [searchInput, setSearchInput] = useState('')
     const [selectedExit, setSelectedExit] = useState('')
-    const [weatherData, setWeatherData] = useState(null)
     const [activeTab, setActiveTab] = useState('current')
     const [loading, setLoading] = useState(false)
     const [autocompleteResults, setAutocompleteResults] = useState([])
@@ -25,8 +24,13 @@ function ExitSearch() {
     const {
         addFavorite,
         removeFavorite,
-        isFavorited
+        isFavorited,
+        currentExitData,
+        updateExitWeather
     } = useApp();
+
+    // Use persistent exit data from context
+    const weatherData = currentExitData;
 
     // Check if current location is favorited
     const isFavorite = weatherData?.weather?.lat && weatherData?.weather?.lon
@@ -87,7 +91,7 @@ function ExitSearch() {
                 }
             }
             // console.log('Modified data with exitName:', modifiedData)
-            setWeatherData(modifiedData)
+            updateExitWeather(modifiedData)
             setAutocompleteResults([])
             setSearchInput('')
             setSelectedExit('')

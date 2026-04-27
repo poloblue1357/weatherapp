@@ -14,6 +14,11 @@ export function AppProvider({children}) {
     const [currentForecast, setCurrentForecast] = useState(null)
     const [currentLocation, setCurrentLocation] = useState({ lat: null, lon: null })
 
+    // EXIT WEATHER STATE (for persistence across navigation)
+    const [currentExitWeather, setCurrentExitWeather] = useState(null)
+    const [currentExitForecast, setCurrentExitForecast] = useState(null)
+    const [currentExitData, setCurrentExitData] = useState(null)
+
     useEffect(() => {
         localStorage.setItem('exitwx-favorites', JSON.stringify(favorites))
     }, [favorites])
@@ -62,6 +67,19 @@ export function AppProvider({children}) {
         setCurrentLocation({ lat: null, lon: null })
     }
 
+    // EXIT WEATHER FUNCTIONS
+    const updateExitWeather = (exitData) => {
+        setCurrentExitWeather(exitData?.weather || null)
+        setCurrentExitForecast(exitData?.forecast || null)
+        setCurrentExitData(exitData || null)
+    }
+
+    const clearExitWeather = () => {
+        setCurrentExitWeather(null)
+        setCurrentExitForecast(null)
+        setCurrentExitData(null)
+    }
+
     return (
         <AppContext.Provider value={{
             // Favorites
@@ -75,7 +93,13 @@ export function AppProvider({children}) {
             currentForecast,
             currentLocation,
             updateWeather,
-            clearWeather
+            clearWeather,
+            // Exit Weather
+            currentExitWeather,
+            currentExitForecast,
+            currentExitData,
+            updateExitWeather,
+            clearExitWeather
         }}>
             {children}
         </AppContext.Provider>
