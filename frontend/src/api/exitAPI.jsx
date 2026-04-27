@@ -17,7 +17,7 @@ export const fetchExitData = async(location) => {
             throw new Error(`HTTP ${response.status}: ${errText}`)
         }
         const jsonData = await response.json()
-        console.log(jsonData)
+        // console.log(jsonData)
         return jsonData
     } catch (error) {
         console.error('Fetch failed:', error)

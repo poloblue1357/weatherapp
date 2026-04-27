@@ -4,6 +4,7 @@ import Forecast from "../components/Forecast";
 import { fetchExitData, fetchExitWeather } from "../api/exitAPI"
 import Spinner from "../components/Spinner"
 import ExitAutocomplete from "./ExitAutocomplete";
+import { useApp } from '../hooks/useApp';
 
 
 const T = {
@@ -14,125 +15,174 @@ const T = {
 
 function ExitSearch() {
     const [searchInput, setSearchInput] = useState('')
-    const [selectedTerm, setSelectedTerm] = useState('')
-    const [testSearch, setTestSearch] = useState([])
+    const [selectedExit, setSelectedExit] = useState('')
+    const [weatherData, setWeatherData] = useState(null)
     const [activeTab, setActiveTab] = useState('current')
     const [loading, setLoading] = useState(false)
-    const [searchResults, setSearchResults] = useState([])
-    const [isSelecting, setIsSelecting] = useState(false)
+    const [autocompleteResults, setAutocompleteResults] = useState([])
+    const [error, setError] = useState(null)
+
+    const {
+        addFavorite,
+        removeFavorite,
+        isFavorited
+    } = useApp();
+
+    // Check if current location is favorited
+    const isFavorite = weatherData?.weather?.lat && weatherData?.weather?.lon
+        ? isFavorited(weatherData.weather.lat, weatherData.weather.lon)
+        : false;
+
+    const toggleFavorite = () => {
+        if (!weatherData?.weather?.lat || !weatherData?.weather?.lon) return;
+        // Use exitName if available, otherwise fall back to city
+        const exitName = weatherData.exitName || weatherData.weather.city;
+        // console.log('Toggling favorite with name:', exitName);
+        // console.log('Full weatherData:', weatherData);
+        if (isFavorite) {
+            removeFavorite(`${weatherData.weather.lat}-${weatherData.weather.lon}`);
+        } else {
+            addFavorite({ 
+                name: exitName, 
+                lat: weatherData.weather.lat, 
+                lon: weatherData.weather.lon 
+            });
+        }
+    };
 
     const handleChange = (e) => {
         const value = e.target.value
+        setError(null)
         setSearchInput(value)
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
         const term = searchInput
-
-        setLoading(true)
+        if(!term) {
+            setError("Search Field Can't be Blank")
+            return
+        }
         searchLocation(term)
-
-        setSearchInput('')
-        setSelectedTerm('')
     }
 
     const searchLocation = async (term) => {
+        setLoading(true)
+        if (!term || term.length <= 2) {
+            setLoading(false)
+            return
+        }
 
         try {
             const data = await fetchExitWeather(term)
-            // console.log("Exit weather data:", data)
-            if(data) {
 
-                const modifiedData = {
-                    ...data,
-                    weather: {
-                        ...data.weather,
-                        city: data.exitName || data.weather.city
-                    }
+            if (!data) throw new Error('Invalid data format')
+
+            const modifiedData = {
+                ...data,
+                exitName: data.exitName,  // Preserve exitName at top level
+                weather: {
+                    ...data.weather,
+                    city: data.exitName || data.weather.city
                 }
-                setLoading(false)
-                setTestSearch(modifiedData)
-                setSearchResults([])
-            } else {
-                throw new Error('Invalid data format')
             }
+            // console.log('Modified data with exitName:', modifiedData)
+            setWeatherData(modifiedData)
+            setAutocompleteResults([])
+            setSearchInput('')
+            setSelectedExit('')
+
         } catch (err) {
-            console.error('fetch error: ', err)
+            console.error(err)
+            setError("Search result isn't available")
+        } finally {
             setLoading(false)
         }
     }
 
     useEffect(() => {
-        if (!searchInput || searchInput.length <= 2) return
+        if (!searchInput || searchInput.length <= 2) {
+            setAutocompleteResults([])
+            return
+        }
 
         // 🚫 don't refetch when user just selected something
-        if (searchInput === selectedTerm) return
+        if (searchInput === selectedExit) return
 
         const timeout = setTimeout(async () => {
             const data = await fetchExitData(searchInput)
-            setSearchResults(data)
+            setAutocompleteResults(data)
         }, 200)
 
         return () => clearTimeout(timeout)
-    }, [searchInput, selectedTerm])
+    }, [searchInput, selectedExit])
 
     return (
         <div>
             {/* Search Input */}
-            <form onSubmit={handleSubmit} style={{  }}>
-                <div style={{ position: 'relative', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-                    <input
-                        style={{
-                            width: '100%',
-                            padding: '20px 64px 20px 20px',
-                            border: 0,
-                            borderRadius: '16px',
-                            fontSize: '16px',
-                            background: 'white',
-                            boxSizing: 'border-box',
-                            outline: 'none'
-                        }}
-                        placeholder="Search by DZ or Exit name"
-                        onChange={handleChange}
-                        value={searchInput}
-                    />
-                    <button
-                        type="submit"
-                        style={{
-                            position: 'absolute',
-                            right: '8px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            background: 'linear-gradient(to right, rgb(14, 165, 233), rgb(59, 130, 246))',
-                            border: 'none',
-                            color: 'white',
-                            padding: '12px',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-                        }}
-                    >
-                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
-                            <circle cx="11" cy="11" r="8" stroke="white" strokeWidth="2" fill="none"/>
-                            <path d="m21 21-4.35-4.35" stroke="white" strokeWidth="2"/>
-                        </svg>
-                    </button>
-                </div>
-            </form>
+            <div className="relative">
+                <form onSubmit={handleSubmit}>
+                    <div style={{ position: 'relative', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+                        <input
+                            style={{
+                                width: '100%',
+                                padding: '20px 64px 20px 20px',
+                                border: 0,
+                                borderRadius: '16px',
+                                fontSize: '16px',
+                                background: 'white',
+                                boxSizing: 'border-box',
+                                outline: 'none'
+                            }}
+                            placeholder="Search by DZ or Exit name"
+                            onChange={handleChange}
+                            value={searchInput}
+                        />
+                        <button
+                            type="submit"
+                            style={{
+                                position: 'absolute',
+                                right: '8px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                background: 'linear-gradient(to right, rgb(14, 165, 233), rgb(59, 130, 246))',
+                                border: 'none',
+                                color: 'white',
+                                padding: '12px',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                            }}
+                        >
+                            <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" stroke="white" strokeWidth="2" fill="none"/>
+                                <path d="m21 21-4.35-4.35" stroke="white" strokeWidth="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
 
-            <ExitAutocomplete 
-                searchInput={searchInput} 
-                searchResults={searchResults}
-                searchLocation={searchLocation}
-                setSearchResults={setSearchResults}
-                setSearchInput={setSearchInput}
-                setSelectedTerm={setSelectedTerm}
-                setIsSelecting={setIsSelecting}
-            />
+                <div className="absolute w-full z-10">
+                    <ExitAutocomplete 
+                        searchInput={searchInput} 
+                        autocompleteResults={autocompleteResults}
+                        searchLocation={searchLocation}
+                        setAutocompleteResults={setAutocompleteResults}
+                        setSearchInput={setSearchInput}
+                        setSelectedExit={setSelectedExit}
+                    />
+                </div>
+            </div>
+            
+            {/* Error */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-4 mt-4">
+                    {error}
+                </div>
+            )}
 
             {/* 32px spacing */}
             <div style={{ height: '32px' }}></div>
@@ -142,7 +192,7 @@ function ExitSearch() {
             }
 
             {/* Weather Results */}
-            {Object.keys(testSearch).length > 0 && (
+            {weatherData && (
                 <>
                     {/* Current/Forecast Tabs */}
                     <div style={T.tabBar}>
@@ -164,11 +214,15 @@ function ExitSearch() {
                     {/* Weather Content */}
                     {activeTab === 'current' ? (
                         <WeatherCard 
-                            weatherInfo={testSearch.weather} 
+                            weatherInfo={weatherData.weather}
+                            lat={weatherData.weather.lat}
+                            lon={weatherData.weather.lon}
+                            isFavorite={isFavorite}
+                            onToggleFavorite={toggleFavorite}
                         />
                     ) : (
                         <Forecast 
-                            forecastInfo={testSearch.forecast} 
+                            forecastInfo={weatherData.forecast} 
                         />
                     )}
                 </>
@@ -178,3 +232,4 @@ function ExitSearch() {
 }
 
 export default ExitSearch
+

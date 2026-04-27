@@ -26,8 +26,11 @@ function Favorites() {
                     weatherResults.push({
                         id: String(fav.id),
                         name: fav.name,
-                        weatherInfo: data.weather,
-                        forecastInfo: data.forecast  // Add this line!
+                        weatherInfo: {
+                            ...data.weather,
+                            city: fav.name  // Override city with saved favorite name
+                        },
+                        forecastInfo: data.forecast
                     });
                 } catch (error) {
                     console.error(`Failed to fetch weather for ${fav.name}:`, error);
@@ -66,8 +69,9 @@ function Favorites() {
                         <WeatherTile
                             key={favoriteLocation.id}
                             id={favoriteLocation.id}
+                            name={favoriteLocation.name}
                             weatherInfo={favoriteLocation.weatherInfo}
-                            forecastInfo={favoriteLocation.forecastInfo}  // Add this line!
+                            forecastInfo={favoriteLocation.forecastInfo}
                             expandedId={expandedId}
                             setExpandedId={setExpandedId}
                         />

@@ -44,7 +44,7 @@ function RemoveButton({ onClick }) {
     );
 }
 
-function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId }) {
+function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId, name }) {
     const [activeTab, setActiveTab] = useState('current');
     const { removeFavorite } = useApp();
 
@@ -68,7 +68,7 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId 
                         style={{ flexShrink: 0, marginLeft: 10, transition: "transform 0.2s", transform: isExpanded ? "rotate(180`deg)" : "rotate(0deg)", ...T.arrow }}
                     />
                     <span style={{ margin: "0 6px 0 8px", fontWeight: 600, fontSize: 14, width: 105, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...T.textPrim }}>
-                        {weatherInfo.city}
+                        {name || weatherInfo.city}
                     </span>
                     <span style={{ margin: '0 20px 0', fontWeight: 700, fontSize: 17, marginRight: 8, flexShrink: 0, ...T.textPrim }}>
                         {Math.round(weatherInfo.temp)}°

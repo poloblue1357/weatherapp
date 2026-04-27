@@ -109,7 +109,7 @@ function Search() {
                                     setSelectedCoords(null);
                                 }}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Search by City / Lat,Lon"
+                                placeholder="Search by City or Lat,Lon"
                                 className="w-full p-5 pr-14 border-0 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg bg-white shadow-lg"
                             />
                             <button
