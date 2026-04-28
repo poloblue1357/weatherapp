@@ -16,12 +16,10 @@ Check real-time conditions, forecasts, and save favorite locations for quick acc
 ### Search (Empty State)
 ![Empty Search](screenshots/empty.png)
 
-<br/>
 
 ### Autocomplete
 ![Autocomplete](screenshots/autocomplete.png)
 
-<br/>
 
 ### Weather Result
 ![Weather Result](screenshots/result.png)
