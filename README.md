@@ -4,7 +4,9 @@ A full-stack weather app for skydivers and dropzone operators.
 Check real-time conditions, forecasts, and save favorite locations for quick access.
 
 🔗 **[Live Demo](https://exitwx-fe.onrender.com/)** 
+
 ⚠️ Note: The backend may take a few seconds to respond on first load due to free hosting (cold start).
+
 📱 Mobile-first design — optimized for smaller screens, but fully functional on desktop.
 
 **Key Problem Solved**: Skydivers need quick access to detailed weather data for specific dropzones. This app combines location-based weather with a curated database of skydiving exits.
