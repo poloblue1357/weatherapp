@@ -12,7 +12,7 @@ const T = {
     textPrim:    { color: "#FFFFFF" },
     textSec:     { color: "rgba(235,235,245,0.6)" },
     arrow:       { color: "rgba(235,235,245,0.85)" },
-    tabActive:   { background: "linear-gradient(to right, rgb(168, 85, 247), rgb(99, 102, 241))", color: "#FFFFFF" },
+    tabActive:   { background: "linear-gradient(to right, rgb(236, 72, 153), rgb(244, 63, 94))", color: "#FFFFFF" },
     tabInactive: { background: "transparent", color: "rgba(235,235,245,0.55)" },
 };
 
@@ -65,7 +65,7 @@ function WeatherTile({ id, weatherInfo, forecastInfo, expandedId, setExpandedId,
                 <div style={{ display: "flex", alignItems: "center", flex: 1, overflow: "hidden" }}>
                     <ChevronDown
                         size={20}
-                        style={{ flexShrink: 0, marginLeft: 10, transition: "transform 0.2s", transform: isExpanded ? "rotate(180`deg)" : "rotate(0deg)", ...T.arrow }}
+                        style={{ flexShrink: 0, marginLeft: 10, transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)", ...T.arrow }}
                     />
                     <span style={{ margin: "0 6px 0 8px", fontWeight: 600, fontSize: 14, width: 105, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...T.textPrim }}>
                         {name || weatherInfo.city}

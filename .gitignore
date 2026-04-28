@@ -17,3 +17,6 @@
 
 # Optional system files
 .DS_Store
+
+# Recruiter Review
+RECRUITER_REVIEW.md

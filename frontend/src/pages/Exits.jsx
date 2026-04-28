@@ -18,7 +18,7 @@ function Exits() {
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-sky-500">
             <Header title="Dropzones & Exits" showBackButton={false} />
            
-            <div style={{ padding: '16px', maxWidth: '448px', marginBottom: '84px' }}>
+            <div className="flex-1 p-4 pb-20 max-w-md mx-auto w-full">
                 <div style={T.tabBar}>
                     {["search", "submit"].map(tab => (
                         <button

@@ -9,7 +9,7 @@ import { useApp } from '../hooks/useApp';
 
 const T = {
     tabBar:      { background: "#2C2C2E", borderRadius: 12, padding: 4, display: "flex", gap: 4, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
-    tabActive:   { background: "linear-gradient(to right, rgb(168, 85, 247), rgb(99, 102, 241))", color: "#FFFFFF" },
+    tabActive:   { background: "linear-gradient(to right, rgb(14, 165, 233), rgb(59, 130, 246))", color: "#FFFFFF" },
     tabInactive: { background: "transparent", color: "rgba(235,235,245,0.55)" },
 };
 
