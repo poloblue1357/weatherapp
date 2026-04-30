@@ -1,7 +1,9 @@
-# ExitWX - Weather App for Skydivers
+# ExitWx - Weather App for Skydivers
 
 A full-stack weather app for skydivers and dropzone operators. 
 Check real-time conditions, forecasts, and save favorite locations for quick access.
+
+*Built as a portfolio project to demonstrate full-stack development skills*
 
 🔗 **[Live Demo](https://exitwx-fe.onrender.com/)** 
 
@@ -131,10 +133,8 @@ weatherapp/
 ## 🔮 Future Enhancements
 
 - [ ] User authentication and profiles
-- [ ] Weather alerts and notifications
 - [ ] PWA support for offline access
 - [ ] Unit and integration tests
-- [ ] Weather radar integration
 
 ## 👤 Author
 
@@ -142,4 +142,4 @@ weatherapp/
 
 ---
 
-*Built as a portfolio project to demonstrate full-stack development skills*
+
