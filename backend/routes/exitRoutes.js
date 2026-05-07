@@ -13,7 +13,10 @@ router.get("/", async (req, res) => {
             : {};
         const results = await Exit.find(query).limit(5);
         
-        res.json(results);
+        res.json({
+            results,
+            message: results.length === 0 ? "No Matches Found" : "Success"
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
